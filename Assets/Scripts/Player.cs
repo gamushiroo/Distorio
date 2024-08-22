@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +18,8 @@ public class Player : MonoBehaviour {
     [SerializeField] private Slider hpBar;
     [SerializeField] private Slider miningProgresBar;
 
+
+    private bool hasGravity = true;
     private ChunkVoxel miningPos;
     private Entity entity;
     private BlockAndSelect SelectedPos;
@@ -31,6 +32,8 @@ public class Player : MonoBehaviour {
     private bool spawnRequest;
     private bool jumpRequest;
     private Vector3 playerVel;
+    private Vector2Int pos;
+    private Vector2Int lastPos;
 
     private void Start () {
 
@@ -43,9 +46,29 @@ public class Player : MonoBehaviour {
 
     private void Update () {
 
+        pos = Data.Vector3ToChunkVoxel(camera.transform.position).c;
+        if (!(pos == lastPos)) {
+            Debug.Log(Time.deltaTime);
+            world.CheckViewDistance(pos);
+            lastPos = pos;
+        }
+        /*
+        if (Input.GetKeyDown(KeyCode.G))
+            hasGravity = !hasGravity;
+
+        if (!hasGravity) {
+
+            if (Input.GetKey(KeyCode.Space))
+                entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.up;
+            if (Input.GetKey(KeyCode.LeftControl))
+                entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.down;
+
+
+        }
+
         if (Input.GetKeyDown(KeyCode.E))
             world.inUI = !world.inUI;
-
+        */
         if (!world.inUI) {
 
             playerVel += Data.GetPlayerVel();
@@ -70,21 +93,22 @@ public class Player : MonoBehaviour {
     private void LateUpdate () {
 
         if (spawnRequest)
-            Spawn(spawnPoint);
+            Spawn();
 
         spawnRequest = false;
         jumpRequest = false;
         playerVel = Vector3.zero;
 
+
     }
 
-    private void Spawn (Vector3 pos) {
+    private void Spawn () {
 
         miningProgress = 0;
         gravityVelocity = 0;
         health = Data.player.health;
         hpBar.value = health / Data.player.health;
-        entity = new Entity(pos + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
+        entity = new Entity(world.CalculateSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
 
     }
 
@@ -97,7 +121,7 @@ public class Player : MonoBehaviour {
 
         SelectedPos = GetSelectedPos();
 
-        Voxel _blockID = new(0,0);
+        byte _blockID = 0;
 
         if (world.chunks.ContainsKey(SelectedPos.blue.c)) {
             _blockID = world.chunks[SelectedPos.blue.c].voxelMap[SelectedPos.blue.v.x, SelectedPos.blue.v.y, SelectedPos.blue.v.z];
@@ -105,12 +129,12 @@ public class Player : MonoBehaviour {
         int _blockID2 = 0;
 
         if (world.chunks.ContainsKey(SelectedPos.red.c)) {
-            _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z].id;
+            _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z];
         }
 
-        blockHighlight.SetActive(_blockID.id != 0);
+        blockHighlight.SetActive(_blockID != 0);
 
-        if (Input.GetMouseButton(0) && _blockID.id != 0) {
+        if (Input.GetMouseButton(0) && _blockID != 0) {
 
             miningProgresBarObj.SetActive(true);
 
@@ -119,56 +143,45 @@ public class Player : MonoBehaviour {
                 miningEffect.Play();
             }
             else {
-                miningProgress = world.blockTypes[_blockID.id].hardness;
+                miningProgress = world.blockTypes[_blockID].hardness;
                 miningPos = SelectedPos.blue;
             }
-
             if (miningProgress <= 0) {
-
-
-                SetBBBL(SelectedPos.blue, Voxel.zero);
-
+                SetBBBL(SelectedPos.blue, 0);
             }
-
-            miningProgresBar.value = miningProgress / world.blockTypes[_blockID.id].hardness;
-
+            miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
         }
-
-        if (Input.GetMouseButtonDown(1) && _blockID2 == 0 && _blockID.id != 0) {
-
+        if (Input.GetMouseButtonDown(1) && _blockID2 == 0 && _blockID != 0) {
             if (selectedBlockIndex != 0) {
                 hand.placeEase = 0;
 
-                if(selectedBlockIndex == 2) {
 
+                SetBBBL(SelectedPos.red, selectedBlockIndex);
+
+                /*
+                if (selectedBlockIndex == 2) {
                     world.modifications.Enqueue(Structure.MakeTree(Data.PublicLocationDerect(SelectedPos.red)));
 
                 }
                 else {
 
-                    SetBBBL(SelectedPos.red, new(selectedBlockIndex, 0));
 
                 }
-
-
+                */
             }
         }
     }
 
-    void SetBBBL (ChunkVoxel pos, Voxel voxel) {
-        /*
-        world.chunks[pos.c].SetBlock(pos.v, voxel);
-        world.chunksToUpdate.Add(world.chunks[pos.c]);
-        */
+    void SetBBBL (ChunkVoxel pos, byte id) {
+
         if (world.chunks.ContainsKey(pos.c) && world.chunks[pos.c].IsEditable()) {
 
             Queue<VoxelMod> queue = new Queue<VoxelMod>();
-            queue.Enqueue(new(pos, voxel.id));
+            queue.Enqueue(new(pos, id));
             world.modifications.Enqueue(queue);
 
         }
     }
-
     private void CalculateVelocity () {
 
         if (jumpRequest && entity.isGrounded) {
@@ -178,8 +191,10 @@ public class Player : MonoBehaviour {
 
         }
 
-        gravityVelocity += 27 * Time.deltaTime;
-        entity.vel += gravityVelocity * Time.deltaTime * Vector3.down;
+        if (hasGravity) {
+            gravityVelocity += 27 * Time.deltaTime;
+            entity.vel += gravityVelocity * Time.deltaTime * Vector3.down;
+        }
 
         entity.vel += Quaternion.Euler(0, rotationY, 0) * playerVel * Data.playerSpeed * Time.deltaTime;
 
@@ -202,7 +217,7 @@ public class Player : MonoBehaviour {
 
     }
 
-    private void SetValue (){
+    private void SetValue () {
 
         camMove += Input.GetKey(KeyCode.LeftControl) ? -1 : 1 * 10 * Time.deltaTime;
         camMove = Mathf.Clamp(camMove, -0.25f, 0);
@@ -220,17 +235,17 @@ public class Player : MonoBehaviour {
     private BlockAndSelect GetSelectedPos () {
         Vector3 _camPos = camera.position;
         ChunkVoxel camPos = Data.Vector3ToChunkVoxel(_camPos);
-        for (int i = 0; i < 120; i++) {
+        for (int i = 0; i < 300; i++) {
             camPos = Data.Vector3ToChunkVoxel(_camPos);
 
 
             if (world.chunks.ContainsKey(camPos.c)) {
-                if (world.chunks[camPos.c].voxelMap[camPos.v.x, camPos.v.y, camPos.v.z].id != 0) {
+                if (world.chunks[camPos.c].voxelMap[camPos.v.x, camPos.v.y, camPos.v.z] != 0) {
                     break;
                 }
             }
 
-            _camPos += camera.forward * 0.05f;
+            _camPos += camera.forward * 0.02f;
         }
         return new BlockAndSelect(camPos, Data.Vector3ToChunkVoxel(II(_camPos) + _camPos));
     }

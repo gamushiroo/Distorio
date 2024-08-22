@@ -30,19 +30,19 @@ public class Structure : MonoBehaviour {
 
 public class VoxelMod {
 
-    public ChunkVoxel position;
+    public ChunkVoxel pos;
     public byte id;
 
     public VoxelMod () {
 
-        position = new ChunkVoxel();
+        pos = new ChunkVoxel();
         id = 0;
 
     }
 
     public VoxelMod (ChunkVoxel _position, byte _id) {
 
-        position = _position;
+        pos = _position;
         id = _id;
 
     }

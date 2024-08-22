@@ -23,7 +23,7 @@ public static class AABB {
 
                         if (world.chunks.ContainsKey(pos.c)) {
 
-                            if (world.blockTypes[world.chunks[pos.c].voxelMap[pos.v.x, pos.v.y, pos.v.z].id].hasCollision) {
+                            if (world.blockTypes[world.chunks[pos.c].voxelMap[pos.v.x, pos.v.y, pos.v.z]].hasCollision) {
 
                                 boxColliderList.Add(SweptAABB(posAndVel_, new Entity(Data.PublicLocationDerect(pos), Vector3.one, Vector3.zero, false)));
 

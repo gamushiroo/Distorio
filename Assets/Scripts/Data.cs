@@ -11,11 +11,10 @@ public static class Data {
     }
 
     public static readonly int ChunkWidth = 16;
-    public static readonly int ChunkHeight = 256;
-    public static readonly int WorldWidth = 8;
-    public static readonly int ChunkLoadRange = 8;
+    public static readonly int ChunkHeight = 128;
+    public static readonly int ChunkLoadRange = 4;
     public static readonly int TextureSize = 16;
-    public static readonly int inventorySize = 12;
+    //public static readonly float playerSpeed = 20f;
     public static readonly float playerSpeed = 4.5f;
     public static readonly float mouseSens = 100;
 
