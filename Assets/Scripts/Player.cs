@@ -41,6 +41,32 @@ public class Player : MonoBehaviour {
 
     }
 
+    private void Update () {
+
+        if (Input.GetKeyDown(KeyCode.E))
+            world.inUI = !world.inUI;
+
+        if (!world.inUI) {
+
+            playerVel += Data.GetPlayerVel();
+
+            if (Input.GetKey(KeyCode.Space))
+                jumpRequest = true;
+            if (Input.GetKeyDown(KeyCode.R))
+                spawnRequest = true;
+
+            rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
+            rotationY += Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse X");
+            rotationX = Mathf.Clamp(rotationX, -90, 90);
+
+        }
+
+        Aaa();
+        CalculateVelocity();
+        SetValue();
+
+    }
+
     private void LateUpdate () {
 
         if (spawnRequest)
@@ -62,40 +88,6 @@ public class Player : MonoBehaviour {
 
     }
 
-    private void Update () {
-
-        if (Input.GetKeyDown(KeyCode.E))
-            world.inUI = !world.inUI;
-
-        if (!world.inUI) {
-
-            playerVel += Data.GetPlayerVel();
-            float y = 0;
-
-            if (Input.GetKey(KeyCode.O))
-                y--;
-            if (Input.GetKey(KeyCode.P))
-                y++;
-
-
-            playerVel += Vector3.up * y * Data.playerSpeed;
-
-            if (Input.GetKey(KeyCode.Space))
-                jumpRequest = true;
-            if (Input.GetKeyDown(KeyCode.R))
-                spawnRequest = true;
-
-            rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
-            rotationY += Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse X");
-            rotationX = Mathf.Clamp(rotationX, -90, 90);
-
-        }
-
-        Aaa();
-        CalculateVelocity();
-        SetValue();
-
-    }
 
     private void Aaa () {
 
@@ -110,6 +102,12 @@ public class Player : MonoBehaviour {
         if (world.chunks.ContainsKey(SelectedPos.blue.c)) {
             _blockID = world.chunks[SelectedPos.blue.c].voxelMap[SelectedPos.blue.v.x, SelectedPos.blue.v.y, SelectedPos.blue.v.z];
         }
+        int _blockID2 = 0;
+
+        if (world.chunks.ContainsKey(SelectedPos.red.c)) {
+            _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z].id;
+        }
+
         blockHighlight.SetActive(_blockID.id != 0);
 
         if (Input.GetMouseButton(0) && _blockID.id != 0) {
@@ -119,47 +117,21 @@ public class Player : MonoBehaviour {
             if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
                 miningProgress -= Time.deltaTime * 3 / 4;
                 miningEffect.Play();
-
             }
             else {
-
                 miningProgress = world.blockTypes[_blockID.id].hardness;
                 miningPos = SelectedPos.blue;
-
             }
 
             if (miningProgress <= 0) {
 
 
                 SetBBBL(SelectedPos.blue, Voxel.zero);
-                /*
-                if (_blockID.group != 0) {
 
-                    for (int a = 0; a < world.noname[_blockID.group].Count; a++) {
-
-                        //world.GetChunk(world.noname[_blockID.group][a].c).SetBlock(world.noname[_blockID.group][a].v, Voxel.zero);
-                        //world.activatedChunk.Add(world.noname[_blockID.group][a].c);
-
-                    }
-
-                    world.noname.Remove(_blockID.group);
-
-                }
-                else {
-
-
-                }
-                */
             }
 
             miningProgresBar.value = miningProgress / world.blockTypes[_blockID.id].hardness;
 
-        }
-
-        int _blockID2 = 0;
-
-        if (world.chunks.ContainsKey(SelectedPos.red.c)) {
-            _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z].id;
         }
 
         if (Input.GetMouseButtonDown(1) && _blockID2 == 0 && _blockID.id != 0) {

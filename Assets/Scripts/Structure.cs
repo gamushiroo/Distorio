@@ -5,7 +5,7 @@ public class Structure : MonoBehaviour {
 
     public static Queue<VoxelMod> MakeTree (Vector3Int position) {
 
-        Queue<VoxelMod> queue = new Queue<VoxelMod>();
+        Queue<VoxelMod> queue = new();
 
         for (int _x = 0; _x < 5; _x++) {
             for (int _y = 0; _y < 6; _y++) {

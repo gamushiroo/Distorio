@@ -93,14 +93,12 @@ public class World : MonoBehaviour {
 
     public byte GetVoxel(Vector3Int pos) {
 
-
-
         float terrainHeight = biome.solidGroundHeight;
         terrainHeight += biome.terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale);
         terrainHeight += biome.terrainHeight2 * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale2);
         terrainHeight = Mathf.FloorToInt(terrainHeight);
 
-        byte VoxelValue = 0;
+        byte VoxelValue;
 
         if (pos.y == terrainHeight)
             VoxelValue = 1;
@@ -109,9 +107,8 @@ public class World : MonoBehaviour {
         else
             VoxelValue = 2;
 
-
-
         return VoxelValue;
+
     }
 
     void CheckViewDistance () {
