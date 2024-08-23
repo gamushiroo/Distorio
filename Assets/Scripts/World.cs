@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -78,14 +77,7 @@ public class World : MonoBehaviour {
         terrainHeight += biome.terrainHeight2 * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale2);
         terrainHeight = Mathf.FloorToInt(terrainHeight);
 
-        byte VoxelValue;
-
-        if (pos.y == terrainHeight) {
-
-            if (new System.Random().Next(0, 500) == 0) {
-                modifications.Enqueue(Structure.MakeTree(pos));
-            }
-        }
+        byte VoxelValue = 0;
 
         if (pos.y == terrainHeight)
             VoxelValue = 1;
@@ -93,6 +85,16 @@ public class World : MonoBehaviour {
             return 0;
         else
             VoxelValue = 2;
+        if (pos.y == terrainHeight) {
+            if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
+
+                if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
+                    lock (modifications) {
+                        modifications.Enqueue(Structure.MakeTree(pos));
+                    }
+                }
+            }
+        }
 
         return VoxelValue;
 
@@ -141,30 +143,23 @@ public class World : MonoBehaviour {
 
     void ApplyModifications () {
 
-        while (modifications.Count > 0) {
+        lock (modifications) {
+            while (modifications.Count > 0) {
+                Queue<VoxelMod> queue = modifications.Dequeue();
 
-            Queue<VoxelMod> queue = modifications.Dequeue();
+                while (queue.Count > 0) {
 
-            while (queue.Count > 0) {
+                    VoxelMod vmod = queue.Dequeue();
 
-                VoxelMod vmod = queue.Dequeue();
+                    if (!chunks.ContainsKey(vmod.pos.c)) {
 
+                        chunks.Add(vmod.pos.c, new(vmod.pos.c, this, true));
+                        generatedChunks.Add(vmod.pos.c);
 
-
-                if (!chunks.ContainsKey(vmod.pos.c)) {
-                    chunks.Add(vmod.pos.c, new(vmod.pos.c, this, true));
-                    generatedChunks.Add(vmod.pos.c);
-                    if (!chunksToUpdate.Contains(chunks[vmod.pos.c]))
-                        chunksToUpdate.Add(chunks[vmod.pos.c]);
-
-                }
-                else if (chunks[vmod.pos.c].IsEditable()) {
-
+                    }
                     chunks[vmod.pos.c].modifications.Enqueue(vmod);
-
                     if (!chunksToUpdate.Contains(chunks[vmod.pos.c]))
                         chunksToUpdate.Add(chunks[vmod.pos.c]);
-
                 }
             }
         }

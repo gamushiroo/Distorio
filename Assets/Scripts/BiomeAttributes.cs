@@ -15,5 +15,12 @@ public class BiomeAttributes : ScriptableObject{
     public float terrainScale2;
 
 
+    public float treeZoneScale = 0.15f;
+    public float treeZoneThreshold = 0.6f;
+
+    public float treePlacementScale = 0.015f;
+    public float treePlacementThreshold = 0.8f;
+
+
 
 }

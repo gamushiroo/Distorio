@@ -83,9 +83,13 @@ public class Chunk {
         isActive = value;
     }
     private void UC () {
-        while (modifications.Count > 0) {
-            VoxelMod vmod = modifications.Dequeue();
-            voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
+        lock (modifications) {
+            while (modifications.Count > 0) {
+                VoxelMod vmod = modifications.Dequeue();
+                if (voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] == 0 || vmod.id != 5) {
+                    voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
+                }
+            }
         }
         threadLocked = false;
     }

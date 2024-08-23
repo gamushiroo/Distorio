@@ -51,7 +51,7 @@ public class Player : MonoBehaviour {
             world.CheckViewDistance(pos);
             lastPos = pos;
         }
-        /*
+
         if (Input.GetKeyDown(KeyCode.G))
             hasGravity = !hasGravity;
 
@@ -66,8 +66,7 @@ public class Player : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.E))
-            world.inUI = !world.inUI;
-        */
+            world.InUI = !world.InUI;
         if (!world.InUI) {
 
             playerVel += Data.GetPlayerVel();
