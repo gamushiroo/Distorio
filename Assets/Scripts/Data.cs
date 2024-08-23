@@ -14,9 +14,11 @@ public static class Data {
     public static readonly int ChunkHeight = 128;
     public static readonly int ChunkLoadRange = 4;
     public static readonly int TextureSize = 16;
-    public static readonly float playerSpeed = 20f;
-    //public static readonly float playerSpeed = 4.5f;
+    //public static readonly float playerSpeed = 20f;
+    public static readonly float playerSpeed = 4.5f;
     public static readonly float mouseSens = 100;
+
+    public static readonly bool IsThread = false;
 
     public static readonly EntityData player = new EntityData("player", new(0.75f, 1.75f, 0.75f), 100, 2000);
 

@@ -31,15 +31,23 @@ public class Chunk {
     }
 
     public void UpdateChunk () {
-        threadLocked = true;
-        new Thread(new ThreadStart(UC)).Start();
+        if (Data.IsThread) {
+            threadLocked = true;
+            new Thread(new ThreadStart(UC)).Start();
+        } else {
+            UC();
+        }
     }
     public bool IsEditable () {
         return !(!isTerrainMapGenerated || threadLocked);
     }
     public void GenerateTerrainData () {
-        threadLocked = true;
-        new Thread(new ThreadStart(GTD)).Start();
+        if (Data.IsThread) {
+            threadLocked = true;
+            new Thread(new ThreadStart(GTD)).Start();
+        } else {
+            GTD();
+        }
     }
     public void GenerateMesh () {
         vertexIndex = 0;
@@ -76,7 +84,7 @@ public class Chunk {
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
     }
-    public void SetActiveState(bool value) {
+    public void SetActiveState (bool value) {
         if (isActive == value)
             return;
         chunkObject.SetActive(value);
