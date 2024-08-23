@@ -82,7 +82,7 @@ public class Chunk {
         chunkObject.SetActive(value);
         isActive = value;
     }
-    public void UC () {
+    private void UC () {
         while (modifications.Count > 0) {
             VoxelMod vmod = modifications.Dequeue();
             voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;

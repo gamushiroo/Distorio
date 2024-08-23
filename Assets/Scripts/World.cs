@@ -29,54 +29,44 @@ public class World : MonoBehaviour {
     public void LateUpdate () {
 
         ApplyModifications();
-        if (chunksToUpdate.Count > 0) {
-            UpdateChunks();
-        }
-        if (chunksToDraw.Count > 0) {
-            lock (chunksToDraw) {
+        UpdateChunks();
+        DrawChunks();
 
-                if (chunksToDraw.Peek().IsEditable()) {
-
-                    chunksToDraw.Dequeue().GenerateMesh();
-
-                }
-            }
-        }
     }
 
-    public Vector3Int CalculateSpawnPoint () {
+    private void DrawChunks () {
+        if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable())
+            chunksToDraw.Dequeue().GenerateMesh();
+    }
 
+    public Vector3Int GetSpawnPoint () {
         Vector3Int pos = Vector3Int.zero;
-
         if (chunks.ContainsKey(Vector2Int.zero)) {
-
-            Chunk chunk = chunks[Vector2Int.zero];
-
             for (int y = Data.ChunkHeight - 1; y >= 0; y--) {
-                if (chunk.voxelMap[0, y, 0] != 0) {
+                if (chunks[Vector2Int.zero].voxelMap[0, y, 0] != 0) {
                     pos = new Vector3Int(0, y + 1, 0);
                     break;
                 }
             }
-
         }
         return pos;
     }
 
     void UpdateChunks () {
+        if (chunksToUpdate.Count > 0) {
+            for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
 
-        for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
+                if (chunksToUpdate[i].IsEditable()) {
+                    chunksToUpdate[i].UpdateChunk();
+                    chunksToDraw.Enqueue(chunksToUpdate[i]);
+                    chunksToUpdate.RemoveAt(i);
 
-            if (chunksToUpdate[i].IsEditable()) {
-                chunksToUpdate[i].UC();
-                chunksToDraw.Enqueue(chunksToUpdate[i]);
-                chunksToUpdate.RemoveAt(i);
-
+                }
             }
         }
     }
 
-    public bool inUI {
+    public bool InUI {
         get { return _inUI; }
         set { _inUI = value; }
     }

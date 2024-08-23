@@ -48,7 +48,6 @@ public class Player : MonoBehaviour {
 
         pos = Data.Vector3ToChunkVoxel(camera.transform.position).c;
         if (!(pos == lastPos)) {
-            Debug.Log(Time.deltaTime);
             world.CheckViewDistance(pos);
             lastPos = pos;
         }
@@ -69,7 +68,7 @@ public class Player : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.E))
             world.inUI = !world.inUI;
         */
-        if (!world.inUI) {
+        if (!world.InUI) {
 
             playerVel += Data.GetPlayerVel();
 
@@ -108,7 +107,7 @@ public class Player : MonoBehaviour {
         gravityVelocity = 0;
         health = Data.player.health;
         hpBar.value = health / Data.player.health;
-        entity = new Entity(world.CalculateSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
+        entity = new Entity(world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
 
     }
 
@@ -122,52 +121,49 @@ public class Player : MonoBehaviour {
         SelectedPos = GetSelectedPos();
 
         byte _blockID = 0;
+        int _blockID2 = 0;
 
         if (world.chunks.ContainsKey(SelectedPos.blue.c)) {
             _blockID = world.chunks[SelectedPos.blue.c].voxelMap[SelectedPos.blue.v.x, SelectedPos.blue.v.y, SelectedPos.blue.v.z];
         }
-        int _blockID2 = 0;
-
         if (world.chunks.ContainsKey(SelectedPos.red.c)) {
             _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z];
         }
 
         blockHighlight.SetActive(_blockID != 0);
 
-        if (Input.GetMouseButton(0) && _blockID != 0) {
+        if(_blockID != 0) {
 
-            miningProgresBarObj.SetActive(true);
+            if (Input.GetMouseButton(0)) {
 
-            if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
-                miningProgress -= Time.deltaTime * 3 / 4;
-                miningEffect.Play();
+                miningProgresBarObj.SetActive(true);
+
+                if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
+                    miningProgress -= Time.deltaTime * 3 / 4;
+                    miningEffect.Play();
+                }
+                else {
+                    miningProgress = world.blockTypes[_blockID].hardness;
+                    miningPos = SelectedPos.blue;
+                }
+                if (miningProgress <= 0) {
+                    SetBBBL(SelectedPos.blue, 0);
+                }
+                miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
             }
-            else {
-                miningProgress = world.blockTypes[_blockID].hardness;
-                miningPos = SelectedPos.blue;
-            }
-            if (miningProgress <= 0) {
-                SetBBBL(SelectedPos.blue, 0);
-            }
-            miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
-        }
-        if (Input.GetMouseButtonDown(1) && _blockID2 == 0 && _blockID != 0) {
-            if (selectedBlockIndex != 0) {
+            if (Input.GetMouseButtonDown(1) && _blockID2 == 0 && selectedBlockIndex != 0) {
+
                 hand.placeEase = 0;
 
-
-                SetBBBL(SelectedPos.red, selectedBlockIndex);
-
-                /*
                 if (selectedBlockIndex == 2) {
                     world.modifications.Enqueue(Structure.MakeTree(Data.PublicLocationDerect(SelectedPos.red)));
 
                 }
                 else {
 
+                    SetBBBL(SelectedPos.red, selectedBlockIndex);
 
                 }
-                */
             }
         }
     }
