@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BiomeAttributes
   m_EditorClassIdentifier: 
   biomeName: 
-  solidGroundHeight: 73
+  solidGroundHeight: 64
   terrainHeight: 12
   terrainScale: 0.03
   terrainHeight2: 8

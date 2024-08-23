@@ -8,7 +8,7 @@ public class Structure : MonoBehaviour {
         Queue<VoxelMod> queue = new();
 
         for (int _x = 0; _x < 5; _x++) {
-            for (int _y = 0; _y < 6; _y++) {
+            for (int _y = 0; _y < 7; _y++) {
                 for (int _z = 0; _z < 5; _z++) {
 
 
@@ -17,7 +17,7 @@ public class Structure : MonoBehaviour {
 
                         Vector3Int pos = new Vector3Int(_x, _y, _z) + position;
                         Debug.Log(Data.Vector3ToChunkVoxel(pos).v);
-                        queue.Enqueue(new VoxelMod(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f), Data.trees[_x, _y, _z]));
+                        queue.Enqueue(new VoxelMod(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f + new Vector3Int(-2, 1, -2)), Data.trees[_x, _y, _z]));
 
                     }
                 }

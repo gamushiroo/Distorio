@@ -464,7 +464,7 @@ Transform:
   - {fileID: 2136937828}
   - {fileID: 443793289}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &172911668
 GameObject:
@@ -1016,7 +1016,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!199 &485163721
 ParticleSystemRenderer:
@@ -7235,12 +7235,6 @@ MonoBehaviour:
     bottomFaceTexture: 0
     leftFaceTexture: 0
     rightFaceTexture: 0
-  activeChunks: []
-  playerChunkCoord: {x: 0, y: 0}
-  perlinNoiseOffset: {x: 0, y: 0}
-  player: {fileID: 270149130}
-  gray: {fileID: 0}
-  playerObject: {fileID: 963194225}
 --- !u!1 &1747402439
 GameObject:
   m_ObjectHideFlags: 0
@@ -7782,7 +7776,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2121667576
 GameObject:

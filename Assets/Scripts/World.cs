@@ -80,6 +80,13 @@ public class World : MonoBehaviour {
 
         byte VoxelValue;
 
+        if (pos.y == terrainHeight) {
+
+            if (new System.Random().Next(0, 500) == 0) {
+                modifications.Enqueue(Structure.MakeTree(pos));
+            }
+        }
+
         if (pos.y == terrainHeight)
             VoxelValue = 1;
         else if (pos.y > terrainHeight)
@@ -147,6 +154,8 @@ public class World : MonoBehaviour {
                 if (!chunks.ContainsKey(vmod.pos.c)) {
                     chunks.Add(vmod.pos.c, new(vmod.pos.c, this, true));
                     generatedChunks.Add(vmod.pos.c);
+                    if (!chunksToUpdate.Contains(chunks[vmod.pos.c]))
+                        chunksToUpdate.Add(chunks[vmod.pos.c]);
 
                 }
                 else if (chunks[vmod.pos.c].IsEditable()) {
