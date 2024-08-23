@@ -6,7 +6,7 @@ public class World : MonoBehaviour {
     [SerializeField] private BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
-
+    public GameObject arm;
     public Dictionary<Vector2Int, Chunk> chunks = new();
     public Queue<Queue<VoxelMod>> modifications = new();
 

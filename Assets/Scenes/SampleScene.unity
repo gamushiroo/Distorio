@@ -7235,6 +7235,7 @@ MonoBehaviour:
     bottomFaceTexture: 0
     leftFaceTexture: 0
     rightFaceTexture: 0
+  arm: {fileID: 4821436208750062270, guid: 5cc5ca77dcdac9b4585d60eb14d28eb5, type: 3}
 --- !u!1 &1747402439
 GameObject:
   m_ObjectHideFlags: 0

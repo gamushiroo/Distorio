@@ -153,8 +153,7 @@ public class Player : MonoBehaviour {
                 hand.placeEase = 0;
 
                 if (selectedBlockIndex == 2) {
-                    world.modifications.Enqueue(Structure.MakeTree(Data.PublicLocationDerect(SelectedPos.red)));
-
+                    GameObject f = Instantiate(world.arm, Data.PublicLocationDerect(SelectedPos.red) +  new Vector3(0.5f, 0, 0.5f), Quaternion.identity, world.transform);
                 }
                 else {
 
