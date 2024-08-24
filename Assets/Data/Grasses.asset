@@ -21,4 +21,4 @@ MonoBehaviour:
   treeZoneScale: 0.02
   treeZoneThreshold: 0.1
   treePlacementScale: 1.03
-  treePlacementThreshold: 0.3
+  treePlacementThreshold: 0.35

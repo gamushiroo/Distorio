@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class World : MonoBehaviour {
 
-    [SerializeField] private BiomeAttributes[] biome;
+    [SerializeField] private BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
     public Dictionary<Vector2Int, Chunk> chunks = new();
     public Queue<Queue<VoxelMod>> modifications = new();
+
+    Vector2 offset;
 
     private bool _inUI;
     private int seed;
@@ -17,11 +19,23 @@ public class World : MonoBehaviour {
     private List<Vector2Int> previouslyActiveChunks;
 
     private void Awake () {
-
+        offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
         seed = (int)System.DateTime.Now.Ticks;
         Random.InitState(seed);
-        CheckViewDistance(Vector2Int.zero);
 
+        for (int x = -16; x < 16; x++) {
+            for (int y = -16; y < 16; y++) {
+
+                Vector2Int pos = new(x, y);
+
+                chunks.Add(pos, new(pos, this, true));
+                generatedChunks.Add(pos);
+                if (!chunksToUpdate.Contains(chunks[pos]))
+                    chunksToUpdate.Add(chunks[pos]);
+
+
+            }
+        }
     }
 
     public void LateUpdate () {
@@ -72,40 +86,34 @@ public class World : MonoBehaviour {
     public byte GetVoxel (Vector3Int pos) {
 
         byte VoxelValue = 0;
-        byte biomeType = 0;
         float terrainHeight = 0;
 
 
         for (int i =  0; i < 4; i++) {
-            float a = Noise.Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
-            terrainHeight += biome[biomeType].terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome[biomeType].terrainScale / Mathf.Pow(2, i) / a);
+            float a = Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
+            terrainHeight += biome.terrainHeight * Get2DPerlin(new(pos.x, pos.z), biome.terrainScale / Mathf.Pow(2, i) / a);
         }
-        terrainHeight *= Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
-        //terrainHeight *= Noise.Get2DPerlin(new(pos.x, pos.z), 0.04f) + 0.5f;
-        /*
-        float eee = 0;
-        for (int i = 0; i < 4; i++) {
-            float a = Noise.Get2DPerlin(new(pos.x, pos.z), 0.05f / 2) / 5000 / 2 + 1;
-            eee += biome[biomeType].terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome[biomeType].terrainScale / Mathf.Pow(2, i) / a / 2) * 2;
-        }
-        eee *= Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.0025f) * 8);
-        //terrainHeight *= Noise.Get2DPerlin(new(pos.x, pos.z), 0.02f) + 0.5f;
-
-        */
-        terrainHeight += biome[biomeType].solidGroundHeight;
-        terrainHeight = Mathf.FloorToInt(terrainHeight);
+        terrainHeight *= Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
+        terrainHeight = Mathf.FloorToInt(terrainHeight + biome.solidGroundHeight);
 
         if (pos.y < terrainHeight) {
 
+            if(Get2DPerlin(new(pos.x, pos.z), 0.005f) < 0f) {
 
-            VoxelValue = 1;
+                VoxelValue = 1;
+            } else {
+                VoxelValue = 6;
+
+            }
         }
-
         if (pos.y == terrainHeight) {
-            if (Noise.Get2DPerlin(new(pos.x, pos.z), biome[biomeType].treeZoneScale) > biome[biomeType].treeZoneThreshold || terrainHeight >= 72) {
-                if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome[biomeType].treePlacementScale) > biome[biomeType].treePlacementThreshold) {
-                    lock (modifications) {
+            if (Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold || terrainHeight >= 72) {
+                if (Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
+                    if (Get2DPerlin(new(pos.x, pos.z), 0.005f) < 0f) {
                         modifications.Enqueue(Structure.MakeTree(pos));
+                    } else {
+
+                        modifications.Enqueue(Structure.MakeCactus(pos));
                     }
                 }
             }
@@ -178,6 +186,15 @@ public class World : MonoBehaviour {
                 }
             }
         }
+    }
+
+
+    public float Get2DPerlin (Vector2 position, float scale) {
+
+        return Mathf.PerlinNoise(position.x * scale + offset.x, position.y * scale + offset.y) - 0.5f;
+
+        //heigh += Mathf.Clamp(Mathf.PerlinNoise(pos.x * 0.01f, pos.y * 0.01f) * 256 - 192, -16, 16);
+
     }
 }
 

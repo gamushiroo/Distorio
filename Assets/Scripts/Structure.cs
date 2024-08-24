@@ -3,6 +3,17 @@ using UnityEngine;
 
 public class Structure : MonoBehaviour {
 
+    public static Queue<VoxelMod> MakeCactus (Vector3Int position) {
+
+        Queue<VoxelMod> queue = new();
+
+        for (int _y = 0; _y < 4; _y++) {
+            queue.Enqueue(new VoxelMod(Data.Vector3ToChunkVoxel(new Vector3Int(0, _y, 0) + position + Vector3.one * 0.5f), 11));
+        }
+
+        return queue;
+
+    }
     public static Queue<VoxelMod> MakeTree (Vector3Int position) {
 
         Queue<VoxelMod> queue = new();
@@ -29,17 +40,10 @@ public class Structure : MonoBehaviour {
     }
 }
 
-public class VoxelMod {
+public struct VoxelMod {
 
     public ChunkVoxel pos;
     public byte id;
-
-    public VoxelMod () {
-
-        pos = new ChunkVoxel();
-        id = 0;
-
-    }
 
     public VoxelMod (ChunkVoxel _position, byte _id) {
 
