@@ -51,17 +51,19 @@ public class Player : MonoBehaviour {
             world.CheckViewDistance(pos);
             lastPos = pos;
         }
+        if (Data.IsThread && false) {
 
-        if (Input.GetKeyDown(KeyCode.G))
-            hasGravity = !hasGravity;
-        if (!hasGravity) {
-            if (Input.GetKey(KeyCode.Space))
-                entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.up;
-            if (Input.GetKey(KeyCode.LeftControl))
-                entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.down;
+            if (Input.GetKeyDown(KeyCode.G))
+                hasGravity = !hasGravity;
+            if (!hasGravity) {
+                if (Input.GetKey(KeyCode.Space))
+                    entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.up;
+                if (Input.GetKey(KeyCode.LeftControl))
+                    entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.down;
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+                world.InUI = !world.InUI;
         }
-        if (Input.GetKeyDown(KeyCode.E))
-            world.InUI = !world.InUI;
 
         if (!world.InUI) {
 
