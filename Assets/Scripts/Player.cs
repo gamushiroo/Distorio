@@ -52,7 +52,6 @@ public class Player : MonoBehaviour {
             lastPos = pos;
         }
 
-        /*
         if (Input.GetKeyDown(KeyCode.G))
             hasGravity = !hasGravity;
         if (!hasGravity) {
@@ -63,7 +62,6 @@ public class Player : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.E))
             world.InUI = !world.InUI;
-        */
 
         if (!world.InUI) {
 
@@ -152,14 +150,7 @@ public class Player : MonoBehaviour {
 
                 hand.placeEase = 0;
 
-                if (selectedBlockIndex == 2) {
-                    GameObject f = Instantiate(world.arm, Data.PublicLocationDerect(SelectedPos.red) +  new Vector3(0.5f, 0, 0.5f), Quaternion.identity, world.transform);
-                }
-                else {
-
-                    SetBBBL(SelectedPos.red, selectedBlockIndex);
-
-                }
+                SetBBBL(SelectedPos.red, selectedBlockIndex);
             }
         }
     }

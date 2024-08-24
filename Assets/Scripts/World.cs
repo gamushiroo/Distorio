@@ -3,10 +3,9 @@ using UnityEngine;
 
 public class World : MonoBehaviour {
 
-    [SerializeField] private BiomeAttributes biome;
+    [SerializeField] private BiomeAttributes[] biome;
     public Material material;
     public List<BlockType> blockTypes = new();
-    public GameObject arm;
     public Dictionary<Vector2Int, Chunk> chunks = new();
     public Queue<Queue<VoxelMod>> modifications = new();
 
@@ -72,23 +71,39 @@ public class World : MonoBehaviour {
 
     public byte GetVoxel (Vector3Int pos) {
 
-        float terrainHeight = biome.solidGroundHeight;
-        terrainHeight += biome.terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale);
-        terrainHeight += biome.terrainHeight2 * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale2);
+        byte VoxelValue = 0;
+        byte biomeType = 0;
+        float terrainHeight = 0;
+
+
+        for (int i =  0; i < 4; i++) {
+            float a = Noise.Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
+            terrainHeight += biome[biomeType].terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome[biomeType].terrainScale / Mathf.Pow(2, i) / a);
+        }
+        terrainHeight *= Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
+        //terrainHeight *= Noise.Get2DPerlin(new(pos.x, pos.z), 0.04f) + 0.5f;
+        /*
+        float eee = 0;
+        for (int i = 0; i < 4; i++) {
+            float a = Noise.Get2DPerlin(new(pos.x, pos.z), 0.05f / 2) / 5000 / 2 + 1;
+            eee += biome[biomeType].terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome[biomeType].terrainScale / Mathf.Pow(2, i) / a / 2) * 2;
+        }
+        eee *= Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.0025f) * 8);
+        //terrainHeight *= Noise.Get2DPerlin(new(pos.x, pos.z), 0.02f) + 0.5f;
+
+        */
+        terrainHeight += biome[biomeType].solidGroundHeight;
         terrainHeight = Mathf.FloorToInt(terrainHeight);
 
-        byte VoxelValue = 0;
+        if (pos.y < terrainHeight) {
 
-        if (pos.y == terrainHeight)
+
             VoxelValue = 1;
-        else if (pos.y > terrainHeight)
-            return 0;
-        else
-            VoxelValue = 2;
-        if (pos.y == terrainHeight) {
-            if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
+        }
 
-                if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
+        if (pos.y == terrainHeight) {
+            if (Noise.Get2DPerlin(new(pos.x, pos.z), biome[biomeType].treeZoneScale) > biome[biomeType].treeZoneThreshold || terrainHeight >= 72) {
+                if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome[biomeType].treePlacementScale) > biome[biomeType].treePlacementThreshold) {
                     lock (modifications) {
                         modifications.Enqueue(Structure.MakeTree(pos));
                     }

@@ -16,7 +16,7 @@ public class Structure : MonoBehaviour {
 
 
                         Vector3Int pos = new Vector3Int(_x, _y, _z) + position;
-                        queue.Enqueue(new VoxelMod(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f + new Vector3Int(-2, 1, -2)), Data.trees[_x, _y, _z]));
+                        queue.Enqueue(new VoxelMod(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f + new Vector3Int(-2, 0, -2)), Data.trees[_x, _y, _z]));
 
                     }
                 }

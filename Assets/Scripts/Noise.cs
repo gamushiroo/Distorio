@@ -4,7 +4,7 @@ public static class Noise {
 
     public static float Get2DPerlin (Vector2 position, float scale) {
 
-        return Mathf.PerlinNoise(position.x * scale + 10000, position.y * scale + 10000);
+        return Mathf.PerlinNoise(position.x * scale + 10000, position.y * scale + 100000) - 0.5f;
 
         //heigh += Mathf.Clamp(Mathf.PerlinNoise(pos.x * 0.01f, pos.y * 0.01f) * 256 - 192, -16, 16);
 

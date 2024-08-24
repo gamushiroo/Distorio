@@ -24,9 +24,9 @@ public class Arm : MonoBehaviour {
     void Move () {
 
         for (int i = 0; i < 6; i++) {
-            if (Mathf.Abs(targets[i] - now[i]) > 3) {
+            if (Mathf.Abs(targets[i] - now[i]) > 4) {
 
-                now[i] += Mathf.Sign(targets[i] - now[i]) * 360 * Time.deltaTime;
+                now[i] += Mathf.Sign(targets[i] - now[i]) * 360 * 1.5f * Time.deltaTime;
             }
         }
 
@@ -35,11 +35,11 @@ public class Arm : MonoBehaviour {
             if (sw) {
                 time--;
                 target = transform.position + new Vector3(0, 0.5f, 1);
-                targetRot = Quaternion.identity;
+                targetRot = Quaternion.Euler(-90, 0, 0);
             } else {
                 time-= 4;
                 target = transform.position + new Vector3(0, 0.5f, -1);
-                targetRot = Quaternion.Euler(20, 0, 30);
+                targetRot = Quaternion.identity;
             }
             CalculateArmsRotTarg();
             sw = !sw;

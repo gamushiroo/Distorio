@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e085820c1fa23b4bbe80345dad7d1ef, type: 3}
-  m_Name: BiomeAttributes
+  m_Name: Desert
   m_EditorClassIdentifier: 
   biomeName: 
   solidGroundHeight: 64
-  terrainHeight: 12
-  terrainScale: 0.03
-  terrainHeight2: 8
-  terrainScale2: 0.005
+  terrainHeight: 7
+  terrainScale: 0.01
+  terrainHeight2: 4
+  terrainScale2: 0.002
   treeZoneScale: 0.02
   treeZoneThreshold: 0.6
   treePlacementScale: 1.03
