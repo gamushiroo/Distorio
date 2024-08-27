@@ -7202,17 +7202,17 @@ MonoBehaviour:
     bottomFaceTexture: 34
     leftFaceTexture: 34
     rightFaceTexture: 34
-  - blockName: Transport Belt
+  - blockName: Furnace
     isSolid: 0
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
-    backFaceTexture: 82
-    frontFaceTexture: 82
-    topFaceTexture: 82
-    bottomFaceTexture: 82
-    leftFaceTexture: 82
-    rightFaceTexture: 82
+    backFaceTexture: 45
+    frontFaceTexture: 44
+    topFaceTexture: 62
+    bottomFaceTexture: 62
+    leftFaceTexture: 45
+    rightFaceTexture: 45
   - blockName: Diamond
     isSolid: 1
     hasCollision: 1

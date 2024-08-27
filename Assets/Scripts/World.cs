@@ -11,6 +11,8 @@ public class World : MonoBehaviour {
 
     Vector2 offset;
 
+    public Dictionary<ChunkVoxel, Func> funcs = new();
+
     private bool _inUI;
     private int seed;
     private readonly List<Chunk> chunksToUpdate = new();
@@ -55,7 +57,7 @@ public class World : MonoBehaviour {
         Vector3Int pos = Vector3Int.zero;
         if (chunks.ContainsKey(Vector2Int.zero)) {
             for (int y = Data.ChunkHeight - 1; y >= 0; y--) {
-                if (chunks[Vector2Int.zero].voxelMap[0, y, 0] != 0) {
+                if (blockTypes[chunks[Vector2Int.zero].voxelMap[0, y, 0]].hasCollision) {
                     pos = new Vector3Int(0, y + 1, 0);
                     break;
                 }

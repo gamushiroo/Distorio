@@ -19,9 +19,12 @@ public class Player : MonoBehaviour {
     [SerializeField] private Slider miningProgresBar;
 
 
+
+    EntityPlayer entityPlayer;
+
     private bool hasGravity = true;
     private ChunkVoxel miningPos;
-    private Entity entity;
+    private WWWEe entity;
     private BlockAndSelect SelectedPos;
     private float camMove;
     private float miningProgress;
@@ -45,6 +48,14 @@ public class Player : MonoBehaviour {
     }
 
     private void Update () {
+
+
+
+
+
+
+
+
 
         pos = Data.Vector3ToChunkVoxel(camera.transform.position).c;
         if (!(pos == lastPos)) {
@@ -104,7 +115,7 @@ public class Player : MonoBehaviour {
         gravityVelocity = 0;
         health = Data.player.health;
         hpBar.value = health / Data.player.health;
-        entity = new Entity(world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
+        entity = new WWWEe(world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
 
     }
 
@@ -114,7 +125,7 @@ public class Player : MonoBehaviour {
         miningEffect.Stop();
         blockHighlight.SetActive(false);
         miningProgresBarObj.SetActive(false);
-
+        blockHighlight.SetActive(false);
         SelectedPos = GetSelectedPos();
 
         byte _blockID = 0;
@@ -127,32 +138,38 @@ public class Player : MonoBehaviour {
             _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z];
         }
 
-        blockHighlight.SetActive(_blockID != 0);
 
-        if(_blockID != 0) {
+        if(world.blockTypes[_blockID].hasCollision) {
 
-            if (Input.GetMouseButton(0)) {
+            blockHighlight.SetActive(true);
 
-                miningProgresBarObj.SetActive(true);
+            if(selectedBlockIndex != 0) {
+                /*
+                //dig
+                if (Input.GetMouseButton(0)) {
 
-                if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
-                    miningProgress -= Time.deltaTime * 3 / 4;
-                    miningEffect.Play();
+                    miningProgresBarObj.SetActive(true);
+
+                    if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
+                        miningProgress -= Time.deltaTime * 3 / 4;
+                        miningEffect.Play();
+                    } else {
+                        miningProgress = world.blockTypes[_blockID].hardness;
+                        miningPos = SelectedPos.blue;
+                    }
+                    if (miningProgress <= 0) {
+                        SetBBBL(SelectedPos.blue, 0);
+                    }
+                    miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
                 }
-                else {
-                    miningProgress = world.blockTypes[_blockID].hardness;
-                    miningPos = SelectedPos.blue;
-                }
-                if (miningProgress <= 0) {
-                    SetBBBL(SelectedPos.blue, 0);
-                }
-                miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
-            }
-            if (Input.GetMouseButtonDown(1) && _blockID2 == 0 && selectedBlockIndex != 0) {
+                */
+                //place
+                if (Input.GetMouseButtonDown(0) && !AABB.FFF(entity, Data.PublicLocationDerect(SelectedPos.red) + Vector3.one * 0.5f) && !world.blockTypes[_blockID2].hasCollision) {
 
-                hand.placeEase = 0;
+                    hand.placeEase = 0;
 
-                SetBBBL(SelectedPos.red, selectedBlockIndex);
+                    SetBBBL(SelectedPos.red, selectedBlockIndex);
+                }
             }
         }
     }
@@ -225,7 +242,7 @@ public class Player : MonoBehaviour {
 
 
             if (world.chunks.ContainsKey(camPos.c)) {
-                if (world.chunks[camPos.c].voxelMap[camPos.v.x, camPos.v.y, camPos.v.z] != 0) {
+                if (world.blockTypes[world.chunks[camPos.c].voxelMap[camPos.v.x, camPos.v.y, camPos.v.z]].hasCollision) {
                     break;
                 }
             }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class AABB {
 
-    public static Entity PosUpdate (Entity posAndVel_, World world) {
+    public static WWWEe PosUpdate (WWWEe posAndVel_, World world) {
 
         posAndVel_.isGrounded = false;
         float remainingtime = 1.0f;
@@ -25,7 +25,7 @@ public static class AABB {
 
                             if (world.blockTypes[world.chunks[pos.c].voxelMap[pos.v.x, pos.v.y, pos.v.z]].hasCollision) {
 
-                                boxColliderList.Add(SweptAABB(posAndVel_, new Entity(Data.PublicLocationDerect(pos), Vector3.one, Vector3.zero, false)));
+                                boxColliderList.Add(SweptAABB(posAndVel_, new WWWEe(Data.PublicLocationDerect(pos), Vector3.one, Vector3.zero, false)));
 
                             }
                         }
@@ -67,7 +67,13 @@ public static class AABB {
 
     }
 
-    private static AABBData SweptAABB (Entity entity, Entity staticBox) {
+    public static bool FFF (WWWEe posAndVel_, Vector3 ttt) {
+
+        return AABBCheck(posAndVel_, new WWWEe(ttt, Vector3.one, Vector3.zero, false));
+
+    }
+
+    private static AABBData SweptAABB (WWWEe entity, WWWEe staticBox) {
 
         entity.pos -= new Vector3(entity.size.x * 0.5f, 0, entity.size.z * 0.5f);
 
@@ -149,9 +155,9 @@ public static class AABB {
 
     }
 
-    private static Entity BroadPhaseBox (Entity b) {
+    private static WWWEe BroadPhaseBox (WWWEe b) {
 
-        Entity box = new() {
+        WWWEe box = new() {
 
             pos = new(b.vel.x >= 0 ? b.pos.x : b.pos.x + b.vel.x,
                       b.vel.y >= 0 ? b.pos.y : b.pos.y + b.vel.y,
@@ -166,7 +172,7 @@ public static class AABB {
 
     }
 
-    public static bool AABBCheck (Entity b1, Entity b2) {
+    public static bool AABBCheck (WWWEe b1, WWWEe b2) {
 
         Vector3 b1p = b1.pos + b1.size;
         Vector3 b2p = b2.pos + b2.size;

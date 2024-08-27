@@ -16,22 +16,6 @@ public struct BlockData {
 
 }
 
-public struct Voxel {
-
-    public static readonly Voxel zero = new Voxel(0, 0);
-
-    public Voxel(byte id, int group) {
-
-        this.id = id;
-        this.group = group;
-
-    }
-
-    public byte id;
-    public int group;
-
-}
-
 
 public struct BlockAndSelect {
     public BlockAndSelect (ChunkVoxel blue, ChunkVoxel red) {
@@ -59,8 +43,8 @@ public struct EntityData {
     public float maxEnergy;
 }
 [System.Serializable]
-public struct Entity {
-    public Entity (Vector3 pos, Vector3 size, Vector3 vel, bool isGrounded) {
+public struct WWWEe {
+    public WWWEe (Vector3 pos, Vector3 size, Vector3 vel, bool isGrounded) {
 
         this.pos = pos;
         this.size = size;
@@ -91,14 +75,33 @@ public struct AABBData {
 
 }
 
+public struct Func {
+    public Item itemIn;
+    public Item itemOut;
+    public Func(Item itemIn, Item itemOut) {
+        this.itemIn = itemIn;
+        this.itemOut = itemOut;
+    }
+}
+
 public struct Item {
-    public int value;
+    public byte value;
     public byte id;
-    public Item (int value, byte id) {
+    public Item (byte value, byte id) {
         this.value = value;
         this.id = id;
     }
 }
+
+public struct Type {
+    public byte value;
+    public byte id;
+    public Type (byte value, byte id) {
+        this.value = value;
+        this.id = id;
+    }
+}
+
 
 public struct ChunkVoxel {
     public ChunkVoxel (Vector2Int c, Vector3Int v) {
