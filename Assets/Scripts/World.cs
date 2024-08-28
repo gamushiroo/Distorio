@@ -6,6 +6,7 @@ public class World : MonoBehaviour {
     [SerializeField] private BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
+    public List<BlockType> itemTypes = new();
     public Dictionary<Vector2Int, Chunk> chunks = new();
     public Queue<Queue<VoxelMod>> modifications = new();
 
@@ -209,6 +210,8 @@ public class BlockType {
     public float hardness;
     public Sprite sprite;
 
+    public bool isFunc;
+
     public int backFaceTexture;
     public int frontFaceTexture;
     public int topFaceTexture;
@@ -227,4 +230,11 @@ public class BlockType {
             _ => 0,
         };
     }
+}
+
+public class ItemType {
+
+    public string itemName;
+    public Sprite sprite;
+
 }

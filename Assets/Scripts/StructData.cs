@@ -4,18 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-[System.Serializable]
-public struct BlockData {
-
-    public string name;
-    public int[] textureID;
-    public bool isSolid;
-    public bool hasCollision;
-    public float hardness;
-    public Sprite sprite;
-
-}
-
 
 public struct BlockAndSelect {
     public BlockAndSelect (ChunkVoxel blue, ChunkVoxel red) {

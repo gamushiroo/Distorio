@@ -7108,6 +7108,7 @@ MonoBehaviour:
     hasCollision: 0
     hardness: 0
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 0
     frontFaceTexture: 0
     topFaceTexture: 0
@@ -7119,6 +7120,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 3
     frontFaceTexture: 3
     topFaceTexture: 0
@@ -7130,6 +7132,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 2
     frontFaceTexture: 2
     topFaceTexture: 2
@@ -7141,6 +7144,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 1
     frontFaceTexture: 1
     topFaceTexture: 1
@@ -7152,6 +7156,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 20
     frontFaceTexture: 20
     topFaceTexture: 21
@@ -7163,6 +7168,7 @@ MonoBehaviour:
     hasCollision: 0
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 52
     frontFaceTexture: 52
     topFaceTexture: 52
@@ -7174,6 +7180,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 18
     frontFaceTexture: 18
     topFaceTexture: 18
@@ -7185,6 +7192,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 49
     frontFaceTexture: 49
     topFaceTexture: 49
@@ -7196,6 +7204,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 34
     frontFaceTexture: 34
     topFaceTexture: 34
@@ -7207,6 +7216,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 1
     backFaceTexture: 45
     frontFaceTexture: 44
     topFaceTexture: 62
@@ -7218,6 +7228,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 50
     frontFaceTexture: 50
     topFaceTexture: 50
@@ -7229,12 +7240,38 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
+    isFunc: 0
     backFaceTexture: 70
     frontFaceTexture: 70
     topFaceTexture: 69
     bottomFaceTexture: 71
     leftFaceTexture: 70
     rightFaceTexture: 70
+  itemTypes:
+  - blockName: 
+    isSolid: 0
+    hasCollision: 0
+    hardness: 0
+    sprite: {fileID: 0}
+    isFunc: 0
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
+  - blockName: 
+    isSolid: 0
+    hasCollision: 0
+    hardness: 0
+    sprite: {fileID: 0}
+    isFunc: 0
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
 --- !u!1 &1747402439
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,8 +20,6 @@ public class Player : MonoBehaviour {
 
 
 
-    EntityPlayer entityPlayer;
-
     private bool hasGravity = true;
     private ChunkVoxel miningPos;
     private WWWEe entity;
@@ -40,10 +38,16 @@ public class Player : MonoBehaviour {
 
     private void Start () {
 
+
+
+
         Cursor.lockState = CursorLockMode.Locked;
         spawnRequest = true;
         jumpRequest = false;
         playerVel = Vector3.zero;
+
+
+
 
     }
 
@@ -55,9 +59,9 @@ public class Player : MonoBehaviour {
 
 
 
+        pos = Data.Vector3ToChunkVoxel(entity.pos).c;
 
 
-        pos = Data.Vector3ToChunkVoxel(camera.transform.position).c;
         if (!(pos == lastPos)) {
             world.CheckViewDistance(pos);
             lastPos = pos;
@@ -72,9 +76,9 @@ public class Player : MonoBehaviour {
                 if (Input.GetKey(KeyCode.LeftControl))
                     entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.down;
             }
-            if (Input.GetKeyDown(KeyCode.E))
-                world.InUI = !world.InUI;
         }
+        if (Input.GetKeyDown(KeyCode.E))
+            world.InUI = !world.InUI;
 
         if (!world.InUI) {
 
@@ -88,10 +92,10 @@ public class Player : MonoBehaviour {
             rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
             rotationY += Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse X");
             rotationX = Mathf.Clamp(rotationX, -90, 90);
+            Aaa();
 
         }
 
-        Aaa();
         CalculateVelocity();
         SetValue();
 
@@ -115,6 +119,13 @@ public class Player : MonoBehaviour {
         gravityVelocity = 0;
         health = Data.player.health;
         hpBar.value = health / Data.player.health;
+
+
+
+
+
+        Vector3 sss = world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f);
+
         entity = new WWWEe(world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
 
     }
@@ -139,36 +150,51 @@ public class Player : MonoBehaviour {
         }
 
 
-        if(world.blockTypes[_blockID].hasCollision) {
+        if (world.blockTypes[_blockID].hasCollision) {
 
             blockHighlight.SetActive(true);
 
-            if(selectedBlockIndex != 0) {
-                /*
-                //dig
-                if (Input.GetMouseButton(0)) {
+            if (Input.GetMouseButtonDown(0)) {
+                if (selectedBlockIndex == 0) {
 
-                    miningProgresBarObj.SetActive(true);
+                    if (world.blockTypes[_blockID].isFunc) {
 
-                    if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
-                        miningProgress -= Time.deltaTime * 3 / 4;
-                        miningEffect.Play();
-                    } else {
-                        miningProgress = world.blockTypes[_blockID].hardness;
-                        miningPos = SelectedPos.blue;
+
+                        world.InUI = !world.InUI;
+
                     }
-                    if (miningProgress <= 0) {
-                        SetBBBL(SelectedPos.blue, 0);
+
+
+
+
+
+                } else {
+                    /*
+                    //dig
+                    if (Input.GetMouseButton(0)) {
+
+                        miningProgresBarObj.SetActive(true);
+
+                        if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
+                            miningProgress -= Time.deltaTime * 3 / 4;
+                            miningEffect.Play();
+                        } else {
+                            miningProgress = world.blockTypes[_blockID].hardness;
+                            miningPos = SelectedPos.blue;
+                        }
+                        if (miningProgress <= 0) {
+                            SetBBBL(SelectedPos.blue, 0);
+                        }
+                        miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
                     }
-                    miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
-                }
-                */
-                //place
-                if (Input.GetMouseButtonDown(0) && !AABB.FFF(entity, Data.PublicLocationDerect(SelectedPos.red) + Vector3.one * 0.5f) && !world.blockTypes[_blockID2].hasCollision) {
+                    */
+                    //place
+                    if (Input.GetMouseButtonDown(0) && !AABB.FFF(entity, Data.PublicLocationDerect(SelectedPos.red) + Vector3.one * 0.5f) && !world.blockTypes[_blockID2].hasCollision) {
 
-                    hand.placeEase = 0;
+                        hand.placeEase = 0;
 
-                    SetBBBL(SelectedPos.red, selectedBlockIndex);
+                        SetBBBL(SelectedPos.red, selectedBlockIndex);
+                    }
                 }
             }
         }
@@ -224,7 +250,7 @@ public class Player : MonoBehaviour {
         camMove += Input.GetKey(KeyCode.LeftControl) ? -1 : 1 * 10 * Time.deltaTime;
         camMove = Mathf.Clamp(camMove, -0.25f, 0);
 
-        camera.position = entity.pos + Vector3.up * ( 1.625f + camMove );
+        camera.position = entity.pos + Vector3.up * (1.625f + camMove);
         camera.rotation = Quaternion.Euler(rotationX, rotationY, 0);
 
         hpText.text = Mathf.FloorToInt(health).ToString("#,#");
@@ -260,11 +286,9 @@ public class Player : MonoBehaviour {
 
         if (v.x < v.z && v.y < v.z) {
             normal += Vector3Int.forward * Mathf.RoundToInt(Mathf.Sign(p.z));
-        }
-        else if (v.x < v.y) {
+        } else if (v.x < v.y) {
             normal += Vector3Int.up * Mathf.RoundToInt(Mathf.Sign(p.y));
-        }
-        else if (v.x > v.y) {
+        } else if (v.x > v.y) {
             normal += Vector3Int.right * Mathf.RoundToInt(Mathf.Sign(p.x));
         }
         return normal;
