@@ -7,110 +7,66 @@ public class Player : MonoBehaviour {
     public byte selectedBlockIndex = 0;
     public Vector3 spawnPoint;
 
+
+    public MyUI myUI;
+
     [SerializeField] private World world;
     [SerializeField] private Hand hand;
     [SerializeField] private new Transform camera;
     [SerializeField] private Transform miningEffectTransform;
     [SerializeField] private GameObject blockHighlight;
     [SerializeField] private GameObject miningProgresBarObj;
-    [SerializeField] private Text hpText;
     [SerializeField] private ParticleSystem miningEffect;
-    [SerializeField] private Slider hpBar;
     [SerializeField] private Slider miningProgresBar;
 
+    public float health;
 
+    private bool dead;
 
-    private bool hasGravity = true;
     private ChunkVoxel miningPos;
     private WWWEe entity;
     private BlockAndSelect SelectedPos;
     private float camMove;
     private float miningProgress;
     private float gravityVelocity;
-    private float health;
+
     private float rotationX;
     private float rotationY;
-    private bool spawnRequest;
-    private bool jumpRequest;
-    private Vector3 playerVel;
-    private Vector2Int pos;
-    private Vector2Int lastPos;
+    private Vector2Int chunkCoord;
+    private Vector2Int lastChunkCoord;
 
     private void Start () {
 
-
-
-
-        Cursor.lockState = CursorLockMode.Locked;
-        spawnRequest = true;
-        jumpRequest = false;
-        playerVel = Vector3.zero;
-
-
-
+        Spawn();
 
     }
 
     private void Update () {
 
+        chunkCoord = Data.Vector3ToChunkVoxel(entity.pos).c;
 
-
-
-
-
-
-        pos = Data.Vector3ToChunkVoxel(entity.pos).c;
-
-
-        if (!(pos == lastPos)) {
-            world.CheckViewDistance(pos);
-            lastPos = pos;
+        if (!(chunkCoord == lastChunkCoord)) {
+            world.CheckViewDistance(chunkCoord);
+            lastChunkCoord = chunkCoord;
         }
-        if (Data.IsThread && false) {
-
-            if (Input.GetKeyDown(KeyCode.G))
-                hasGravity = !hasGravity;
-            if (!hasGravity) {
-                if (Input.GetKey(KeyCode.Space))
-                    entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.up;
-                if (Input.GetKey(KeyCode.LeftControl))
-                    entity.vel += Data.playerSpeed * Time.deltaTime * Vector3.down;
+        if (!dead) {
+            if (Input.GetKeyDown(KeyCode.E))
+                myUI.Switch();
+            if (!myUI.inUI) {
+                AddInput();
+                Aaa();
             }
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-            world.InUI = !world.InUI;
-
-        if (!world.InUI) {
-
-            playerVel += Data.GetPlayerVel();
-
-            if (Input.GetKey(KeyCode.Space))
-                jumpRequest = true;
+            CalculateVelocity();
+            SetValue();
+        } else {
             if (Input.GetKeyDown(KeyCode.R))
-                spawnRequest = true;
-
-            rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
-            rotationY += Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse X");
-            rotationX = Mathf.Clamp(rotationX, -90, 90);
-            Aaa();
-
+                Spawn();
         }
-
-        CalculateVelocity();
-        SetValue();
-
     }
 
-    private void LateUpdate () {
 
-        if (spawnRequest)
-            Spawn();
-
-        spawnRequest = false;
-        jumpRequest = false;
-        playerVel = Vector3.zero;
-
-
+    private void Die () {
+        dead = true;
     }
 
     private void Spawn () {
@@ -118,18 +74,20 @@ public class Player : MonoBehaviour {
         miningProgress = 0;
         gravityVelocity = 0;
         health = Data.player.health;
-        hpBar.value = health / Data.player.health;
-
-
-
-
-
-        Vector3 sss = world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f);
 
         entity = new WWWEe(world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f), Data.player.size, Vector3.zero, false);
+        dead = false;
 
     }
 
+    private void AddInput () {
+        if (Input.GetKey(KeyCode.Space) && entity.isGrounded)
+            gravityVelocity -= 10;
+        rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
+        rotationY += Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse X");
+        rotationX = Mathf.Clamp(rotationX, -90, 90);
+        entity.vel += Quaternion.Euler(0, rotationY, 0) * Data.GetPlayerVel() * Data.playerSpeed * Time.deltaTime;
+    }
 
     private void Aaa () {
 
@@ -155,48 +113,36 @@ public class Player : MonoBehaviour {
             blockHighlight.SetActive(true);
 
             if (Input.GetMouseButtonDown(0)) {
-                if (selectedBlockIndex == 0) {
 
-                    if (world.blockTypes[_blockID].isFunc) {
-
-
-                        world.InUI = !world.InUI;
-
-                    }
-
-
-
-
-
-                } else {
-                    /*
-                    //dig
-                    if (Input.GetMouseButton(0)) {
-
-                        miningProgresBarObj.SetActive(true);
-
-                        if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
-                            miningProgress -= Time.deltaTime * 3 / 4;
-                            miningEffect.Play();
-                        } else {
-                            miningProgress = world.blockTypes[_blockID].hardness;
-                            miningPos = SelectedPos.blue;
-                        }
-                        if (miningProgress <= 0) {
-                            SetBBBL(SelectedPos.blue, 0);
-                        }
-                        miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
-                    }
-                    */
-                    //place
+                if (selectedBlockIndex < 128) {
                     if (Input.GetMouseButtonDown(0) && !AABB.FFF(entity, Data.PublicLocationDerect(SelectedPos.red) + Vector3.one * 0.5f) && !world.blockTypes[_blockID2].hasCollision) {
 
                         hand.placeEase = 0;
 
                         SetBBBL(SelectedPos.red, selectedBlockIndex);
                     }
+                } else {
                 }
             }
+        }
+    }
+
+    void Dig (byte _blockID) {
+        if (Input.GetMouseButton(0)) {
+
+            miningProgresBarObj.SetActive(true);
+
+            if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
+                miningProgress -= Time.deltaTime * 3 / 4;
+                miningEffect.Play();
+            } else {
+                miningProgress = world.blockTypes[_blockID].hardness;
+                miningPos = SelectedPos.blue;
+            }
+            if (miningProgress <= 0) {
+                SetBBBL(SelectedPos.blue, 0);
+            }
+            miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
         }
     }
 
@@ -212,20 +158,8 @@ public class Player : MonoBehaviour {
     }
     private void CalculateVelocity () {
 
-        if (jumpRequest && entity.isGrounded) {
-
-            gravityVelocity -= 10;
-
-
-        }
-
-        if (hasGravity) {
-            gravityVelocity += 27 * Time.deltaTime;
-            entity.vel += gravityVelocity * Time.deltaTime * Vector3.down;
-        }
-
-        entity.vel += Quaternion.Euler(0, rotationY, 0) * playerVel * Data.playerSpeed * Time.deltaTime;
-
+        gravityVelocity += 27 * Time.deltaTime;
+        entity.vel += gravityVelocity * Time.deltaTime * Vector3.down;
         entity = AABB.PosUpdate(entity, world);
 
         health += Time.deltaTime * 4;
@@ -239,10 +173,9 @@ public class Player : MonoBehaviour {
 
         health = Mathf.Min(health, Data.player.health);
 
-        if (health <= 0)
-            spawnRequest = true;
-
-
+        if (health <= 0) {
+            Die();
+        }
     }
 
     private void SetValue () {
@@ -253,8 +186,6 @@ public class Player : MonoBehaviour {
         camera.position = entity.pos + Vector3.up * (1.625f + camMove);
         camera.rotation = Quaternion.Euler(rotationX, rotationY, 0);
 
-        hpText.text = Mathf.FloorToInt(health).ToString("#,#");
-        hpBar.value = health / Data.player.health;
         blockHighlight.transform.position = Data.PublicLocationDerect(SelectedPos.blue) + Vector3.one * 0.5f;
         miningEffectTransform.position = Data.PublicLocationDerect(SelectedPos.blue) + Vector3.one * 0.5f;
 

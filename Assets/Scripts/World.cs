@@ -14,7 +14,6 @@ public class World : MonoBehaviour {
 
     public Dictionary<ChunkVoxel, Func> funcs = new();
 
-    private bool _inUI;
     private int seed;
     private readonly List<Chunk> chunksToUpdate = new();
     private readonly List<Vector2Int> generatedChunks = new();
@@ -57,9 +56,9 @@ public class World : MonoBehaviour {
     public Vector3Int GetSpawnPoint () {
         Vector3Int pos = Vector3Int.zero;
         if (chunks.ContainsKey(Vector2Int.zero)) {
-            for (int y = Data.ChunkHeight - 1; y >= 0; y--) {
-                if (blockTypes[chunks[Vector2Int.zero].voxelMap[0, y, 0]].hasCollision) {
-                    pos = new Vector3Int(0, y + 1, 0);
+            for (int y = 0; y < Data.ChunkHeight; y++) {
+                if (!blockTypes[chunks[Vector2Int.zero].voxelMap[0, y, 0]].hasCollision) {
+                    pos = new Vector3Int(0, y, 0);
                     break;
                 }
             }
@@ -81,10 +80,6 @@ public class World : MonoBehaviour {
         }
     }
 
-    public bool InUI {
-        get { return _inUI; }
-        set { _inUI = value; }
-    }
 
     public byte GetVoxel (Vector3Int pos) {
 
@@ -232,9 +227,14 @@ public class BlockType {
     }
 }
 
-public class ItemType {
+public class IDType {
 
     public string itemName;
     public Sprite sprite;
+
+    public byte groupID;
+    public byte itemID;
+
+
 
 }

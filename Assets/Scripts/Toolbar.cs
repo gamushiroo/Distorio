@@ -43,9 +43,11 @@ public class Toolbar : MonoBehaviour {
 
             highlight.position = itemSlots[slotIndex].icon.transform.position;
             player.selectedBlockIndex = itemSlots[slotIndex].itemID;
-            hand.GenerateMesh(itemSlots[slotIndex].itemID);
-            blockName.text = world.blockTypes[itemSlots[slotIndex].itemID].blockName;
 
+            if(itemSlots[slotIndex].itemID < 128) {
+                blockName.text = world.blockTypes[itemSlots[slotIndex].itemID].blockName;
+                hand.GenerateMesh(itemSlots[slotIndex].itemID);
+            }
         }
     }
 }

@@ -665,16 +665,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedBlockIndex: 0
   spawnPoint: {x: 0, y: 0, z: 0}
+  myUI: {fileID: 782628376}
   world: {fileID: 1482468890}
   hand: {fileID: 1439694691}
   camera: {fileID: 963194228}
   miningEffectTransform: {fileID: 485163720}
   blockHighlight: {fileID: 2109980259}
   miningProgresBarObj: {fileID: 790624905}
-  hpText: {fileID: 1828601337}
   miningEffect: {fileID: 485163722}
-  hpBar: {fileID: 786760891}
   miningProgresBar: {fileID: 790624907}
+  health: 0
 --- !u!1 &340895051
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,17 +895,17 @@ MonoBehaviour:
     icon: {fileID: 2121667578}
   - itemID: 5
     icon: {fileID: 1907284746}
-  - itemID: 6
+  - itemID: 128
     icon: {fileID: 98215544}
-  - itemID: 7
+  - itemID: 129
     icon: {fileID: 1058003689}
-  - itemID: 8
+  - itemID: 130
     icon: {fileID: 1188635078}
-  - itemID: 9
+  - itemID: 131
     icon: {fileID: 1030307130}
-  - itemID: 10
+  - itemID: 132
     icon: {fileID: 2135471334}
-  - itemID: 11
+  - itemID: 133
     icon: {fileID: 172911670}
   highlight: {fileID: 2096473317}
   blockName: {fileID: 40919616}
@@ -6059,6 +6059,53 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &782628375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 782628377}
+  - component: {fileID: 782628376}
+  m_Layer: 0
+  m_Name: MyUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &782628376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782628375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19c5978fcb0932d4b81553c51045b8ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 270149130}
+  hpBar: {fileID: 786760891}
+  hpText: {fileID: 1828601337}
+--- !u!4 &782628377
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782628375}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &786760889
 GameObject:
   m_ObjectHideFlags: 0
