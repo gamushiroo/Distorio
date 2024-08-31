@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-
 public class World : MonoBehaviour {
 
     [SerializeField] private BiomeAttributes biome;
@@ -30,7 +29,7 @@ public class World : MonoBehaviour {
 
                 Vector2Int pos = new(x, y);
 
-                chunks.Add(pos, new(pos, this, true));
+                chunks.Add(pos, new(pos, this));
                 generatedChunks.Add(pos);
                 if (!chunksToUpdate.Contains(chunks[pos]))
                     chunksToUpdate.Add(chunks[pos]);
@@ -48,8 +47,12 @@ public class World : MonoBehaviour {
 
     }
 
+
+    public byte GetVoxelID (ChunkVoxel pos) {
+        return chunks[pos.c].GetVoxelIDChunk(pos.v);
+    }
     private void DrawChunks () {
-        if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable())
+        if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable)
             chunksToDraw.Dequeue().GenerateMesh();
     }
 
@@ -57,7 +60,7 @@ public class World : MonoBehaviour {
         Vector3Int pos = Vector3Int.zero;
         if (chunks.ContainsKey(Vector2Int.zero)) {
             for (int y = 0; y < Data.ChunkHeight; y++) {
-                if (!blockTypes[chunks[Vector2Int.zero].voxelMap[0, y, 0]].hasCollision) {
+                if (!blockTypes[GetVoxelID(new(Vector2Int.zero, new(0, y, 0)))].hasCollision) {
                     pos = new Vector3Int(0, y, 0);
                     break;
                 }
@@ -70,7 +73,7 @@ public class World : MonoBehaviour {
         if (chunksToUpdate.Count > 0) {
             for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
 
-                if (chunksToUpdate[i].IsEditable()) {
+                if (chunksToUpdate[i].IsEditable) {
                     chunksToUpdate[i].UpdateChunk();
                     chunksToDraw.Enqueue(chunksToUpdate[i]);
                     chunksToUpdate.RemoveAt(i);
@@ -80,34 +83,43 @@ public class World : MonoBehaviour {
         }
     }
 
+    public float GetTemp (Vector3 pos) {
+        return (Get2DPerlin(new(pos.x, pos.z), 0.001f) + 0.5f) * 60 - 20;
 
+    }
     public byte GetVoxel (Vector3Int pos) {
 
         byte VoxelValue = 0;
         float terrainHeight = 0;
 
 
-        for (int i =  0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             float a = Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
             terrainHeight += biome.terrainHeight * Get2DPerlin(new(pos.x, pos.z), biome.terrainScale / Mathf.Pow(2, i) / a);
         }
         terrainHeight *= Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
         terrainHeight = Mathf.FloorToInt(terrainHeight + biome.solidGroundHeight);
 
+        float temp = GetTemp(pos);
         if (pos.y < terrainHeight) {
+            if (temp < -5f) {
 
-            if(Get2DPerlin(new(pos.x, pos.z), 0.005f) < 0f) {
-
+                VoxelValue = 12;
+            } else if (temp < 20f) {
                 VoxelValue = 1;
-            } else {
-                VoxelValue = 6;
 
+            } else {
+
+                VoxelValue = 6;
             }
         }
         if (pos.y == terrainHeight) {
             if (Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold || terrainHeight >= 72) {
                 if (Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
-                    if (Get2DPerlin(new(pos.x, pos.z), 0.005f) < 0f) {
+                    if (temp < -5f) {
+
+                    } else if (temp < 20f) {
+
                         modifications.Enqueue(Structure.MakeTree(pos));
                     } else {
 
@@ -131,14 +143,13 @@ public class World : MonoBehaviour {
 
                 if (!chunks.ContainsKey(pos)) {
 
-                    chunks.Add(pos, new(pos, this, true));
+                    chunks.Add(pos, new(pos, this));
                     generatedChunks.Add(pos);
 
                     if (!chunksToUpdate.Contains(chunks[pos]))
                         chunksToUpdate.Add(chunks[pos]);
 
-                }
-                else {
+                } else {
                     chunks[pos].SetActiveState(true);
                 }
 
@@ -174,11 +185,11 @@ public class World : MonoBehaviour {
 
                     if (!chunks.ContainsKey(vmod.pos.c)) {
 
-                        chunks.Add(vmod.pos.c, new(vmod.pos.c, this, true));
+                        chunks.Add(vmod.pos.c, new(vmod.pos.c, this));
                         generatedChunks.Add(vmod.pos.c);
 
                     }
-                    chunks[vmod.pos.c].modifications.Enqueue(vmod);
+                    chunks[vmod.pos.c].EnqueueVoxelMod(vmod);
                     if (!chunksToUpdate.Contains(chunks[vmod.pos.c]))
                         chunksToUpdate.Add(chunks[vmod.pos.c]);
                 }

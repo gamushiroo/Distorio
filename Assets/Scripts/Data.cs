@@ -3,16 +3,9 @@ using UnityEngine;
 
 public static class Data {
 
-    public static readonly int TextureAtlasSizeInBlocks = 16;
-    public static float NormalizedBlockTextureSize {
-
-        get { return 1f / TextureAtlasSizeInBlocks; }
-
-    }
-
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
-    public static readonly int ChunkLoadRange = 8;
+    public static readonly int ChunkLoadRange = 6;
     public static readonly int TextureSize = 16;
     public static readonly float playerSpeed = 4.5f;
     public static readonly float mouseSens = 100;
@@ -21,13 +14,6 @@ public static class Data {
 
     public static readonly EntityData player = new EntityData("player", new(0.75f, 1.75f, 0.75f), 100, 2000);
 
-    public static readonly int[,] terrain = new int[3, 2] {
-
-        {0, 1},
-        {1, 2},
-        {4, 3}
-
-    };
 
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
 
@@ -90,11 +76,6 @@ public static class Data {
 
     };
 
-    public static bool IsInChunk (Vector3 pos) {
-
-        return !( pos.x < 0 || pos.x >= ChunkWidth || pos.y < 0 || pos.y >= ChunkHeight || pos.z < 0 || pos.z >= ChunkWidth );
-
-    }
 
     public static Vector2 TexturePos (int ID) {
 
@@ -115,18 +96,6 @@ public static class Data {
 
     }
 
-    public static int GetScrool () {
-
-        if (Input.mouseScrollDelta.y > 0) {
-            return 1;
-        }
-        else if (Input.mouseScrollDelta.y < 0) {
-            return -1;
-        }
-        else {
-            return 0;
-        }
-    }
 
     public static Vector3Int PublicLocationDerect (ChunkVoxel pos) => pos.v + new Vector3Int(pos.c.x * ChunkWidth,0, pos.c.y * ChunkWidth);
 

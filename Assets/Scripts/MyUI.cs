@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,10 +8,11 @@ public class MyUI : MonoBehaviour {
     public Player player;
     public Slider hpBar;
     public Text hpText;
+    public World world;
+    public Text temp;
 
 
     private void Start () {
-
         Cursor.lockState = CursorLockMode.Locked;
 
 
@@ -23,6 +22,8 @@ public class MyUI : MonoBehaviour {
 
         hpBar.value = player.health / Data.player.health;
         hpText.text = Mathf.FloorToInt(player.health).ToString("#,#");
+
+        temp.text = Mathf.FloorToInt(world.GetTemp(player.camera.transform.position)).ToString("#,#") + "ÅãC";
     }
 
 

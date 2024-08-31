@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Services.Analytics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,7 @@ public class Player : MonoBehaviour {
 
     [SerializeField] private World world;
     [SerializeField] private Hand hand;
-    [SerializeField] private new Transform camera;
+    [SerializeField] public new Transform camera;
     [SerializeField] private Transform miningEffectTransform;
     [SerializeField] private GameObject blockHighlight;
     [SerializeField] private GameObject miningProgresBarObj;
@@ -42,6 +43,9 @@ public class Player : MonoBehaviour {
     }
 
     private void Update () {
+
+
+
 
         chunkCoord = Data.Vector3ToChunkVoxel(entity.pos).c;
 
@@ -80,9 +84,15 @@ public class Player : MonoBehaviour {
 
     }
 
+    private void FixedUpdate () {
+
+
+    }
+
     private void AddInput () {
         if (Input.GetKey(KeyCode.Space) && entity.isGrounded)
             gravityVelocity -= 10;
+
         rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
         rotationY += Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse X");
         rotationX = Mathf.Clamp(rotationX, -90, 90);
@@ -101,10 +111,10 @@ public class Player : MonoBehaviour {
         int _blockID2 = 0;
 
         if (world.chunks.ContainsKey(SelectedPos.blue.c)) {
-            _blockID = world.chunks[SelectedPos.blue.c].voxelMap[SelectedPos.blue.v.x, SelectedPos.blue.v.y, SelectedPos.blue.v.z];
+            _blockID = world.GetVoxelID(SelectedPos.blue);
         }
         if (world.chunks.ContainsKey(SelectedPos.red.c)) {
-            _blockID2 = world.chunks[SelectedPos.red.c].voxelMap[SelectedPos.red.v.x, SelectedPos.red.v.y, SelectedPos.red.v.z];
+            _blockID2 = world.GetVoxelID(SelectedPos.red);
         }
 
 
@@ -148,7 +158,7 @@ public class Player : MonoBehaviour {
 
     void SetBBBL (ChunkVoxel pos, byte id) {
 
-        if (world.chunks.ContainsKey(pos.c) && world.chunks[pos.c].IsEditable()) {
+        if (world.chunks.ContainsKey(pos.c) && world.chunks[pos.c].IsEditable) {
 
             Queue<VoxelMod> queue = new Queue<VoxelMod>();
             queue.Enqueue(new(pos, id));
@@ -199,7 +209,7 @@ public class Player : MonoBehaviour {
 
 
             if (world.chunks.ContainsKey(camPos.c)) {
-                if (world.blockTypes[world.chunks[camPos.c].voxelMap[camPos.v.x, camPos.v.y, camPos.v.z]].hasCollision) {
+                if (world.blockTypes[world.GetVoxelID(camPos)].hasCollision) {
                     break;
                 }
             }

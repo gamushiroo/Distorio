@@ -64,18 +64,18 @@ public struct AABBData {
 }
 
 public struct Func {
-    public Item itemIn;
-    public Item itemOut;
-    public Func(Item itemIn, Item itemOut) {
+    public ItemData itemIn;
+    public ItemData itemOut;
+    public Func(ItemData itemIn, ItemData itemOut) {
         this.itemIn = itemIn;
         this.itemOut = itemOut;
     }
 }
 
-public struct Item {
+public struct ItemData {
     public byte value;
     public byte id;
-    public Item (byte value, byte id) {
+    public ItemData (byte value, byte id) {
         this.value = value;
         this.id = id;
     }

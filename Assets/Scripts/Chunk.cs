@@ -1,35 +1,41 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-
 public class Chunk {
-
-    public byte[,,] voxelMap = new byte[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
-    public Queue<VoxelMod> modifications = new();
-    private bool threadLocked = false;
     private bool isTerrainMapGenerated = false;
+    private bool threadLocked = false;
     private bool isActive = true;
-    private int vertexIndex = 0;
+    private readonly byte[,,] voxelMap = new byte[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
+    private readonly Queue<VoxelMod> modifications = new();
     private readonly List<Vector3> vertices = new();
+    private readonly GameObject chunkObject = new();
     private readonly List<int> triangles = new();
     private readonly List<Vector2> uvs = new();
-    private readonly GameObject chunkObject;
     private readonly MeshFilter meshFilter;
-    private readonly World world;
     private readonly Vector2Int pos;
-
-    public Chunk (Vector2Int pos, World world, bool generateOnLoad) {
+    private readonly World world;
+    public Chunk (Vector2Int pos, World world) {
         this.pos = pos;
         this.world = world;
-        chunkObject = new();
         chunkObject.transform.parent = world.transform;
         chunkObject.transform.position = new Vector3Int(pos.x, 0, pos.y) * Data.ChunkWidth;
         chunkObject.AddComponent<MeshRenderer>().material = world.material;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
-        if (generateOnLoad)
-            GenerateTerrainData();
+        GenerateTerrainData();
     }
-
+    public bool IsEditable => !(!isTerrainMapGenerated || threadLocked);
+    public byte GetVoxelIDChunk (Vector3Int pos) {
+        return voxelMap[pos.x, pos.y, pos.z];
+    }
+    public void EnqueueVoxelMod (VoxelMod voxelMod) {
+        modifications.Enqueue(voxelMod);
+    }
+    public void SetActiveState (bool value) {
+        if (isActive != value) {
+            chunkObject.SetActive(value);
+            isActive = value;
+        }
+    }
     public void UpdateChunk () {
         if (Data.IsThread) {
             threadLocked = true;
@@ -37,9 +43,6 @@ public class Chunk {
         } else {
             UC();
         }
-    }
-    public bool IsEditable () {
-        return !(!isTerrainMapGenerated || threadLocked);
     }
     public void GenerateTerrainData () {
         if (Data.IsThread) {
@@ -50,7 +53,7 @@ public class Chunk {
         }
     }
     public void GenerateMesh () {
-        vertexIndex = 0;
+        int vertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
         uvs.Clear();
@@ -60,7 +63,7 @@ public class Chunk {
                     if (voxelMap[x, y, z] != 0) {
                         for (int p = 0; p < 6; p++) {
                             Vector3Int pos = Data.faceChecks[p] + new Vector3Int(x, y, z);
-                            if (!(Data.IsInChunk(pos) && world.blockTypes[voxelMap[pos.x, pos.y, pos.z]].isSolid)) {
+                            if (!(IsInChunk(pos) && world.blockTypes[GetVoxelIDChunk(pos)].isSolid)) {
                                 for (int i = 0; i < 4; i++) {
                                     vertices.Add(Data.voxelVerts[Data.voxelTris[p, i]] + new Vector3(x, y, z));
                                     uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
@@ -84,17 +87,14 @@ public class Chunk {
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
     }
-    public void SetActiveState (bool value) {
-        if (isActive == value)
-            return;
-        chunkObject.SetActive(value);
-        isActive = value;
+    private bool IsInChunk (Vector3 pos) {
+        return !(pos.x < 0 || pos.x >= Data.ChunkWidth || pos.y < 0 || pos.y >= Data.ChunkHeight || pos.z < 0 || pos.z >= Data.ChunkWidth);
     }
     private void UC () {
         lock (modifications) {
             while (modifications.Count > 0) {
                 VoxelMod vmod = modifications.Dequeue();
-                if (voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] == 0 || vmod.id != 5) {
+                if (!world.blockTypes[GetVoxelIDChunk(vmod.pos.v)].hasCollision) {
                     voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
                 }
             }
