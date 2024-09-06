@@ -61,17 +61,30 @@ public class Chunk {
             for (int y = 0; y < Data.ChunkHeight; y++) {
                 for (int z = 0; z < Data.ChunkWidth; z++) {
                     if (voxelMap[x, y, z] != 0) {
-                        for (int p = 0; p < 6; p++) {
-                            Vector3Int pos = Data.faceChecks[p] + new Vector3Int(x, y, z);
-                            if (!(IsInChunk(pos) && world.blockTypes[GetVoxelIDChunk(pos)].isSolid)) {
+                        if (world.blockTypes[voxelMap[x, y, z]].isGrass) {
+                            for (int p = 0; p < 4; p++) {
                                 for (int i = 0; i < 4; i++) {
-                                    vertices.Add(Data.voxelVerts[Data.voxelTris[p, i]] + new Vector3(x, y, z));
+                                    vertices.Add(Data.voxelVerts[Data.ffff[p, i]] + new Vector3(x, y, z));
                                     uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
                                 }
                                 for (int i = 0; i < 6; i++) {
                                     triangles.Add(Data.order[i] + vertexIndex);
                                 }
                                 vertexIndex += 4;
+                            }
+                        } else {
+                            for (int p = 0; p < 6; p++) {
+                                Vector3Int pos = Data.faceChecks[p] + new Vector3Int(x, y, z);
+                                if (!(IsInChunk(pos) && world.blockTypes[GetVoxelIDChunk(pos)].isSolid)) {
+                                    for (int i = 0; i < 4; i++) {
+                                        vertices.Add(Data.voxelVerts[Data.voxelTris[p, i]] + new Vector3(x, y, z));
+                                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                                    }
+                                    for (int i = 0; i < 6; i++) {
+                                        triangles.Add(Data.order[i] + vertexIndex);
+                                    }
+                                    vertexIndex += 4;
+                                }
                             }
                         }
                     }
@@ -94,9 +107,7 @@ public class Chunk {
         lock (modifications) {
             while (modifications.Count > 0) {
                 VoxelMod vmod = modifications.Dequeue();
-                if (!world.blockTypes[GetVoxelIDChunk(vmod.pos.v)].hasCollision) {
-                    voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
-                }
+                voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
             }
         }
         threadLocked = false;

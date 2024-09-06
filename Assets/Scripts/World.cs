@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 public class World : MonoBehaviour {
 
     [SerializeField] private BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
-    public List<BlockType> itemTypes = new();
+    public List<ItemType> itemTypes = new();
     public Dictionary<Vector2Int, Chunk> chunks = new();
     public Queue<Queue<VoxelMod>> modifications = new();
+
+    public Sprite slot;
 
     Vector2 offset;
 
@@ -24,8 +27,8 @@ public class World : MonoBehaviour {
         seed = (int)System.DateTime.Now.Ticks;
         Random.InitState(seed);
 
-        for (int x = -16; x < 16; x++) {
-            for (int y = -16; y < 16; y++) {
+        for (int x = -8; x < 8; x++) {
+            for (int y = -8; y < 8; y++) {
 
                 Vector2Int pos = new(x, y);
 
@@ -84,46 +87,81 @@ public class World : MonoBehaviour {
     }
 
     public float GetTemp (Vector3 pos) {
-        return (Get2DPerlin(new(pos.x, pos.z), 0.001f) + 0.5f) * 60 - 20;
-
+        return (Get2DPerlin(new(pos.x, pos.z), 0.002f) + 0.5f) * 60 - 20;
     }
-    public byte GetVoxel (Vector3Int pos) {
-
-        byte VoxelValue = 0;
+    float GetHeight (Vector3Int pos) {
         float terrainHeight = 0;
-
-
         for (int i = 0; i < 4; i++) {
             float a = Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
             terrainHeight += biome.terrainHeight * Get2DPerlin(new(pos.x, pos.z), biome.terrainScale / Mathf.Pow(2, i) / a);
         }
-        terrainHeight *= Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
+        float sec = Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.029f) * 4) + Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
+        terrainHeight *= sec  / 2;
         terrainHeight = Mathf.FloorToInt(terrainHeight + biome.solidGroundHeight);
+        return terrainHeight;
+    }
 
+    public byte GetVoxel (Vector3Int pos) {
+
+        float terrainHeight = GetHeight(pos);
         float temp = GetTemp(pos);
+        byte VoxelValue = 0;
+
         if (pos.y < terrainHeight) {
-            if (temp < -5f) {
 
-                VoxelValue = 12;
-            } else if (temp < 20f) {
-                VoxelValue = 1;
-
+            if (pos.y == terrainHeight - 1) {
+                if (temp < -5f) {
+                    VoxelValue = 12;
+                } else if (temp < 20f) {
+                    VoxelValue = 1;
+                } else {
+                    VoxelValue = 6;
+                }
+            } else if (pos.y < terrainHeight - 1 && pos.y >= terrainHeight - 4) {
+                VoxelValue = 2;
             } else {
-
-                VoxelValue = 6;
+                VoxelValue = 3;
             }
         }
+
         if (pos.y == terrainHeight) {
-            if (Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold || terrainHeight >= 72) {
+            lock (modifications) {
+                int add = 0;
+                byte type = 0;
+                if (temp < -5f) {
+                } else if (temp < 20f) {
+                    add = 32;
+                    type = 15;
+                } else {
+                    add = 128;
+                    type = 14;
+                }
+                float www = Mathf.Max(0, Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f) * add;
+
+
+                if (Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
+                    if (new System.Random().Next(0, Mathf.FloorToInt(www) + 2) == 0) {
+                        Queue<VoxelMod> a = new();
+                        a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f), type));
+                        modifications.Enqueue(a);
+                    }
+                }
+
+            }
+            if (Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
                 if (Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
-                    if (temp < -5f) {
+                    lock (modifications) {
 
-                    } else if (temp < 20f) {
-
-                        modifications.Enqueue(Structure.MakeTree(pos));
-                    } else {
-
-                        modifications.Enqueue(Structure.MakeCactus(pos));
+                        if (temp < -5f) {
+                        } else if (temp < 20f) {
+                            if (new System.Random().Next(0, 4) == 0) {
+                                modifications.Enqueue(Structure.MakeTreeTwo(pos));
+                            } else {
+                                modifications.Enqueue(Structure.MakeTree(pos));
+                            }
+                        } else {
+                            modifications.Enqueue(Structure.MakeCactus(pos));
+                        }
                     }
                 }
             }
@@ -215,8 +253,7 @@ public class BlockType {
     public bool hasCollision;
     public float hardness;
     public Sprite sprite;
-
-    public bool isFunc;
+    public bool isGrass;
 
     public int backFaceTexture;
     public int frontFaceTexture;
@@ -238,14 +275,12 @@ public class BlockType {
     }
 }
 
-public class IDType {
+[System.Serializable]
+public class ItemType {
 
     public string itemName;
     public Sprite sprite;
-
-    public byte groupID;
-    public byte itemID;
-
+    public float mineSpeed;
 
 
 }

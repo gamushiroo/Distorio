@@ -6,23 +6,25 @@ public class Toolbar : MonoBehaviour {
     [SerializeField] private World world;
     [SerializeField] private Hand hand;
     [SerializeField] private Player player;
-    [SerializeField] private ItemSlot[] itemSlots;
+
     [SerializeField] private RectTransform highlight;
     [SerializeField] private Text blockName;
 
-    private int slotIndex = 0;
+    public GameObject background;
+    public  Inventory inventory ;
 
     private void Start () {
 
         world = GameObject.Find("World").GetComponent<World>();
         hand = GameObject.Find("Hand").GetComponent<Hand>();
 
-        foreach (ItemSlot slot in itemSlots) {
+        inventory = new(this, world, background.transform);
+        inventory.SetItem(0, new(131, 1));
+        inventory.SetItem(1, new(6, 1));
 
-            slot.icon.sprite = world.blockTypes[slot.itemID].sprite;
-            slot.icon.enabled = true;
+        inventory.SetItem(30, new(5, 1));
+        highlight.position = inventory.images[0].transform.position;
 
-        }
     }
 
     private void Update () {
@@ -30,32 +32,18 @@ public class Toolbar : MonoBehaviour {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
         if (scroll != 0) {
+            inventory.Scroll(scroll);
+            ItemStack a = inventory.GetSelected();
+            highlight.position = inventory.images[inventory.slotIndex].transform.position;
+            player.selectedBlockIndex = a.id;
 
-            if (scroll > 0)
-                slotIndex--;
-            else
-                slotIndex++;
-
-            if (slotIndex > itemSlots.Length - 1)
-                slotIndex = 0;
-            if (slotIndex < 0)
-                slotIndex = itemSlots.Length - 1;
-
-            highlight.position = itemSlots[slotIndex].icon.transform.position;
-            player.selectedBlockIndex = itemSlots[slotIndex].itemID;
-
-            if(itemSlots[slotIndex].itemID < 128) {
-                blockName.text = world.blockTypes[itemSlots[slotIndex].itemID].blockName;
-                hand.GenerateMesh(itemSlots[slotIndex].itemID);
+            if (a.id < 128) {
+                blockName.text = world.blockTypes[a.id].blockName;
+                hand.GenerateMesh(a.id);
+            } else {
+                blockName.text = world.itemTypes[a.id - 128].itemName;
+                hand.GenerateMesh(0);
             }
         }
     }
-}
-
-[System.Serializable]
-public class ItemSlot {
-
-    public byte itemID;
-    public Image icon;
-
 }

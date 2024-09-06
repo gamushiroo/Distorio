@@ -48,6 +48,9 @@ public struct WWWEe {
     public Vector3 vel;
     public bool isGrounded;
 }
+
+
+
 [System.Serializable]
 public struct AABBData {
 
@@ -81,12 +84,12 @@ public struct ItemData {
     }
 }
 
-public struct Type {
-    public byte value;
+public struct ItemStack {
     public byte id;
-    public Type (byte value, byte id) {
-        this.value = value;
+    public byte value;
+    public ItemStack (byte id, byte value) {
         this.id = id;
+        this.value = value;
     }
 }
 

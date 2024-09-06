@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class Data {
@@ -9,6 +8,8 @@ public static class Data {
     public static readonly int TextureSize = 16;
     public static readonly float playerSpeed = 4.5f;
     public static readonly float mouseSens = 100;
+    public static readonly int inventoryX = 10;
+    public static readonly int inventoryY = 5;
 
     public static readonly bool IsThread = true;
 
@@ -28,6 +29,16 @@ public static class Data {
 
     };
 
+    public static readonly int[,] ffff = new int[4, 4] {
+
+        {0, 3, 5, 6}, // Back Face
+        {5, 6, 0, 3}, // Front Face
+        {4, 7, 1, 2}, // Left Face
+        {1, 2, 4, 7}  // Right Face
+
+    };
+
+
     public static readonly byte[,,] trees = new byte[5, 7, 5] {
 
         {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } },
@@ -38,6 +49,15 @@ public static class Data {
 
     };
 
+    public static readonly byte[,,] treesTwo = new byte[5, 9, 5] {
+
+        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 },{0, 0, 5, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } },
+        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{5, 5, 5, 5, 5 },{5, 5, 5, 5, 5 },{0, 5, 5, 5, 5 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 } },
+        {{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{0, 5, 4, 5, 0 },{0, 5, 5, 5, 0 } },
+        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{5, 5, 5, 5, 5 },{5, 5, 5, 5, 5 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 } },
+        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 },{0, 0, 5, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } }
+
+    };
 
     public static readonly Vector3Int[] faceChecks = new Vector3Int[6] {
 
@@ -97,7 +117,7 @@ public static class Data {
     }
 
 
-    public static Vector3Int PublicLocationDerect (ChunkVoxel pos) => pos.v + new Vector3Int(pos.c.x * ChunkWidth,0, pos.c.y * ChunkWidth);
+    public static Vector3Int PublicLocationDerect (ChunkVoxel pos) => pos.v + new Vector3Int(pos.c.x * ChunkWidth, 0, pos.c.y * ChunkWidth);
 
 
     public static Vector3 GetPlayerVel () {

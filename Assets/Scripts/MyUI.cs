@@ -10,6 +10,7 @@ public class MyUI : MonoBehaviour {
     public Text hpText;
     public World world;
     public Text temp;
+    public Toolbar toolbar;
 
 
     private void Start () {
@@ -38,6 +39,6 @@ public class MyUI : MonoBehaviour {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
-
+        toolbar.inventory.Switch(inUI);
     }
 }

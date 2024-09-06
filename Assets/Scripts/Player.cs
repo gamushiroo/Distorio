@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Services.Analytics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,6 +65,10 @@ public class Player : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.R))
                 Spawn();
         }
+
+        if(entity.pos.y < 16) {
+            Spawn();
+        }
     }
 
 
@@ -122,38 +125,43 @@ public class Player : MonoBehaviour {
 
             blockHighlight.SetActive(true);
 
-            if (Input.GetMouseButtonDown(0)) {
 
-                if (selectedBlockIndex < 128) {
+            if (selectedBlockIndex < 128) {
+                if (Input.GetMouseButtonDown(0)) {
                     if (Input.GetMouseButtonDown(0) && !AABB.FFF(entity, Data.PublicLocationDerect(SelectedPos.red) + Vector3.one * 0.5f) && !world.blockTypes[_blockID2].hasCollision) {
 
                         hand.placeEase = 0;
 
                         SetBBBL(SelectedPos.red, selectedBlockIndex);
                     }
-                } else {
+                }
+            } else {
+
+                if (Input.GetMouseButton(0)) {
+
+                    miningProgresBarObj.SetActive(true);
+
+                    if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
+                        miningProgress -= Time.deltaTime * (GetMiningSpeed(selectedBlockIndex - 128, 0.85f, 1f) + 0.75f);
+                        miningEffect.Play();
+                    } else {
+                        miningProgress = world.blockTypes[_blockID].hardness;
+                        miningPos = SelectedPos.blue;
+                    }
+                    if (miningProgress <= 0) {
+                        SetBBBL(SelectedPos.blue, 0);
+                        //Debug.Log("shit");
+                    }
+                    miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
                 }
             }
-        }
+        } 
     }
 
-    void Dig (byte _blockID) {
-        if (Input.GetMouseButton(0)) {
+    float GetMiningSpeed (int n, float a, float l) {
 
-            miningProgresBarObj.SetActive(true);
 
-            if (miningPos.c == SelectedPos.blue.c && miningPos.v == SelectedPos.blue.v) {
-                miningProgress -= Time.deltaTime * 3 / 4;
-                miningEffect.Play();
-            } else {
-                miningProgress = world.blockTypes[_blockID].hardness;
-                miningPos = SelectedPos.blue;
-            }
-            if (miningProgress <= 0) {
-                SetBBBL(SelectedPos.blue, 0);
-            }
-            miningProgresBar.value = miningProgress / world.blockTypes[_blockID].hardness;
-        }
+        return l * ((Mathf.Pow(a, n) - 1) / (a - 1));
     }
 
     void SetBBBL (ChunkVoxel pos, byte id) {
