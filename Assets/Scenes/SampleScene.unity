@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.49019608, g: 0.5176471, b: 0.67058825, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.001
+  m_FogDensity: 0.005
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -513,18 +513,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 163ebf44c3e900140990a842a8c9250a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationX: 0
   selectedBlockIndex: 0
-  spawnPoint: {x: 0, y: 0, z: 0}
   myUI: {fileID: 782628376}
   world: {fileID: 1482468890}
   hand: {fileID: 1439694691}
   camera: {fileID: 963194228}
-  miningEffectTransform: {fileID: 485163720}
   blockHighlight: {fileID: 2109980259}
+  miningEffect: {fileID: 485163719}
   miningProgresBarObj: {fileID: 790624905}
-  miningEffect: {fileID: 485163722}
   miningProgresBar: {fileID: 790624907}
-  health: 0
 --- !u!1 &340895051
 GameObject:
   m_ObjectHideFlags: 0
@@ -6687,6 +6685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5385bbdb8ac5b004386ec86292929b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioClip: {fileID: 8300000, guid: fd1cbe11262003c48bf9edac1a499d12, type: 3}
   biome: {fileID: 11400000, guid: 12cce7ccb08750442b3ce218c3965c8f, type: 2}
   material: {fileID: 2100000, guid: e92221d114e6e854f8578be0f5db3b98, type: 2}
   blockTypes:
@@ -6695,193 +6694,222 @@ MonoBehaviour:
     hasCollision: 0
     hardness: 0
     sprite: {fileID: -1783754289, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 0
     frontFaceTexture: 0
     topFaceTexture: 0
     bottomFaceTexture: 0
     leftFaceTexture: 0
     rightFaceTexture: 0
+    size: {x: 0, y: 0, z: 0}
   - blockName: Grass
     isSolid: 1
     hasCollision: 1
     hardness: 1
     sprite: {fileID: -848102514, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 3
     frontFaceTexture: 3
     topFaceTexture: 0
     bottomFaceTexture: 2
     leftFaceTexture: 3
     rightFaceTexture: 3
+    size: {x: 1, y: 1, z: 1}
   - blockName: Dirt
     isSolid: 1
     hasCollision: 1
     hardness: 1
     sprite: {fileID: 1549071701, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 2
     frontFaceTexture: 2
     topFaceTexture: 2
     bottomFaceTexture: 2
     leftFaceTexture: 2
     rightFaceTexture: 2
+    size: {x: 1, y: 1, z: 1}
   - blockName: Stone
     isSolid: 1
     hasCollision: 1
     hardness: 3
     sprite: {fileID: 2086677478, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 1
     frontFaceTexture: 1
     topFaceTexture: 1
     bottomFaceTexture: 1
     leftFaceTexture: 1
     rightFaceTexture: 1
+    size: {x: 1, y: 1, z: 1}
   - blockName: Wood
     isSolid: 1
     hasCollision: 1
     hardness: 2
     sprite: {fileID: 102581001, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 20
     frontFaceTexture: 20
     topFaceTexture: 21
     bottomFaceTexture: 21
     leftFaceTexture: 20
     rightFaceTexture: 20
+    size: {x: 1, y: 1, z: 1}
   - blockName: Leaf
     isSolid: 0
     hasCollision: 0
     hardness: 0.5
     sprite: {fileID: -317537582, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 52
     frontFaceTexture: 52
     topFaceTexture: 52
     bottomFaceTexture: 52
     leftFaceTexture: 52
     rightFaceTexture: 52
+    size: {x: 1, y: 1, z: 1}
   - blockName: Sand
     isSolid: 1
     hasCollision: 1
     hardness: 1
     sprite: {fileID: 1244101536, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 18
     frontFaceTexture: 18
     topFaceTexture: 18
     bottomFaceTexture: 18
     leftFaceTexture: 18
     rightFaceTexture: 18
+    size: {x: 1, y: 1, z: 1}
   - blockName: Glass
     isSolid: 0
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 536285754, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 49
     frontFaceTexture: 49
     topFaceTexture: 49
     bottomFaceTexture: 49
     leftFaceTexture: 49
     rightFaceTexture: 49
+    size: {x: 1, y: 1, z: 1}
   - blockName: Coal
     isSolid: 1
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 1611522741, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 34
     frontFaceTexture: 34
     topFaceTexture: 34
     bottomFaceTexture: 34
     leftFaceTexture: 34
     rightFaceTexture: 34
+    size: {x: 1, y: 1, z: 1}
   - blockName: Furnace
     isSolid: 0
     hasCollision: 1
     hardness: 0.5
-    sprite: {fileID: 0}
-    isGrass: 0
+    sprite: {fileID: -1891841105, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
+    meshTypes: 0
     backFaceTexture: 45
     frontFaceTexture: 44
     topFaceTexture: 62
     bottomFaceTexture: 62
     leftFaceTexture: 45
     rightFaceTexture: 45
+    size: {x: 2, y: 3, z: 2}
   - blockName: Diamond
     isSolid: 1
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 50
     frontFaceTexture: 50
     topFaceTexture: 50
     bottomFaceTexture: 50
     leftFaceTexture: 50
     rightFaceTexture: 50
+    size: {x: 1, y: 1, z: 1}
   - blockName: Cactus
     isSolid: 1
     hasCollision: 1
     hardness: 2
     sprite: {fileID: 0}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 70
     frontFaceTexture: 70
     topFaceTexture: 69
     bottomFaceTexture: 71
     leftFaceTexture: 70
     rightFaceTexture: 70
+    size: {x: 1, y: 1, z: 1}
   - blockName: Snow
     isSolid: 1
     hasCollision: 1
     hardness: 0.5
     sprite: {fileID: 0}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 68
     frontFaceTexture: 68
     topFaceTexture: 66
     bottomFaceTexture: 2
     leftFaceTexture: 68
     rightFaceTexture: 68
+    size: {x: 1, y: 1, z: 1}
   - blockName: Ice
     isSolid: 0
     hasCollision: 0
     hardness: 0.5
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 0
+    meshTypes: 0
     backFaceTexture: 65
     frontFaceTexture: 65
     topFaceTexture: 65
     bottomFaceTexture: 65
     leftFaceTexture: 65
     rightFaceTexture: 65
+    size: {x: 1, y: 1, z: 1}
   - blockName: Plant
     isSolid: 0
     hasCollision: 0
     hardness: 0.5
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 1
+    meshTypes: 1
     backFaceTexture: 55
     frontFaceTexture: 55
     topFaceTexture: 55
     bottomFaceTexture: 55
     leftFaceTexture: 55
     rightFaceTexture: 55
+    size: {x: 1, y: 1, z: 1}
   - blockName: Plant2
     isSolid: 0
     hasCollision: 0
     hardness: 0.5
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    isGrass: 1
+    meshTypes: 1
     backFaceTexture: 39
     frontFaceTexture: 39
     topFaceTexture: 39
     bottomFaceTexture: 39
     leftFaceTexture: 39
     rightFaceTexture: 39
+    size: {x: 1, y: 1, z: 1}
+  - blockName: Plant2
+    isSolid: 0
+    hasCollision: 0
+    hardness: 0.5
+    sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
+    meshTypes: 1
+    backFaceTexture: 39
+    frontFaceTexture: 39
+    topFaceTexture: 39
+    bottomFaceTexture: 39
+    leftFaceTexture: 39
+    rightFaceTexture: 39
+    size: {x: 1, y: 1, z: 1}
   itemTypes:
   - itemName: Wooden Shovel
     sprite: {fileID: 782798829, guid: 489cbf3f57c9564429dd6265e7bf40a2, type: 3}

@@ -29,14 +29,6 @@ public static class Data {
 
     };
 
-    public static readonly int[,] ffff = new int[4, 4] {
-
-        {0, 3, 5, 6}, // Back Face
-        {5, 6, 0, 3}, // Front Face
-        {4, 7, 1, 2}, // Left Face
-        {1, 2, 4, 7}  // Right Face
-
-    };
 
 
     public static readonly byte[,,] trees = new byte[5, 7, 5] {
@@ -70,7 +62,16 @@ public static class Data {
 
     };
 
-    public static readonly int[,] voxelTris = new int[6, 4] {
+    public static readonly int[,] grassMesh = new int[4, 4] {
+
+        {0, 3, 5, 6}, // Back Face
+        {5, 6, 0, 3}, // Front Face
+        {4, 7, 1, 2}, // Left Face
+        {1, 2, 4, 7}  // Right Face
+
+    };
+
+    public static readonly int[,] blockMesh = new int[6, 4] {
 
         {0, 3, 1, 2}, // Back Face
         {5, 6, 4, 7}, // Front Face

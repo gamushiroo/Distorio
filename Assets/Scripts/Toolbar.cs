@@ -22,6 +22,7 @@ public class Toolbar : MonoBehaviour {
         inventory.SetItem(0, new(131, 1));
         inventory.SetItem(1, new(6, 1));
 
+        inventory.SetItem(2, new(9, 1));
         inventory.SetItem(30, new(5, 1));
         highlight.position = inventory.images[0].transform.position;
 

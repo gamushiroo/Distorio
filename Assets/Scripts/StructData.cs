@@ -49,7 +49,19 @@ public struct WWWEe {
     public bool isGrounded;
 }
 
+public struct VoxelAndPos {
 
+    public ChunkVoxel pos;
+    public byte id;
+
+    public VoxelAndPos (ChunkVoxel _position, byte _id) {
+
+        pos = _position;
+        id = _id;
+
+    }
+
+}
 
 [System.Serializable]
 public struct AABBData {
@@ -66,23 +78,6 @@ public struct AABBData {
 
 }
 
-public struct Func {
-    public ItemData itemIn;
-    public ItemData itemOut;
-    public Func(ItemData itemIn, ItemData itemOut) {
-        this.itemIn = itemIn;
-        this.itemOut = itemOut;
-    }
-}
-
-public struct ItemData {
-    public byte value;
-    public byte id;
-    public ItemData (byte value, byte id) {
-        this.value = value;
-        this.id = id;
-    }
-}
 
 public struct ItemStack {
     public byte id;
@@ -99,6 +94,13 @@ public struct ChunkVoxel {
         this.c = c;
         this.v = v;
     }
+
+    public static bool Equal (ChunkVoxel a, ChunkVoxel b) {
+        return a.c == b.c && a.v == b.v;
+    }
+
+    public static ChunkVoxel zero = new ChunkVoxel(Vector2Int.zero, Vector3Int.zero);
+
     public Vector2Int c;
     public Vector3Int v;
 }

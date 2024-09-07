@@ -21,8 +21,8 @@ public class MyUI : MonoBehaviour {
 
     private void LateUpdate () {
 
-        hpBar.value = player.health / Data.player.health;
-        hpText.text = Mathf.FloorToInt(player.health).ToString("#,#");
+        hpBar.value = player.entity.Health / Data.player.health;
+        hpText.text = Mathf.FloorToInt(player.entity.Health).ToString("#,#");
 
         temp.text = Mathf.FloorToInt(world.GetTemp(player.camera.transform.position)).ToString("#,#") + "ÅãC";
     }

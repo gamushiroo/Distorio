@@ -41,43 +41,28 @@ public class Hand : MonoBehaviour {
     public void GenerateMesh (int selectedBlockIndex) {
 
         switchEase = 0;
-
         int vertexIndex = 0;
         List<Vector3> vertices = new();
         List<int> triangles = new();
         List<Vector2> uvs = new();
-
         if (selectedBlockIndex != 0) {
-
             for (int p = 0; p < 6; p++) {
-
                 for (int i = 0; i < 4; i++) {
-
-                    vertices.Add(Data.voxelVerts[Data.voxelTris[p, i]]);
+                    vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]]);
                     uvs.Add(( Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[selectedBlockIndex].GetTextureID(p)) ) / Data.TextureSize);
-
                 }
-
                 for (int i = 0; i < 6; i++)
                     triangles.Add(Data.order[i] + vertexIndex);
-
                 vertexIndex += 4;
             }
         }
-
         Mesh mesh = new() {
-
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
             vertices = vertices.ToArray(),
             triangles = triangles.ToArray(),
             uv = uvs.ToArray()
-
         };
-
         mesh.RecalculateNormals();
-
-        Destroy(meshFilter.sharedMesh);
         meshFilter.sharedMesh = mesh;
-
     }
 }

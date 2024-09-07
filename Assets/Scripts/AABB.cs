@@ -21,13 +21,10 @@ public static class AABB {
 
                         ChunkVoxel pos = Data.Vector3ToChunkVoxel(posAndVel_.pos + new Vector3Int(x, y, z));
 
-                        if (world.chunks.ContainsKey(pos.c)) {
+                        if (world.blockTypes[world.GetVoxelID(pos)].hasCollision) {
 
-                            if (world.blockTypes[world.GetVoxelID(pos)].hasCollision) {
+                            boxColliderList.Add(SweptAABB(posAndVel_, new WWWEe(Data.PublicLocationDerect(pos), Vector3.one, Vector3.zero, false)));
 
-                                boxColliderList.Add(SweptAABB(posAndVel_, new WWWEe(Data.PublicLocationDerect(pos), Vector3.one, Vector3.zero, false)));
-
-                            }
                         }
                     }
                 }
@@ -67,7 +64,7 @@ public static class AABB {
 
     }
 
-    public static bool FFF (WWWEe posAndVel_, Vector3 ttt) {
+    public static bool ABCheck (WWWEe posAndVel_, Vector3 ttt) {
 
         return AABBCheck(posAndVel_, new WWWEe(ttt, Vector3.one, Vector3.zero, false));
 

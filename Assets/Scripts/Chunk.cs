@@ -5,8 +5,9 @@ public class Chunk {
     private bool isTerrainMapGenerated = false;
     private bool threadLocked = false;
     private bool isActive = true;
+    private int vertexIndex = 0;
     private readonly byte[,,] voxelMap = new byte[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
-    private readonly Queue<VoxelMod> modifications = new();
+    private readonly Queue<VoxelAndPos> modifications = new();
     private readonly List<Vector3> vertices = new();
     private readonly GameObject chunkObject = new();
     private readonly List<int> triangles = new();
@@ -25,9 +26,11 @@ public class Chunk {
     }
     public bool IsEditable => !(!isTerrainMapGenerated || threadLocked);
     public byte GetVoxelIDChunk (Vector3Int pos) {
+        if (pos.x < 0 || pos.x >= Data.ChunkWidth || pos.y < 0 || pos.y >= Data.ChunkHeight || pos.z < 0 || pos.z >= Data.ChunkWidth)
+            return 0;
         return voxelMap[pos.x, pos.y, pos.z];
     }
-    public void EnqueueVoxelMod (VoxelMod voxelMod) {
+    public void EnqueueVoxelMod (VoxelAndPos voxelMod) {
         modifications.Enqueue(voxelMod);
     }
     public void SetActiveState (bool value) {
@@ -53,7 +56,7 @@ public class Chunk {
         }
     }
     public void GenerateMesh () {
-        int vertexIndex = 0;
+        vertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
         uvs.Clear();
@@ -61,32 +64,7 @@ public class Chunk {
             for (int y = 0; y < Data.ChunkHeight; y++) {
                 for (int z = 0; z < Data.ChunkWidth; z++) {
                     if (voxelMap[x, y, z] != 0) {
-                        if (world.blockTypes[voxelMap[x, y, z]].isGrass) {
-                            for (int p = 0; p < 4; p++) {
-                                for (int i = 0; i < 4; i++) {
-                                    vertices.Add(Data.voxelVerts[Data.ffff[p, i]] + new Vector3(x, y, z));
-                                    uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
-                                }
-                                for (int i = 0; i < 6; i++) {
-                                    triangles.Add(Data.order[i] + vertexIndex);
-                                }
-                                vertexIndex += 4;
-                            }
-                        } else {
-                            for (int p = 0; p < 6; p++) {
-                                Vector3Int pos = Data.faceChecks[p] + new Vector3Int(x, y, z);
-                                if (!(IsInChunk(pos) && world.blockTypes[GetVoxelIDChunk(pos)].isSolid)) {
-                                    for (int i = 0; i < 4; i++) {
-                                        vertices.Add(Data.voxelVerts[Data.voxelTris[p, i]] + new Vector3(x, y, z));
-                                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
-                                    }
-                                    for (int i = 0; i < 6; i++) {
-                                        triangles.Add(Data.order[i] + vertexIndex);
-                                    }
-                                    vertexIndex += 4;
-                                }
-                            }
-                        }
+                        AddVoxelMesh(x, y, z, world.blockTypes[voxelMap[x, y, z]].meshTypes);
                     }
                 }
             }
@@ -100,13 +78,36 @@ public class Chunk {
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
     }
-    private bool IsInChunk (Vector3 pos) {
-        return !(pos.x < 0 || pos.x >= Data.ChunkWidth || pos.y < 0 || pos.y >= Data.ChunkHeight || pos.z < 0 || pos.z >= Data.ChunkWidth);
+    private void AddVoxelMesh (int x, int y, int z, int meshTypeID) {
+        int[,] meshType;
+        switch (meshTypeID) {
+            case 0:
+                meshType = Data.blockMesh;
+                break;
+            case 1:
+                meshType = Data.grassMesh;
+                break;
+            default:
+                meshType = Data.blockMesh;
+                break;
+        }
+        for (int p = 0; p < meshType.Length / 4; p++) {
+            if (meshTypeID != 0 || !world.blockTypes[GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
+                for (int i = 0; i < 4; i++) {
+                    vertices.Add(Data.voxelVerts[meshType[p, i]] + new Vector3(x, y, z));
+                    uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                }
+                for (int i = 0; i < 6; i++) {
+                    triangles.Add(Data.order[i] + vertexIndex);
+                }
+                vertexIndex += 4;
+            }
+        }
     }
     private void UC () {
         lock (modifications) {
             while (modifications.Count > 0) {
-                VoxelMod vmod = modifications.Dequeue();
+                VoxelAndPos vmod = modifications.Dequeue();
                 voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
             }
         }
