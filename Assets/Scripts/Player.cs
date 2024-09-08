@@ -33,11 +33,6 @@ public class Player : MonoBehaviour {
 
         if (entity.isAllive) {
 
-            if (Input.GetKeyDown(KeyCode.E)) {
-
-                myUI.Switch();
-
-            }
 
             if (!myUI.inUI)  {
 
@@ -64,6 +59,7 @@ public class Player : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.R) && !entity.isAllive) {
 
             entity.Init();
+
         }
     }
     private void SetValue () {
@@ -128,7 +124,14 @@ public class Player : MonoBehaviour {
             }
 
 
-        } else if ( !world.blockTypes[world.GetVoxelID(tryPlacingPos)].hasCollision && !entity.IsCollide(tryPlacingPos)) {
+        } else if(id == 0) {
+            Queue<VoxelAndPos> queue = new();
+            queue.Enqueue(new(pos, id));
+            world.AddMod(queue);
+
+            hand.placeEase = 0;
+
+        } else if (!world.blockTypes[world.GetVoxelID(tryPlacingPos)].hasCollision && !entity.IsCollide(tryPlacingPos)) {
 
             Queue<VoxelAndPos> queue = new();
             queue.Enqueue(new(pos, id));

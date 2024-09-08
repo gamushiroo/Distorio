@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class World : MonoBehaviour {
     public AudioClip audioClip;
@@ -250,10 +249,4 @@ public class BlockType {
             _ => 0,
         };
     }
-}
-[System.Serializable]
-public class ItemType {
-    public string itemName;
-    public Sprite sprite;
-    public float mineSpeed;
 }

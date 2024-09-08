@@ -29,7 +29,18 @@ public static class Data {
 
     };
 
+    public static readonly Vector3[] halfVoxelVerts = new Vector3[8] {
 
+        new Vector3(0.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.5f, 0.0f),
+        new Vector3(0.0f, 0.5f, 0.0f),
+        new Vector3(0.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.5f, 1.0f),
+        new Vector3(0.0f, 0.5f, 1.0f)
+
+    };
 
     public static readonly byte[,,] trees = new byte[5, 7, 5] {
 

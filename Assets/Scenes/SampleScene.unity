@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.49019608, g: 0.5176471, b: 0.67058825, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.005
+  m_FogDensity: 0.0075
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -6772,7 +6772,7 @@ MonoBehaviour:
     hasCollision: 1
     hardness: 1
     sprite: {fileID: 1244101536, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 0
+    meshTypes: 2
     backFaceTexture: 18
     frontFaceTexture: 18
     topFaceTexture: 18

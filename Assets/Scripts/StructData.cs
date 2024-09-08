@@ -78,6 +78,12 @@ public struct AABBData {
 
 }
 
+[System.Serializable]
+public struct ItemType {
+    public string itemName;
+    public Sprite sprite;
+    public float mineSpeed;
+}
 
 public struct ItemStack {
     public byte id;

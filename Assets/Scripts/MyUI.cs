@@ -25,6 +25,13 @@ public class MyUI : MonoBehaviour {
         hpText.text = Mathf.FloorToInt(player.entity.Health).ToString("#,#");
 
         temp.text = Mathf.FloorToInt(world.GetTemp(player.camera.transform.position)).ToString("#,#") + "ÅãC";
+
+        if (Input.GetKeyDown(KeyCode.E)) {
+
+            Switch();
+
+        }
+
     }
 
 
