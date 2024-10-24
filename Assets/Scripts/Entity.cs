@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class Entity {
@@ -9,7 +12,7 @@ public class Entity {
     private readonly int entityID;
 
     public MeshFilter meshFilter;
-
+    bool isCollidedVertically;
     public bool isDead;
 
     public double posX;
@@ -73,7 +76,7 @@ public class Entity {
     public AxisAlignedBB GetEntityBoundingBox () {
         return boundingBox;
     }
-    private void SetPosition (double x, double y, double z) {
+    protected void SetPosition (double x, double y, double z) {
         posX = x;
         posY = y;
         posZ = z;
@@ -136,22 +139,53 @@ public class Entity {
         }
     }
 
+    private void ResetPositionToBB () {
+        posX = (GetEntityBoundingBox().minX + GetEntityBoundingBox().maxX) / 2.0D;
+        posY = GetEntityBoundingBox().minY;
+        posZ = (GetEntityBoundingBox().minZ + GetEntityBoundingBox().maxZ) / 2.0D;
+    }
+
     private void MoveEntity (double x, double y, double z) {
 
 
-        double d0 = this.posX;
-        double d1 = this.posY;
-        double d2 = this.posZ;
+        double d0 = posX;
+        double d1 = posY;
+        double d2 = posZ;
 
         double d3 = x;
         double d4 = y;
         double d5 = z;
 
-        WWWEe entity = AABB.PosUpdate(new(new((float)posX, (float)posY, (float)posZ), new(width, height, width), new((float)x, (float)y, (float)z), false), worldObj);
-        posX = entity.pos.x;
-        posY = entity.pos.y;
-        posZ = entity.pos.z;
-        onGround = entity.isGrounded;
+        List<AxisAlignedBB> list1 = worldObj.Ajj(GetEntityBoundingBox().AddCoord(x, y, z));
+        foreach (AxisAlignedBB axisalignedbb1 in list1) {
+            y = axisalignedbb1.CalculateYOffset(GetEntityBoundingBox(), y);
+        }
+        SetEntityBoundingBox(GetEntityBoundingBox().Offset(0.0D, y, 0.0D));
+        foreach (AxisAlignedBB axisalignedbb2 in list1) {
+            x = axisalignedbb2.CalculateXOffset(GetEntityBoundingBox(), x);
+        }
+        SetEntityBoundingBox(GetEntityBoundingBox().Offset(x, 0.0D, 0.0D));
+        foreach (AxisAlignedBB axisalignedbb13 in list1) {
+            z = axisalignedbb13.CalculateZOffset(GetEntityBoundingBox(), z);
+        }
+        SetEntityBoundingBox(GetEntityBoundingBox().Offset(0.0D, 0.0D, z));
+
+        ResetPositionToBB();
+
+        //Debug.Log(new Vector3((float)x, (float)y, (float)z));
+
+
+        isCollidedVertically = d4 != y;
+        onGround = isCollidedVertically && d4 < 0.0D;
+        if( isCollidedVertically && d4 > 0.0D) {
+            gravityVelocity = 0;
+        }
+
+
+
+
+
+        //WWWEe entity = AABB.PosUpdate(new(new((float)posX, (float)posY, (float)posZ), new(width, height, width), new((float)x, (float)y, (float)z), false), worldObj);
 
 
 

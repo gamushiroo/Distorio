@@ -52,9 +52,9 @@ public struct WWWEe {
 public struct VoxelAndPos {
 
     public ChunkVoxel pos;
-    public byte id;
+    public int id;
 
-    public VoxelAndPos (ChunkVoxel _position, byte _id) {
+    public VoxelAndPos (ChunkVoxel _position, int _id) {
 
         pos = _position;
         id = _id;

@@ -17,6 +17,10 @@ public class Item {
 
     }
 
+    public string GetName () {
+        return name;
+    }
+
     public int getItemStackLimit () {
         return this.maxStackSize;
     }

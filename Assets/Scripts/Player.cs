@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour {
 
     public float rotationX;
-    public byte selectedBlockIndex = 0;
+    public int selectedBlockIndex = 0;
 
     [SerializeField] private World world;
     [SerializeField] private Hand hand;
@@ -108,7 +108,7 @@ public class Player : MonoBehaviour {
             lastChunkCoord = chunkCoord;
         }
     }
-    public void SetBBBL (Vector3 position, byte id) {
+    public void SetBBBL (Vector3 position, int id) {
 
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
 

@@ -6,7 +6,7 @@ public class Chunk {
     private bool threadLocked = false;
     private bool isActive = true;
     private int vertexIndex = 0;
-    private readonly byte[,,] voxelMap = new byte[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
+    private readonly int[,,] voxelMap = new int[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
     private readonly Dictionary<Vector3Int, Inventory> Inventories = new();
     private readonly Queue<VoxelAndPos> modifications = new();
     private readonly List<Vector3> vertices = new();
@@ -27,7 +27,7 @@ public class Chunk {
         threadLocked = true;
         new Thread(new ThreadStart(GenerateTerrainData)).Start();
     }
-    public byte GetVoxelIDChunk (Vector3Int pos) {
+    public int GetVoxelIDChunk (Vector3Int pos) {
         if (pos.x < 0 || pos.x >= Data.ChunkWidth || pos.y < 0 || pos.y >= Data.ChunkHeight || pos.z < 0 || pos.z >= Data.ChunkWidth)
             return 0;
         return voxelMap[pos.x, pos.y, pos.z];

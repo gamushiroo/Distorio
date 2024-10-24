@@ -42,9 +42,9 @@ public class UserInterface : MonoBehaviour {
 
     }
 
-    private byte GetSelected () {
+    private int GetSelected () {
 
-        return (byte)player.inventory.GetItemStack(slotIndex).id;
+        return player.inventory.GetItemStack(slotIndex).id;
 
 
     }
@@ -95,13 +95,14 @@ public class UserInterface : MonoBehaviour {
             else if (slotIndex < 0)
                 slotIndex = Data.InventoryWidth - 1;
 
-            byte a = GetSelected();
+            int a = GetSelected();
             player.selectedBlockIndex = a;
             if (a < 128) {
                 blockName.text = world.blockTypes[a].blockName;
                 hand.GenerateMesh(a);
             } else {
-                blockName.text = world.itemTypes[a - 128].itemName;
+                blockName.text = ItemRegistry.GetItem(a).GetName();
+                Debug.Log(a);
                 hand.GenerateMesh(0);
             }
             highlight.position = toolbarImages[slotIndex].transform.position;

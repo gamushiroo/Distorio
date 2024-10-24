@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class World : MonoBehaviour {
 
@@ -20,6 +20,34 @@ public class World : MonoBehaviour {
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly List<Chunk> chunksToUpdate = new();
     private readonly Queue<Chunk> chunksToDraw = new();
+
+
+
+    public List<AxisAlignedBB> Ajj (AxisAlignedBB aaa) {
+
+
+        List<AxisAlignedBB> a = new();
+
+
+
+        Vector3 ttt = new((float)aaa.minX, (float)aaa.minY, (float)aaa.minZ);
+
+        for (int __X = -2; __X < 2; __X++) {
+            for (int __Y = -2; __Y < 3; __Y++) {
+                for (int __Z = -2; __Z < 2; __Z++) {
+
+                    Vector3Int pos = Vector3Int.FloorToInt(ttt + new Vector3Int(__X, __Y, __Z));
+                    if (blockTypes[GetVoxelID(pos)].hasCollision) {
+
+                        a.Add(new(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1));
+
+                    }
+                }
+            }
+        }
+
+        return a;
+    }
 
     private void Awake () {
 
@@ -50,7 +78,7 @@ public class World : MonoBehaviour {
         }
     }
 
-    public void SummonEntity(Vector3 pos) {
+    public void SummonEntity (Vector3 pos) {
 
         entities.Add(new EntityItem(this, 50000f, pos));
 
@@ -163,10 +191,11 @@ public class World : MonoBehaviour {
         return VoxelValue;
 
     }
+
     public bool IsEditable (Vector2Int pos) {
         return chunks.ContainsKey(pos) && chunks[pos].IsEditable;
     }
-    public byte GetVoxelID (Vector3 position) {
+    public int GetVoxelID (Vector3 position) {
 
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
 
@@ -175,7 +204,7 @@ public class World : MonoBehaviour {
         else
             return 0;
     }
-    public bool GetInventory(Vector3 position) {
+    public bool GetInventory (Vector3 position) {
 
 
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);

@@ -18,9 +18,7 @@ public class EntityPlayer : Entity {
 
     public override void AAA () {
 
-        Vector3 a = worldObj.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f);
-        posX = a.x;
-        posY = a.y;
-        posZ = a.z;
+        Vector3 a = worldObj.GetSpawnPoint() + new Vector3(0.5f, 0.5f, 0.5f);
+        SetPosition(a.x, a.y, a.z);
     }
 }
