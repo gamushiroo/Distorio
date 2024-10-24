@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +6,6 @@ public class Player : MonoBehaviour {
 
     public float rotationX;
     public byte selectedBlockIndex = 0;
-    public MyUI myUI;
 
     [SerializeField] private World world;
     [SerializeField] private Hand hand;
@@ -17,27 +15,45 @@ public class Player : MonoBehaviour {
     [SerializeField] private GameObject miningProgresBarObj;
     [SerializeField] private Slider miningProgresBar;
     private bool isMining = false;
-    private ChunkVoxel miningPos;
-    private ChunkVoxel tryPlacingPos;
-    private ChunkVoxel SelectingPos;
+    private Vector3Int miningPos;
+    public Vector3Int tryPlacingPos;
+    public Vector3Int SelectingPos;
     private float miningProgress;
     private Vector2Int chunkCoord;
     private Vector2Int lastChunkCoord;
     public Entity entity;
+    public Inventory inventory;
+
+    public float miningSpeed;
+    public bool locked;
+
+    public void Awake () {
+        locked = false;
+        inventory = new();
+
+    }
+
     private void Start () {
 
-        entity = new(Data.player.size, world, Data.player.health);
+        entity = new EntityPlayer( world, Data.player.health, Vector3.zero);
 
     }
     private void Update () {
 
-        if (entity.isAllive) {
+        if (!entity.isDead) {
+
+            if (!locked) {
+
+                if(selectedBlockIndex >= 128) {
+                    miningSpeed = 4;
+
+                } else {
+                    miningSpeed = 0.8f;
+                }
 
 
-            if (!myUI.inUI)  {
 
-
-                isMining = Input.GetMouseButton(0) && selectedBlockIndex >= 128 && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision;
+                isMining = Input.GetMouseButton(0)  && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision;
 
 
                 rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
@@ -46,19 +62,15 @@ public class Player : MonoBehaviour {
                 entity.AddRotation(Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime);
                 entity.AddVel(Data.GetPlayerVel(), Input.GetKey(KeyCode.Space));
 
-                if (Input.GetMouseButtonDown(0) && !world.blockTypes[world.GetVoxelID(tryPlacingPos)].hasCollision && selectedBlockIndex < 128 && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision) {
-                    SetBBBL(tryPlacingPos, selectedBlockIndex);
-                }
             }
 
             SetValue();
-            CheckPos();
 
-        } 
-        
-        if (Input.GetKeyDown(KeyCode.R) && !entity.isAllive) {
+        }
 
-            entity.Init();
+        if (Input.GetKeyDown(KeyCode.R) && entity.isDead) {
+
+            entity.EntityInit();
 
         }
     }
@@ -67,69 +79,48 @@ public class Player : MonoBehaviour {
         entity.Apply();
 
         CalculateSelectingPos();
-        
+
         if (isMining) {
-            if (!ChunkVoxel.Equal(miningPos, SelectingPos)) {
+            if (!Equals(miningPos, SelectingPos)) {
                 miningPos = SelectingPos;
                 miningProgress = world.blockTypes[world.GetVoxelID(SelectingPos)].hardness;
             }
-            miningProgress -= Time.deltaTime * GetMiningSpeed(selectedBlockIndex - 128, 0.85f, 1f, 0.75f);
+            miningProgress -= Time.deltaTime * miningSpeed;
             if (miningProgress <= 0) {
                 SetBBBL(SelectingPos, 0);
             }
             miningProgresBar.value = miningProgress / world.blockTypes[world.GetVoxelID(SelectingPos)].hardness;
         }
-
-        camera.position = entity.pos + Vector3.up * 1.625f;
+        camera.position = new Vector3((float)entity.posX, (float)entity.posY, (float)entity.posZ)+ Vector3.up * 1.625f;
         camera.rotation = Quaternion.Euler(rotationX, entity.Rotation, 0);
 
-        blockHighlight.transform.position = Data.PublicLocationDerect(SelectingPos) + Vector3.one * 0.5f;
-        miningEffect.transform.position = Data.PublicLocationDerect(SelectingPos) + Vector3.one * 0.5f;
+        blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
+
+        miningEffect.transform.position = SelectingPos + Vector3.one * 0.5f;
 
         miningEffect.SetActive(isMining);
         miningProgresBarObj.SetActive(isMining);
-        blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
-    }
-    private void CheckPos () {
-        chunkCoord = Data.Vector3ToChunkVoxel(entity.pos).c;
+        blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision && !locked);
+
+        chunkCoord = Data.Vector3ToChunkVoxel(new((float)entity.posX, (float)entity.posY, (float)entity.posZ)).c;
         if (!(chunkCoord == lastChunkCoord)) {
             world.CheckViewDistance(chunkCoord);
             lastChunkCoord = chunkCoord;
         }
     }
-    float GetMiningSpeed (int n, float a, float l, float o) {
-        return l * ((Mathf.Pow(a, n) - 1) / (a - 1)) + o;
-    }
-    void SetBBBL (ChunkVoxel pos, byte id) {
-        if(id == 9) {
+    public void SetBBBL (Vector3 position, byte id) {
 
-            bool canPlace = true;
+        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
 
 
-            for (int x = 0; x < 2; x++) {
-                for (int y = 0; y < 3; y++) {
-                    for (int z = 0; z < 2; z++) {
-                        ChunkVoxel checking = Data.Vector3ToChunkVoxel(Data.PublicLocationDerect(tryPlacingPos) + new Vector3Int(x, y, z) + Vector3.one * 0.5f);
-                        if (world.blockTypes[world.GetVoxelID(checking)].hasCollision || entity.IsCollide(checking)) {
-                            canPlace = false;
-                        }
+        Debug.Log(Time.deltaTime);
 
-                    }
-                }
-            }
-
-            if(canPlace) {
-                hand.placeEase = 0;
-                world.AddMod(Structure.MakeFurnace(Data.PublicLocationDerect(pos)));
-            }
-
-
-        } else if(id == 0) {
+        if (id == 0) {
             Queue<VoxelAndPos> queue = new();
             queue.Enqueue(new(pos, id));
             world.AddMod(queue);
+            world.SummonEntity(position + Vector3.one * 0.5f);
 
-            hand.placeEase = 0;
 
         } else if (!world.blockTypes[world.GetVoxelID(tryPlacingPos)].hasCollision && !entity.IsCollide(tryPlacingPos)) {
 
@@ -143,13 +134,13 @@ public class Player : MonoBehaviour {
     private void CalculateSelectingPos () {
         Vector3 _camPos = camera.position;
         for (int i = 0; i < 300; i++) {
-            if (world.blockTypes[world.GetVoxelID(Data.Vector3ToChunkVoxel(_camPos))].hasCollision) {
+            if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
                 break;
             }
             _camPos += camera.forward * 0.02f;
         }
-        SelectingPos = Data.Vector3ToChunkVoxel(_camPos);
-        tryPlacingPos = Data.Vector3ToChunkVoxel(CalculateNormal(_camPos) + _camPos);
+        SelectingPos = Vector3Int.FloorToInt(_camPos);
+        tryPlacingPos = Vector3Int.FloorToInt(CalculateNormal(_camPos) + _camPos);
     }
     private Vector3Int CalculateNormal (Vector3 pp) {
 

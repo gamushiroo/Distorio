@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class World : MonoBehaviour {
-    public AudioClip audioClip;
 
+    public AudioClip audioClip;
     public BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
     public List<ItemType> itemTypes = new();
-    public Sprite slot;
     public List<Entity> entities = new();
+    public Transform backGround;
+    public Player player;
 
     private Vector2 offset;
+
     private readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly List<Chunk> chunksToUpdate = new();
@@ -20,45 +23,46 @@ public class World : MonoBehaviour {
 
     private void Awake () {
 
-        offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
-        Random.InitState((int)System.DateTime.Now.Ticks);
+        Item.RegisterItems();
 
-        for (int x = -8; x < 8; x++) {
-            for (int y = -8; y < 8; y++) {
-
-                Vector2Int pos = new(x, y);
-
-                chunks.Add(pos, new(pos, this));
-                if (!chunksToUpdate.Contains(chunks[pos]))
-                    chunksToUpdate.Add(chunks[pos]);
-
-
-            }
-        }
-    }
-    private void Start () {
-
-        for(int i = 0; i < 10; i++) {
-            entities.Add(new(Vector3.one * 0.9f, this, 50000f));
-            entities[i].AddRotation(Random.Range(-180, 180) );
-        }
+        InitNoise();
+        GenerateWorld();
+        //SummonEntities();
     }
     private void LateUpdate () {
-
-        for (int i = 0; i < 10; i++) {
-            entities[i].AddRotation(90 * Time.deltaTime);
-            entities[i].AddVel(Vector3.forward, true);
-            entities[i].Apply();
-        }
-
+        UpdateEntities();
         ModifyChunks();
         UpdateChunks();
         DrawChunks();
     }
-
-    private float Get2DPerlin (Vector2 position, float scale) {
-        return Mathf.PerlinNoise(position.x * scale + offset.x, position.y * scale + offset.y) - 0.5f;
+    private void InitNoise () {
+        Random.InitState((int)System.DateTime.Now.Ticks);
+        offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
+        Noise.SetOffset(offset);
     }
+    private void GenerateWorld () {
+        for (int x = -8; x < 8; x++) {
+            for (int y = -8; y < 8; y++) {
+                Vector2Int pos = new(x, y);
+                chunks.Add(pos, new(pos, this));
+                chunksToUpdate.Add(chunks[pos]);
+            }
+        }
+    }
+
+    public void SummonEntity(Vector3 pos) {
+
+        entities.Add(new EntityItem(this, 50000f, pos));
+
+
+    }
+    private void UpdateEntities () {
+        for (int i = 0; i < entities.Count; i++) {
+
+            entities[i].Apply();
+        }
+    }
+
     public void CheckViewDistance (Vector2Int playerPos) {
         List<Vector2Int> previouslyActiveChunks = chunks.Keys.ToList();
         for (int x = playerPos.x - Data.ChunkLoadRange; x < playerPos.x + Data.ChunkLoadRange; x++) {
@@ -66,8 +70,7 @@ public class World : MonoBehaviour {
                 Vector2Int pos = new(x, y);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this));
-                    if (!chunksToUpdate.Contains(chunks[pos]))
-                        chunksToUpdate.Add(chunks[pos]);
+                    chunksToUpdate.Add(chunks[pos]);
                 } else {
                     chunks[pos].SetActiveState(true);
                 }
@@ -86,10 +89,11 @@ public class World : MonoBehaviour {
     private float GetHeight (Vector3Int pos) {
         float terrainHeight = 0;
         for (int i = 0; i < 4; i++) {
-            float a = Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
-            terrainHeight += biome.terrainHeight * Get2DPerlin(new(pos.x, pos.z), biome.terrainScale / Mathf.Pow(2, i) / a);
+            terrainHeight += biome.terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale / Mathf.Pow(2, i));
         }
-        float sec = Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.029f) * 4) + Mathf.Pow(2, Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
+        terrainHeight /= Noise.Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
+
+        float sec = Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.029f) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
         terrainHeight *= sec / 2;
         terrainHeight = Mathf.FloorToInt(terrainHeight + biome.solidGroundHeight);
         return terrainHeight;
@@ -129,10 +133,10 @@ public class World : MonoBehaviour {
                     add = 128;
                     type = 14;
                 }
-                float www = Mathf.Max(0, Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f) * add;
+                float www = Mathf.Max(0, Noise.Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f) * add;
 
 
-                if (Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
+                if (Noise.Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
                     if (new System.Random().Next(0, Mathf.FloorToInt(www) + 2) == 0) {
                         Queue<VoxelAndPos> a = new();
                         a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f), type));
@@ -141,8 +145,8 @@ public class World : MonoBehaviour {
                 }
 
             }
-            if (Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
-                if (Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
+            if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
+                if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
                     lock (modifications) {
 
                         if (temp < -5f) {
@@ -162,20 +166,30 @@ public class World : MonoBehaviour {
     public bool IsEditable (Vector2Int pos) {
         return chunks.ContainsKey(pos) && chunks[pos].IsEditable;
     }
-    public byte GetVoxelID (ChunkVoxel pos) {
+    public byte GetVoxelID (Vector3 position) {
+
+        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+
         if (chunks.ContainsKey(pos.c) && chunks[pos.c].IsEditable)
             return chunks[pos.c].GetVoxelIDChunk(pos.v);
         else
             return 0;
     }
+    public bool GetInventory(Vector3 position) {
+
+
+        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+        return chunks.ContainsKey(pos.c) && chunks[pos.c].IsEditable && chunks[pos.c].GetInventory(pos.v);
+
+    }
     public float GetTemp (Vector3 pos) {
-        return (Get2DPerlin(new(pos.x, pos.z), 0.002f) + 0.5f) * 60 - 20;
+        return (Noise.Get2DPerlin(new(pos.x, pos.z), 0.002f) + 0.5f) * 60 - 20;
     }
     public Vector3Int GetSpawnPoint () {
         Vector3Int pos = Vector3Int.zero;
         if (chunks.ContainsKey(Vector2Int.zero)) {
             for (int y = 0; y < Data.ChunkHeight; y++) {
-                if (!blockTypes[GetVoxelID(new(Vector2Int.zero, new(0, y, 0)))].hasCollision) {
+                if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
                     pos = new Vector3Int(0, y, 0);
                     break;
                 }
@@ -226,6 +240,7 @@ public class BlockType {
     public string blockName;
     public bool isSolid;
     public bool hasCollision;
+    public bool hasInventory;
     public float hardness;
     public Sprite sprite;
     public byte meshTypes;
@@ -235,8 +250,6 @@ public class BlockType {
     public int bottomFaceTexture;
     public int leftFaceTexture;
     public int rightFaceTexture;
-
-    public Vector3Int size;
 
     public int GetTextureID (int faceIndex) {
         return faceIndex switch {

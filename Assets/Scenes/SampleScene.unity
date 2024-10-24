@@ -182,9 +182,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 165f4d88dca1fa2488780527e5733052, type: 3}
     m_FontSize: 60
-    m_FontStyle: 2
+    m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 300
@@ -302,7 +302,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: -3
@@ -387,7 +387,9 @@ Transform:
   - {fileID: 65284394}
   - {fileID: 2136937828}
   - {fileID: 1933486333}
+  - {fileID: 849995241}
   - {fileID: 443793289}
+  - {fileID: 1555666365}
   - {fileID: 1412084297}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -409,7 +411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &223974227
 RectTransform:
   m_ObjectHideFlags: 0
@@ -515,7 +517,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationX: 0
   selectedBlockIndex: 0
-  myUI: {fileID: 782628376}
   world: {fileID: 1482468890}
   hand: {fileID: 1439694691}
   camera: {fileID: 963194228}
@@ -523,6 +524,10 @@ MonoBehaviour:
   miningEffect: {fileID: 485163719}
   miningProgresBarObj: {fileID: 790624905}
   miningProgresBar: {fileID: 790624907}
+  tryPlacingPos: {x: 0, y: 0, z: 0}
+  SelectingPos: {x: 0, y: 0, z: 0}
+  miningSpeed: 0
+  locked: 0
 --- !u!1 &340895051
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,7 +545,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &340895052
 RectTransform:
   m_ObjectHideFlags: 0
@@ -611,7 +616,6 @@ GameObject:
   - component: {fileID: 443793288}
   - component: {fileID: 443793287}
   - component: {fileID: 443793286}
-  - component: {fileID: 443793290}
   m_Layer: 5
   m_Name: Toolbar
   m_TagString: Untagged
@@ -702,24 +706,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &443793290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443793285}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 941e73615e1171146973d7bf475b7268, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  world: {fileID: 1482468890}
-  hand: {fileID: 1439694691}
-  player: {fileID: 270149130}
-  highlight: {fileID: 2096473317}
-  blockName: {fileID: 40919616}
-  background: {fileID: 1933486332}
 --- !u!1 &470481379
 GameObject:
   m_ObjectHideFlags: 0
@@ -5794,57 +5780,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &782628375
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 782628377}
-  - component: {fileID: 782628376}
-  m_Layer: 0
-  m_Name: MyUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &782628376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782628375}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c5978fcb0932d4b81553c51045b8ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inUI: 0
-  player: {fileID: 270149130}
-  hpBar: {fileID: 786760891}
-  hpText: {fileID: 1828601337}
-  world: {fileID: 1482468890}
-  temp: {fileID: 1556735834}
-  toolbar: {fileID: 443793290}
---- !u!4 &782628377
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782628375}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &786760889
 GameObject:
   m_ObjectHideFlags: 0
@@ -6101,6 +6036,108 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &849995240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 849995241}
+  - component: {fileID: 849995244}
+  - component: {fileID: 849995243}
+  - component: {fileID: 849995242}
+  m_Layer: 5
+  m_Name: ToolbarBackground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &849995241
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849995240}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 133479527}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &849995242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849995240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &849995243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849995240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &849995244
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849995240}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: -1
+  m_TargetDisplay: 0
 --- !u!1 &904941809
 GameObject:
   m_ObjectHideFlags: 0
@@ -6175,7 +6212,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.7686275, g: 0.85098046, b: 0.95294124, a: 0}
+  m_BackGroundColor: {r: 0.64146495, g: 0.74686426, b: 0.8773585, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -6692,8 +6729,9 @@ MonoBehaviour:
   - blockName: 
     isSolid: 0
     hasCollision: 0
+    hasInventory: 0
     hardness: 0
-    sprite: {fileID: -1783754289, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
+    sprite: {fileID: 21300000, guid: 223386f7d475133429222aefb8631ede, type: 3}
     meshTypes: 0
     backFaceTexture: 0
     frontFaceTexture: 0
@@ -6701,10 +6739,10 @@ MonoBehaviour:
     bottomFaceTexture: 0
     leftFaceTexture: 0
     rightFaceTexture: 0
-    size: {x: 0, y: 0, z: 0}
   - blockName: Grass
     isSolid: 1
     hasCollision: 1
+    hasInventory: 0
     hardness: 1
     sprite: {fileID: -848102514, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
@@ -6714,10 +6752,10 @@ MonoBehaviour:
     bottomFaceTexture: 2
     leftFaceTexture: 3
     rightFaceTexture: 3
-    size: {x: 1, y: 1, z: 1}
   - blockName: Dirt
     isSolid: 1
     hasCollision: 1
+    hasInventory: 0
     hardness: 1
     sprite: {fileID: 1549071701, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
@@ -6727,11 +6765,11 @@ MonoBehaviour:
     bottomFaceTexture: 2
     leftFaceTexture: 2
     rightFaceTexture: 2
-    size: {x: 1, y: 1, z: 1}
   - blockName: Stone
     isSolid: 1
     hasCollision: 1
-    hardness: 3
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 2086677478, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 1
@@ -6740,11 +6778,11 @@ MonoBehaviour:
     bottomFaceTexture: 1
     leftFaceTexture: 1
     rightFaceTexture: 1
-    size: {x: 1, y: 1, z: 1}
   - blockName: Wood
     isSolid: 1
     hasCollision: 1
-    hardness: 2
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 102581001, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 20
@@ -6753,11 +6791,11 @@ MonoBehaviour:
     bottomFaceTexture: 21
     leftFaceTexture: 20
     rightFaceTexture: 20
-    size: {x: 1, y: 1, z: 1}
   - blockName: Leaf
     isSolid: 0
-    hasCollision: 0
-    hardness: 0.5
+    hasCollision: 1
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: -317537582, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 52
@@ -6766,24 +6804,24 @@ MonoBehaviour:
     bottomFaceTexture: 52
     leftFaceTexture: 52
     rightFaceTexture: 52
-    size: {x: 1, y: 1, z: 1}
   - blockName: Sand
     isSolid: 1
     hasCollision: 1
+    hasInventory: 0
     hardness: 1
     sprite: {fileID: 1244101536, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 2
+    meshTypes: 0
     backFaceTexture: 18
     frontFaceTexture: 18
     topFaceTexture: 18
     bottomFaceTexture: 18
     leftFaceTexture: 18
     rightFaceTexture: 18
-    size: {x: 1, y: 1, z: 1}
   - blockName: Glass
     isSolid: 0
     hasCollision: 1
-    hardness: 0.5
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 536285754, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 49
@@ -6792,11 +6830,11 @@ MonoBehaviour:
     bottomFaceTexture: 49
     leftFaceTexture: 49
     rightFaceTexture: 49
-    size: {x: 1, y: 1, z: 1}
   - blockName: Coal
     isSolid: 1
     hasCollision: 1
-    hardness: 0.5
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 1611522741, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 34
@@ -6805,11 +6843,11 @@ MonoBehaviour:
     bottomFaceTexture: 34
     leftFaceTexture: 34
     rightFaceTexture: 34
-    size: {x: 1, y: 1, z: 1}
   - blockName: Furnace
     isSolid: 0
     hasCollision: 1
-    hardness: 0.5
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: -1891841105, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 45
@@ -6818,11 +6856,11 @@ MonoBehaviour:
     bottomFaceTexture: 62
     leftFaceTexture: 45
     rightFaceTexture: 45
-    size: {x: 2, y: 3, z: 2}
   - blockName: Diamond
     isSolid: 1
     hasCollision: 1
-    hardness: 0.5
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 0}
     meshTypes: 0
     backFaceTexture: 50
@@ -6831,11 +6869,11 @@ MonoBehaviour:
     bottomFaceTexture: 50
     leftFaceTexture: 50
     rightFaceTexture: 50
-    size: {x: 1, y: 1, z: 1}
   - blockName: Cactus
     isSolid: 1
     hasCollision: 1
-    hardness: 2
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 0}
     meshTypes: 0
     backFaceTexture: 70
@@ -6844,11 +6882,11 @@ MonoBehaviour:
     bottomFaceTexture: 71
     leftFaceTexture: 70
     rightFaceTexture: 70
-    size: {x: 1, y: 1, z: 1}
   - blockName: Snow
     isSolid: 1
     hasCollision: 1
-    hardness: 0.5
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: 0}
     meshTypes: 0
     backFaceTexture: 68
@@ -6857,11 +6895,11 @@ MonoBehaviour:
     bottomFaceTexture: 2
     leftFaceTexture: 68
     rightFaceTexture: 68
-    size: {x: 1, y: 1, z: 1}
   - blockName: Ice
     isSolid: 0
     hasCollision: 0
-    hardness: 0.5
+    hasInventory: 0
+    hardness: 1
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 0
     backFaceTexture: 65
@@ -6870,10 +6908,10 @@ MonoBehaviour:
     bottomFaceTexture: 65
     leftFaceTexture: 65
     rightFaceTexture: 65
-    size: {x: 1, y: 1, z: 1}
   - blockName: Plant
     isSolid: 0
     hasCollision: 0
+    hasInventory: 0
     hardness: 0.5
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 1
@@ -6883,10 +6921,10 @@ MonoBehaviour:
     bottomFaceTexture: 55
     leftFaceTexture: 55
     rightFaceTexture: 55
-    size: {x: 1, y: 1, z: 1}
   - blockName: Plant2
     isSolid: 0
     hasCollision: 0
+    hasInventory: 0
     hardness: 0.5
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 1
@@ -6896,10 +6934,10 @@ MonoBehaviour:
     bottomFaceTexture: 39
     leftFaceTexture: 39
     rightFaceTexture: 39
-    size: {x: 1, y: 1, z: 1}
   - blockName: Plant2
     isSolid: 0
     hasCollision: 0
+    hasInventory: 0
     hardness: 0.5
     sprite: {fileID: -1532345523, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
     meshTypes: 1
@@ -6909,7 +6947,32 @@ MonoBehaviour:
     bottomFaceTexture: 39
     leftFaceTexture: 39
     rightFaceTexture: 39
-    size: {x: 1, y: 1, z: 1}
+  - blockName: Chest
+    isSolid: 1
+    hasCollision: 1
+    hasInventory: 1
+    hardness: 1
+    sprite: {fileID: -1905043986, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
+    meshTypes: 0
+    backFaceTexture: 27
+    frontFaceTexture: 27
+    topFaceTexture: 25
+    bottomFaceTexture: 25
+    leftFaceTexture: 27
+    rightFaceTexture: 27
+  - blockName: Piston
+    isSolid: 1
+    hasCollision: 1
+    hasInventory: 0
+    hardness: 1
+    sprite: {fileID: -1905043986, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
+    meshTypes: 0
+    backFaceTexture: 108
+    frontFaceTexture: 108
+    topFaceTexture: 107
+    bottomFaceTexture: 108
+    leftFaceTexture: 108
+    rightFaceTexture: 108
   itemTypes:
   - itemName: Wooden Shovel
     sprite: {fileID: 782798829, guid: 489cbf3f57c9564429dd6265e7bf40a2, type: 3}
@@ -6918,12 +6981,174 @@ MonoBehaviour:
     sprite: {fileID: -22161511, guid: 489cbf3f57c9564429dd6265e7bf40a2, type: 3}
     mineSpeed: 0
   - itemName: Iron Shovel
-    sprite: {fileID: 1563811926, guid: 489cbf3f57c9564429dd6265e7bf40a2, type: 3}
+    sprite: {fileID: 857996084, guid: 7464b0f7b2ca2d042920cd67fca0379b, type: 3}
     mineSpeed: 0
   - itemName: Titanium Shovel
     sprite: {fileID: -394320418, guid: 489cbf3f57c9564429dd6265e7bf40a2, type: 3}
     mineSpeed: 0
+  backGround: {fileID: 1933486333}
+  player: {fileID: 270149130}
+--- !u!1 &1505735810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1505735811}
+  - component: {fileID: 1505735812}
+  m_Layer: 0
+  m_Name: UserInterface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1505735811
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505735810}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -173.956, y: 168.41585, z: -629.29156}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1505735812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505735810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d6a8f9acb54e4d970a72f724181a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   slot: {fileID: 21300000, guid: c6662f2f1b05cab469b4475bec882c8e, type: 3}
+  nothing: {fileID: 21300000, guid: 223386f7d475133429222aefb8631ede, type: 3}
+  inventoryBackGround: {fileID: 1933486332}
+  toolbarBackGround: {fileID: 849995240}
+  toolbar: {fileID: 443793285}
+  inventoryObj: {fileID: 1555666364}
+  player: {fileID: 270149130}
+  world: {fileID: 1482468890}
+  highlight: {fileID: 2096473317}
+  slotIndex: 0
+  hpBar: {fileID: 786760891}
+  hpText: {fileID: 1828601337}
+  inUI: 0
+  blockName: {fileID: 40919616}
+  hand: {fileID: 0}
+--- !u!1 &1555666364
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1555666365}
+  - component: {fileID: 1555666368}
+  - component: {fileID: 1555666367}
+  - component: {fileID: 1555666366}
+  m_Layer: 5
+  m_Name: InventoryObj
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1555666365
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555666364}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 133479527}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &1555666366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555666364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &1555666367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555666364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &1555666368
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555666364}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &1556735832
 GameObject:
   m_ObjectHideFlags: 0
@@ -7021,7 +7246,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1828601336
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7173,7 +7398,7 @@ GameObject:
   - component: {fileID: 1933486335}
   - component: {fileID: 1933486334}
   m_Layer: 5
-  m_Name: Toolbar (2)
+  m_Name: InventoryBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

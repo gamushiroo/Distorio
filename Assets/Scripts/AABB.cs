@@ -19,11 +19,11 @@ public static class AABB {
                 for (int y = -2; y < 3; y++) {
                     for (int z = -2; z < 2; z++) {
 
-                        ChunkVoxel pos = Data.Vector3ToChunkVoxel(posAndVel_.pos + new Vector3Int(x, y, z));
+                        Vector3Int pos = Vector3Int.FloorToInt(posAndVel_.pos + new Vector3Int(x, y, z));
 
                         if (world.blockTypes[world.GetVoxelID(pos)].hasCollision) {
 
-                            boxColliderList.Add(SweptAABB(posAndVel_, new WWWEe(Data.PublicLocationDerect(pos), Vector3.one, Vector3.zero, false)));
+                            boxColliderList.Add(SweptAABB(posAndVel_, new WWWEe(pos, Vector3.one, Vector3.zero, false)));
 
                         }
                     }

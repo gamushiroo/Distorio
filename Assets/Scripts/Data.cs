@@ -4,14 +4,14 @@ public static class Data {
 
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
-    public static readonly int ChunkLoadRange = 6;
+
+    public static readonly int InventoryWidth = 8;
+    public static readonly int InventoryHeight = 4;
+
+    public static readonly int ChunkLoadRange =6;
     public static readonly int TextureSize = 16;
     public static readonly float playerSpeed = 4.5f;
     public static readonly float mouseSens = 100;
-    public static readonly int inventoryX = 10;
-    public static readonly int inventoryY = 5;
-
-    public static readonly bool IsThread = true;
 
     public static readonly EntityData player = new EntityData("player", new(0.75f, 1.75f, 0.75f), 100, 2000);
 
@@ -49,16 +49,6 @@ public static class Data {
         {{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{0, 5, 4, 5, 0 },{0, 5, 5, 5, 0 } },
         {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{5, 5, 5, 5, 5 },{5, 5, 5, 5, 5 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 } },
         {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } }
-
-    };
-
-    public static readonly byte[,,] treesTwo = new byte[5, 9, 5] {
-
-        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 },{0, 0, 5, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } },
-        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{5, 5, 5, 5, 5 },{5, 5, 5, 5, 5 },{0, 5, 5, 5, 5 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 } },
-        {{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{0, 5, 4, 5, 0 },{0, 5, 5, 5, 0 } },
-        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{5, 5, 5, 5, 5 },{5, 5, 5, 5, 5 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 } },
-        {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 },{0, 0, 5, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } }
 
     };
 
@@ -117,19 +107,15 @@ public static class Data {
 
     public static ChunkVoxel Vector3ToChunkVoxel (Vector3 pos) {
 
-        Vector2Int ddd = new(Mathf.FloorToInt(pos.x / ChunkWidth), Mathf.FloorToInt(pos.z / ChunkWidth));
+        Vector3Int a = Vector3Int.FloorToInt(pos);
 
+        int x = pos.x >= 0 ? a.x % ChunkWidth : (a.x + 1) % ChunkWidth - 1 + ChunkWidth;
+        int y = pos.y >= 0 ? a.y % ChunkHeight : (a.y + 1) % ChunkHeight - 1 + ChunkHeight;
+        int z = pos.z >= 0 ? a.z % ChunkWidth : (a.z + 1) % ChunkWidth - 1 + ChunkWidth;
 
-        int x = pos.x >= 0 ? Mathf.FloorToInt(pos.x) % ChunkWidth : Mathf.CeilToInt(pos.x) % ChunkWidth + ChunkWidth - 1;
-        int y = pos.y >= 0 ? Mathf.FloorToInt(pos.y) % ChunkHeight : Mathf.CeilToInt(pos.y) % ChunkHeight + ChunkHeight - 1;
-        int z = pos.z >= 0 ? Mathf.FloorToInt(pos.z) % ChunkWidth : Mathf.CeilToInt(pos.z) % ChunkWidth + ChunkWidth - 1;
-
-        return new(ddd, new(x, y, z));
+        return new(new(Mathf.FloorToInt(pos.x / ChunkWidth), Mathf.FloorToInt(pos.z / ChunkWidth)), new(x, y, z));
 
     }
-
-
-    public static Vector3Int PublicLocationDerect (ChunkVoxel pos) => pos.v + new Vector3Int(pos.c.x * ChunkWidth, 0, pos.c.y * ChunkWidth);
 
 
     public static Vector3 GetPlayerVel () {

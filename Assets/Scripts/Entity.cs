@@ -3,24 +3,48 @@ using UnityEngine;
 
 public class Entity {
 
+    private static readonly AxisAlignedBB ZERO_AABB = new(0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
+
+    private static int nextEntityID;
+    private readonly int entityID;
+
     public MeshFilter meshFilter;
-    public bool isAllive;
-    public Vector3 pos;
+
+    public bool isDead;
+
+    public double posX;
+    public double posY;
+    public double posZ;
+
+    public float width;
+    public float height;
+
+    private AxisAlignedBB boundingBox;
+
     private float health;
     private float rotationY;
     private float gravityVelocity;
-    private bool isGrounded;
-    private Vector3 velocity;
-    private Vector3 size;
-    private readonly World world;
+    private bool onGround;
+    protected private Vector3 velocity;
+    protected readonly World worldObj;
     private readonly float maxHealth;
     private readonly GameObject obj;
     private AudioSource audioSource;
 
-    public Entity (Vector3 size, World world, float maxHealth) {
+    public Entity ( World worldObj, float maxHealth, Vector3 pos) {
+
+
+        isDead = false;
+        entityID = nextEntityID++;
+        boundingBox = ZERO_AABB;
+
+        width = 0.6f;
+        height = 1.8f;
+
+        SetPosition(pos.x, pos.y, pos.z);
 
         obj = new();
-        obj.AddComponent<MeshRenderer>().material = world.material;
+        obj.AddComponent<MeshRenderer>().material = worldObj.material;
         meshFilter = obj.AddComponent<MeshFilter>();
         audioSource = obj.AddComponent<AudioSource>();
         audioSource.spatialBlend = 1;
@@ -28,71 +52,142 @@ public class Entity {
         audioSource.volume = 0.05f;
         audioSource.rolloffMode = AudioRolloffMode.Linear;
         audioSource.dopplerLevel = 0;
-        this.world = world;
-        this.size = size;
+        this.worldObj = worldObj;
         this.maxHealth = maxHealth;
-        Init();
         GenerateMesh(10);
+        EntityInit();
     }
 
-    public void AddHealth(float value) {
 
-        if (isAllive) {
-            if (value < 0) {
-                audioSource.PlayOneShot(world.audioClip);
-            }
+    protected void SetSize (float width, float height) {
+        if (width != this.width || height != this.height) {
+            this.width = width;
+            this.height = height;
+
+            float f = width / 2.0F;
+            SetEntityBoundingBox(new(f, 0, f, f, height, f));
+            GenerateMesh(10);
+        }
+    }
+
+    public AxisAlignedBB GetEntityBoundingBox () {
+        return boundingBox;
+    }
+    private void SetPosition (double x, double y, double z) {
+        posX = x;
+        posY = y;
+        posZ = z;
+        float f = width / 2.0F;
+        SetEntityBoundingBox(new(x - f, y, z - f, x + f, y + height, z + f));
+    }
+    private void SetEntityBoundingBox (AxisAlignedBB BB) {
+        boundingBox = BB;
+    }
+    public int GetEntityId () {
+        return this.entityID;
+    }
+
+    public void AddHealth (float value) {
+
+        if (!isDead) {
             health += value;
         }
     }
     public float Rotation => rotationY;
     public float Health => health;
     public void AddRotation (float rot) {
-        rotationY += rot ;
+        rotationY += rot;
     }
-    public bool IsCollide (ChunkVoxel SelectedPos) {
-        return AABB.ABCheck(new WWWEe(pos, size, velocity, isGrounded), Data.PublicLocationDerect(SelectedPos) + Vector3.one * 0.5f);
+
+    public void Die () {
+        isDead = true;
+        obj.SetActive(false);
     }
-    public void Init () {
-        isAllive = true;
+    public bool IsCollide (Vector3Int selectedPos) {
+
+
+
+        return AABB.ABCheck(new WWWEe(new((float)posX, (float)posY, (float)posZ), new(width, height, width), velocity, onGround), selectedPos + Vector3.one * 0.5f);
+    }
+
+    public virtual void AAA () {
+
+    }
+    public virtual void BBB () {
+
+    }
+
+    public void EntityInit () {
+
         gravityVelocity = 0;
-        isGrounded = false;
-        pos = world.GetSpawnPoint() + new Vector3(0.5f, 0, 0.5f);
+        onGround = false;
+
+        AAA();
+
+
         health = maxHealth;
         velocity = Vector3.zero;
         Apply();
     }
     public void AddVel (Vector3 vel, bool jump) {
         velocity += Quaternion.Euler(0, rotationY, 0) * vel * Data.playerSpeed * Time.deltaTime;
-        if (jump && isGrounded) {
+        if (jump && onGround) {
             gravityVelocity -= 10;
         }
     }
+
+    private void MoveEntity (double x, double y, double z) {
+
+
+        double d0 = this.posX;
+        double d1 = this.posY;
+        double d2 = this.posZ;
+
+        double d3 = x;
+        double d4 = y;
+        double d5 = z;
+
+        WWWEe entity = AABB.PosUpdate(new(new((float)posX, (float)posY, (float)posZ), new(width, height, width), new((float)x, (float)y, (float)z), false), worldObj);
+        posX = entity.pos.x;
+        posY = entity.pos.y;
+        posZ = entity.pos.z;
+        onGround = entity.isGrounded;
+
+
+
+    }
+
+
+
     public void Apply () {
 
-        if (isAllive) {
+
+        if (!isDead) {
             health += Time.deltaTime;
             gravityVelocity += 27 * Time.deltaTime;
             velocity += gravityVelocity * Time.deltaTime * Vector3.down;
 
-            WWWEe entity = AABB.PosUpdate(new(pos, size, velocity, isGrounded), world);
+            BBB();
 
-            pos = entity.pos;
-            velocity = entity.vel;
-            isGrounded = entity.isGrounded;
+            MoveEntity(velocity.x, velocity.y, velocity.z);
 
-            if (isGrounded) {
+
+            if (onGround) {
                 if (gravityVelocity > 15) {
                     AddHealth(-Mathf.Pow(gravityVelocity, 2) / 13.5f);
                 }
                 gravityVelocity = 0;
             }
             health = Mathf.Min(health, maxHealth);
-            if (pos.y < 16 || health <= 0) {
-                isAllive = false;
+            if (health <= 0) {
+                isDead = true;
             }
 
-            obj.transform.position = pos;
+            obj.transform.position = new((float)posX, (float)posY, (float)posZ);
             obj.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+
+
+            velocity = Vector3.zero;
         }
     }
 
@@ -108,14 +203,14 @@ public class Entity {
                 Vector3 a = Data.voxelVerts[Data.blockMesh[p, i]];
 
 
-                a.x *= size.x;
-                a.y *= size.y;
-                a.z *= size.z;
+                a.x *= width;
+                a.y *= height;
+                a.z *= width;
 
-                a -= new Vector3(size.x, 0, size.z) / 2;
+                a -= new Vector3(width, 0, width) / 2;
 
                 vertices.Add(a);
-                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[skin].GetTextureID(p))) / Data.TextureSize);
+                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(worldObj.blockTypes[skin].GetTextureID(p))) / Data.TextureSize);
             }
             for (int i = 0; i < 6; i++)
                 triangles.Add(Data.order[i] + vertexIndex);

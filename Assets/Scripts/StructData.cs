@@ -85,16 +85,8 @@ public struct ItemType {
     public float mineSpeed;
 }
 
-public struct ItemStack {
-    public byte id;
-    public byte value;
-    public ItemStack (byte id, byte value) {
-        this.id = id;
-        this.value = value;
-    }
-}
 
-
+[System.Serializable]
 public struct ChunkVoxel {
     public ChunkVoxel (Vector2Int c, Vector3Int v) {
         this.c = c;

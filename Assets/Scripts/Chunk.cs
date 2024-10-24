@@ -7,6 +7,7 @@ public class Chunk {
     private bool isActive = true;
     private int vertexIndex = 0;
     private readonly byte[,,] voxelMap = new byte[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
+    private readonly Dictionary<Vector3Int, Inventory> Inventories = new();
     private readonly Queue<VoxelAndPos> modifications = new();
     private readonly List<Vector3> vertices = new();
     private readonly GameObject chunkObject = new();
@@ -15,47 +16,50 @@ public class Chunk {
     private readonly MeshFilter meshFilter;
     private readonly Vector2Int pos;
     private readonly World world;
+    public bool IsEditable => !(!isTerrainMapGenerated || threadLocked);
     public Chunk (Vector2Int pos, World world) {
         this.pos = pos;
         this.world = world;
         chunkObject.transform.parent = world.transform;
-        chunkObject.transform.position = new Vector3Int(pos.x, 0, pos.y) * Data.ChunkWidth;
+        chunkObject.transform.position = Data.ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
         chunkObject.AddComponent<MeshRenderer>().material = world.material;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
-        GenerateTerrainData();
+        threadLocked = true;
+        new Thread(new ThreadStart(GenerateTerrainData)).Start();
     }
-    public bool IsEditable => !(!isTerrainMapGenerated || threadLocked);
     public byte GetVoxelIDChunk (Vector3Int pos) {
         if (pos.x < 0 || pos.x >= Data.ChunkWidth || pos.y < 0 || pos.y >= Data.ChunkHeight || pos.z < 0 || pos.z >= Data.ChunkWidth)
             return 0;
         return voxelMap[pos.x, pos.y, pos.z];
+    }
+    public bool GetInventory(Vector3Int pos) {
+        return Inventories.ContainsKey(pos);
     }
     public void EnqueueVoxelMod (VoxelAndPos voxelMod) {
         modifications.Enqueue(voxelMod);
     }
     public void SetActiveState (bool value) {
         if (isActive != value) {
-            chunkObject.SetActive(value);
             isActive = value;
+            chunkObject.SetActive(value);
         }
     }
     public void UpdateChunk () {
-        if (Data.IsThread) {
-            threadLocked = true;
-            new Thread(new ThreadStart(UC)).Start();
-        } else {
-            UC();
+        lock (modifications) {
+            while (modifications.Count > 0) {
+                VoxelAndPos vmod = modifications.Dequeue();
+                voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
+                if (world.blockTypes[vmod.id].hasInventory) {
+                    Inventories.Add(vmod.pos.v, new Inventory());
+                }
+            }
         }
+        threadLocked = true;
+        new Thread(new ThreadStart(AAA)).Start();
     }
-    public void GenerateTerrainData () {
-        if (Data.IsThread) {
-            threadLocked = true;
-            new Thread(new ThreadStart(GTD)).Start();
-        } else {
-            GTD();
-        }
-    }
-    public void GenerateMesh () {
+
+    private void AAA () {
+
         vertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
@@ -83,6 +87,10 @@ public class Chunk {
                 }
             }
         }
+        threadLocked = false;
+    }
+
+    public void GenerateMesh () {
         Mesh mesh = new() {
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
             vertices = vertices.ToArray(),
@@ -94,7 +102,7 @@ public class Chunk {
     }
     void NormalMesh (int x, int y, int z) {
         for (int p = 0; p < 6; p++) {
-            if (!world.blockTypes[GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
+            if (!world.blockTypes[GetVoxelIDChunk( Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
                 for (int i = 0; i < 4; i++) {
                     vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
                     uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
@@ -132,16 +140,7 @@ public class Chunk {
             vertexIndex += 4;
         }
     }
-    private void UC () {
-        lock (modifications) {
-            while (modifications.Count > 0) {
-                VoxelAndPos vmod = modifications.Dequeue();
-                voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
-            }
-        }
-        threadLocked = false;
-    }
-    private void GTD () {
+    private void GenerateTerrainData () {
         for (int x = 0; x < Data.ChunkWidth; x++) {
             for (int y = 0; y < Data.ChunkHeight; y++) {
                 for (int z = 0; z < Data.ChunkWidth; z++) {
