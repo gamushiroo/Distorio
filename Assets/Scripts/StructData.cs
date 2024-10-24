@@ -5,16 +5,6 @@ using UnityEngine.UI;
 
 
 
-public struct BlockAndSelect {
-    public BlockAndSelect (ChunkVoxel blue, ChunkVoxel red) {
-
-        this.blue = blue;
-        this.red = red;
-
-    }
-    public ChunkVoxel blue;
-    public ChunkVoxel red;
-}
 
 public struct EntityData {
     public EntityData (string name, Vector3 size, float maxHealth, float maxEnergy) {

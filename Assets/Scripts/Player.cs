@@ -35,7 +35,7 @@ public class Player : MonoBehaviour {
 
     private void Start () {
 
-        entity = new EntityPlayer(world, Data.player.health, Vector3.zero);
+        entity = new EntityPlayer(world, 20, Vector3.zero);
 
     }
     private void Update () {
@@ -112,8 +112,6 @@ public class Player : MonoBehaviour {
 
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
 
-
-        Debug.Log(Time.deltaTime);
 
         if (id == 0) {
             Queue<VoxelAndPos> queue = new();

@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class Entity {
@@ -34,7 +31,7 @@ public class Entity {
     private readonly GameObject obj;
     private AudioSource audioSource;
 
-    public Entity ( World worldObj, float maxHealth, Vector3 pos) {
+    public Entity (World worldObj, float maxHealth, Vector3 pos) {
 
 
         isDead = false;
@@ -60,6 +57,7 @@ public class Entity {
         GenerateMesh(10);
         EntityInit();
     }
+
 
 
     protected void SetSize (float width, float height) {
@@ -147,14 +145,7 @@ public class Entity {
 
     private void MoveEntity (double x, double y, double z) {
 
-
-        double d0 = posX;
-        double d1 = posY;
-        double d2 = posZ;
-
-        double d3 = x;
         double d4 = y;
-        double d5 = z;
 
         List<AxisAlignedBB> list1 = worldObj.Ajj(GetEntityBoundingBox().AddCoord(x, y, z));
         foreach (AxisAlignedBB axisalignedbb1 in list1) {
@@ -177,10 +168,9 @@ public class Entity {
 
         isCollidedVertically = d4 != y;
         onGround = isCollidedVertically && d4 < 0.0D;
-        if( isCollidedVertically && d4 > 0.0D) {
+        if (isCollidedVertically && d4 > 0.0D) {
             gravityVelocity = 0;
         }
-
 
 
 
@@ -192,12 +182,18 @@ public class Entity {
     }
 
 
+    public void Fall (float distance) {
+
+        float i = Mathf.Pow(distance, 2) - 3.0F;
+        if (i > 0) {
+            AddHealth(-i);
+        }
+    }
 
     public void Apply () {
 
 
         if (!isDead) {
-            health += Time.deltaTime;
             gravityVelocity += 27 * Time.deltaTime;
             velocity += gravityVelocity * Time.deltaTime * Vector3.down;
 
@@ -207,9 +203,8 @@ public class Entity {
 
 
             if (onGround) {
-                if (gravityVelocity > 15) {
-                    AddHealth(-Mathf.Pow(gravityVelocity, 2) / 13.5f);
-                }
+
+                Fall(gravityVelocity);
                 gravityVelocity = 0;
             }
             health = Mathf.Min(health, maxHealth);

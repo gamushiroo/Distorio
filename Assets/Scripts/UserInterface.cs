@@ -102,7 +102,6 @@ public class UserInterface : MonoBehaviour {
                 hand.GenerateMesh(a);
             } else {
                 blockName.text = ItemRegistry.GetItem(a).GetName();
-                Debug.Log(a);
                 hand.GenerateMesh(0);
             }
             highlight.position = toolbarImages[slotIndex].transform.position;
