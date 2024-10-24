@@ -35,7 +35,7 @@ public class Player : MonoBehaviour {
 
     private void Start () {
 
-        entity = new EntityPlayer( world, Data.player.health, Vector3.zero);
+        entity = new EntityPlayer(world, Data.player.health, Vector3.zero);
 
     }
     private void Update () {
@@ -44,7 +44,7 @@ public class Player : MonoBehaviour {
 
             if (!locked) {
 
-                if(selectedBlockIndex >= 128) {
+                if (selectedBlockIndex >= 128) {
                     miningSpeed = 4;
 
                 } else {
@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
 
 
 
-                isMining = Input.GetMouseButton(0)  && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision;
+                isMining = Input.GetMouseButton(0) && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision;
 
 
                 rotationX -= Data.mouseSens * Time.deltaTime * Input.GetAxisRaw("Mouse Y");
@@ -91,7 +91,7 @@ public class Player : MonoBehaviour {
             }
             miningProgresBar.value = miningProgress / world.blockTypes[world.GetVoxelID(SelectingPos)].hardness;
         }
-        camera.position = new Vector3((float)entity.posX, (float)entity.posY, (float)entity.posZ)+ Vector3.up * 1.625f;
+        camera.position = new Vector3((float)entity.posX, (float)entity.posY, (float)entity.posZ) + Vector3.up * 1.625f;
         camera.rotation = Quaternion.Euler(rotationX, entity.Rotation, 0);
 
         blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
