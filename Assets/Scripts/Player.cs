@@ -35,7 +35,7 @@ public class Player : MonoBehaviour {
 
     private void Start () {
 
-        entity = new EntityPlayer(world, 20, Vector3.zero);
+        entity = new EntityPlayer(world, 20);
 
     }
     private void Update () {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Entity {
+public abstract class Entity {
 
-    private static readonly AxisAlignedBB ZERO_AABB = new(0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
+    private static readonly AABB ZERO_AABB = new(0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
 
     private static int nextEntityID;
     private readonly int entityID;
@@ -19,7 +19,7 @@ public class Entity {
     public float width;
     public float height;
 
-    private AxisAlignedBB boundingBox;
+    private AABB boundingBox;
 
     private float health;
     private float rotationY;
@@ -29,35 +29,37 @@ public class Entity {
     protected readonly World worldObj;
     private readonly float maxHealth;
     private readonly GameObject obj;
-    private AudioSource audioSource;
 
-    public Entity (World worldObj, float maxHealth, Vector3 pos) {
-
-
-        isDead = false;
+    public Entity (World worldIn, float maxHealth) {
         entityID = nextEntityID++;
         boundingBox = ZERO_AABB;
+        width = 0.6F;
+        height = 1.8F;
+        worldObj = worldIn;
+        SetPosition(0.0D, 0.0D, 0.0D);
 
-        width = 0.6f;
-        height = 1.8f;
 
-        SetPosition(pos.x, pos.y, pos.z);
 
         obj = new();
-        obj.AddComponent<MeshRenderer>().material = worldObj.material;
+        obj.AddComponent<MeshRenderer>().material = worldIn.material;
         meshFilter = obj.AddComponent<MeshFilter>();
-        audioSource = obj.AddComponent<AudioSource>();
-        audioSource.spatialBlend = 1;
-        audioSource.maxDistance = 16;
-        audioSource.volume = 0.05f;
-        audioSource.rolloffMode = AudioRolloffMode.Linear;
-        audioSource.dopplerLevel = 0;
-        this.worldObj = worldObj;
-        this.maxHealth = maxHealth;
         GenerateMesh(10);
+
+        this.maxHealth = maxHealth;
         EntityInit();
     }
-
+    public void EntityInit () {
+        gravityVelocity = 0;
+        velocity = Vector3.zero;
+        AAA();
+        health = maxHealth;
+    }
+    public void AddVel (Vector3 vel, bool jump) {
+        velocity += Quaternion.Euler(0, rotationY, 0) * vel * Data.playerSpeed * Time.deltaTime;
+        if (jump && onGround) {
+            gravityVelocity -= 10;
+        }
+    }
 
 
     protected void SetSize (float width, float height) {
@@ -71,21 +73,8 @@ public class Entity {
         }
     }
 
-    public AxisAlignedBB GetEntityBoundingBox () {
-        return boundingBox;
-    }
-    protected void SetPosition (double x, double y, double z) {
-        posX = x;
-        posY = y;
-        posZ = z;
-        float f = width / 2.0F;
-        SetEntityBoundingBox(new(x - f, y, z - f, x + f, y + height, z + f));
-    }
-    private void SetEntityBoundingBox (AxisAlignedBB BB) {
-        boundingBox = BB;
-    }
     public int GetEntityId () {
-        return this.entityID;
+        return entityID;
     }
 
     public void AddHealth (float value) {
@@ -105,10 +94,7 @@ public class Entity {
         obj.SetActive(false);
     }
     public bool IsCollide (Vector3Int selectedPos) {
-
-
-
-        return AABB.ABCheck(new WWWEe(new((float)posX, (float)posY, (float)posZ), new(width, height, width), velocity, onGround), selectedPos + Vector3.one * 0.5f);
+        return Data.ABCheck(new WWWEe(new((float)posX, (float)posY, (float)posZ), new(width, height, width), velocity, onGround), selectedPos + Vector3.one * 0.5f);
     }
 
     public virtual void AAA () {
@@ -118,67 +104,46 @@ public class Entity {
 
     }
 
-    public void EntityInit () {
 
-        gravityVelocity = 0;
-        onGround = false;
-
-        AAA();
-
-
-        health = maxHealth;
-        velocity = Vector3.zero;
-        Apply();
+    protected void SetPosition (double x, double y, double z) {
+        posX = x;
+        posY = y;
+        posZ = z;
+        float f = width / 2.0F;
+        SetEntityBoundingBox(new(x - f, y, z - f, x + f, y + height, z + f));
     }
-    public void AddVel (Vector3 vel, bool jump) {
-        velocity += Quaternion.Euler(0, rotationY, 0) * vel * Data.playerSpeed * Time.deltaTime;
-        if (jump && onGround) {
-            gravityVelocity -= 10;
+    private AABB GetEntityBoundingBox () {
+        return boundingBox;
+    }
+    private void SetEntityBoundingBox (AABB BB) {
+        boundingBox = BB;
+    }
+    private void MoveEntity (double _x, double _y, double _z) {
+        double y = _y;
+        List<AABB> AABBs = worldObj.Ajj(GetEntityBoundingBox().AddCoord(_x, _y, _z));
+        foreach (AABB AABBYs in AABBs) {
+            _y = AABBYs.CalculateYOffset(GetEntityBoundingBox(), _y);
+        }
+        SetEntityBoundingBox(GetEntityBoundingBox().Offset(0.0D, _y, 0.0D));
+        foreach (AABB AABBXs in AABBs) {
+            _x = AABBXs.CalculateXOffset(GetEntityBoundingBox(), _x);
+        }
+        SetEntityBoundingBox(GetEntityBoundingBox().Offset(_x, 0.0D, 0.0D));
+        foreach (AABB AABBZs in AABBs) {
+            _z = AABBZs.CalculateZOffset(GetEntityBoundingBox(), _z);
+        }
+        SetEntityBoundingBox(GetEntityBoundingBox().Offset(0.0D, 0.0D, _z));
+        ResetPositionToBB();
+        isCollidedVertically = y != _y;
+        onGround = isCollidedVertically && y < 0.0D;
+        if (isCollidedVertically) {
+            gravityVelocity = 0;
         }
     }
-
     private void ResetPositionToBB () {
         posX = (GetEntityBoundingBox().minX + GetEntityBoundingBox().maxX) / 2.0D;
         posY = GetEntityBoundingBox().minY;
         posZ = (GetEntityBoundingBox().minZ + GetEntityBoundingBox().maxZ) / 2.0D;
-    }
-
-    private void MoveEntity (double x, double y, double z) {
-
-        double d4 = y;
-
-        List<AxisAlignedBB> list1 = worldObj.Ajj(GetEntityBoundingBox().AddCoord(x, y, z));
-        foreach (AxisAlignedBB axisalignedbb1 in list1) {
-            y = axisalignedbb1.CalculateYOffset(GetEntityBoundingBox(), y);
-        }
-        SetEntityBoundingBox(GetEntityBoundingBox().Offset(0.0D, y, 0.0D));
-        foreach (AxisAlignedBB axisalignedbb2 in list1) {
-            x = axisalignedbb2.CalculateXOffset(GetEntityBoundingBox(), x);
-        }
-        SetEntityBoundingBox(GetEntityBoundingBox().Offset(x, 0.0D, 0.0D));
-        foreach (AxisAlignedBB axisalignedbb13 in list1) {
-            z = axisalignedbb13.CalculateZOffset(GetEntityBoundingBox(), z);
-        }
-        SetEntityBoundingBox(GetEntityBoundingBox().Offset(0.0D, 0.0D, z));
-
-        ResetPositionToBB();
-
-        //Debug.Log(new Vector3((float)x, (float)y, (float)z));
-
-
-        isCollidedVertically = d4 != y;
-        onGround = isCollidedVertically && d4 < 0.0D;
-        if (isCollidedVertically && d4 > 0.0D) {
-            gravityVelocity = 0;
-        }
-
-
-
-
-        //WWWEe entity = AABB.PosUpdate(new(new((float)posX, (float)posY, (float)posZ), new(width, height, width), new((float)x, (float)y, (float)z), false), worldObj);
-
-
-
     }
 
 
@@ -186,7 +151,7 @@ public class Entity {
 
         float i = Mathf.Pow(distance, 2) - 3.0F;
         if (i > 0) {
-            AddHealth(-i);
+            //AddHealth(-i);
         }
     }
 

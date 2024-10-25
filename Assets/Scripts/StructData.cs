@@ -3,23 +3,6 @@ using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
-
-public struct EntityData {
-    public EntityData (string name, Vector3 size, float maxHealth, float maxEnergy) {
-
-        this.name = name;
-        this.size = size;
-        this.health = maxHealth;
-        this.maxEnergy = maxEnergy;
-
-    }
-    public string name;
-    public Vector3 size;
-    public float health;
-    public float maxEnergy;
-}
 [System.Serializable]
 public struct WWWEe {
     public WWWEe (Vector3 pos, Vector3 size, Vector3 vel, bool isGrounded) {
@@ -50,7 +33,6 @@ public struct VoxelAndPos {
         id = _id;
 
     }
-
 }
 
 [System.Serializable]
@@ -87,7 +69,7 @@ public struct ChunkVoxel {
         return a.c == b.c && a.v == b.v;
     }
 
-    public static ChunkVoxel zero = new ChunkVoxel(Vector2Int.zero, Vector3Int.zero);
+    public static ChunkVoxel zero = new(Vector2Int.zero, Vector3Int.zero);
 
     public Vector2Int c;
     public Vector3Int v;

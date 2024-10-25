@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EntityItem : Entity{
 
-    public EntityItem (World world, float maxHealth, Vector3 pos) : base ( world,  maxHealth,  pos) {
+    public EntityItem (World world, float maxHealth) : base ( world,  maxHealth) {
 
         SetSize(0.25f, 0.25f);
 

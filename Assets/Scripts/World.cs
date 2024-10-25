@@ -23,10 +23,10 @@ public class World : MonoBehaviour {
 
 
 
-    public List<AxisAlignedBB> Ajj (AxisAlignedBB aaa) {
+    public List<AABB> Ajj (AABB aaa) {
 
 
-        List<AxisAlignedBB> a = new();
+        List<AABB> a = new();
 
 
 
@@ -80,7 +80,7 @@ public class World : MonoBehaviour {
 
     public void SummonEntity (Vector3 pos) {
 
-        entities.Add(new EntityItem(this, 50000f, pos));
+        entities.Add(new EntityItem(this, 50000f));
 
 
     }

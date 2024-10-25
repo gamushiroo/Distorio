@@ -79,7 +79,7 @@ public class UserInterface : MonoBehaviour {
         }
     }
     private void SetSlidebarValues () {
-        hpBar.value = player.entity.Health / Data.player.health;
+        hpBar.value = player.entity.Health / 100;
         hpText.text = Mathf.FloorToInt(player.entity.Health).ToString("#,#");
     }
     private void Scroll () {

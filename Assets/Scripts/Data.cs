@@ -13,8 +13,6 @@ public static class Data {
     public static readonly float playerSpeed = 4.5f;
     public static readonly float mouseSens = 100;
 
-    public static readonly EntityData player = new EntityData("player", new(0.75f, 1.75f, 0.75f), 100, 2000);
-
 
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
 
@@ -82,6 +80,14 @@ public static class Data {
         {1, 2, 5, 6}  // Right Face
 
     };
+
+
+    public static bool ABCheck (WWWEe posAndVel_, Vector3 ttt) {
+        WWWEe b2 = new(ttt, Vector3.one, Vector3.zero, false);
+        Vector3 b1p = posAndVel_.pos + posAndVel_.size;
+        Vector3 b2p = b2.pos + b2.size;
+        return !(b2.pos.x >= b1p.x || posAndVel_.pos.x >= b2p.x || b2.pos.y >= b1p.y || posAndVel_.pos.y >= b2p.y || b2.pos.z >= b1p.z || posAndVel_.pos.z >= b2p.z);
+    }
 
     public static readonly int[] order = new int[6]{
 
