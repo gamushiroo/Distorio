@@ -5,6 +5,7 @@ public static class Data {
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
 
+    public static double gravityScale = 27;
     public static readonly int InventoryWidth = 8;
     public static readonly int InventoryHeight = 4;
 

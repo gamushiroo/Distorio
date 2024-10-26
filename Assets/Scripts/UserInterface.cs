@@ -30,23 +30,20 @@ public class UserInterface : MonoBehaviour {
         player.inventory.AddItemStackToInventory(new ItemStack(257, 1));
         player.inventory.AddItemStackToInventory(new ItemStack(258, 1));
         player.inventory.AddItemStackToInventory(new ItemStack(259, 1));
-
+        player.inventory.AddItemStackToInventory(new ItemStack(0, 4));
+        player.inventory.AddItemStackToInventory(new ItemStack(1, 4));
+        player.inventory.AddItemStackToInventory(new ItemStack(2, 4));
+        player.inventory.AddItemStackToInventory(new ItemStack(3, 4));
         Cursor.lockState = CursorLockMode.Locked;
         SetSprites();
         inventoryBackGround.SetActive(false);
         inventoryObj.SetActive(false);
         highlight.position = toolbarImages[0].transform.position;
-
         RenderSprites();
         player.selectedBlockIndex = GetSelected();
-
     }
-
     private int GetSelected () {
-
         return player.inventory.GetItemStack(slotIndex).id;
-
-
     }
     private void Update () {
 
@@ -61,11 +58,11 @@ public class UserInterface : MonoBehaviour {
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-                player.locked = true;
+                player.inUI = true;
 
             } else if (Input.GetMouseButtonDown(1) && !world.blockTypes[world.GetVoxelID(player.tryPlacingPos)].hasCollision && player.selectedBlockIndex < 128 && world.blockTypes[world.GetVoxelID(player.SelectingPos)].hasCollision) {
 
-                player.SetBBBL(player.tryPlacingPos, player.selectedBlockIndex);
+                player.SetBlock(player.tryPlacingPos, player.selectedBlockIndex);
             }
         }
 
@@ -75,12 +72,12 @@ public class UserInterface : MonoBehaviour {
             inventoryObj.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            player.locked = false;
+            player.inUI = false;
         }
     }
     private void SetSlidebarValues () {
-        hpBar.value = player.entity.Health / 100;
-        hpText.text = Mathf.FloorToInt(player.entity.Health).ToString("#,#");
+        hpBar.value = player.entity.health / 20;
+        hpText.text = Mathf.FloorToInt(player.entity.health).ToString("#,#");
     }
     private void Scroll () {
         float value = Input.GetAxis("Mouse ScrollWheel");
@@ -95,13 +92,8 @@ public class UserInterface : MonoBehaviour {
             else if (slotIndex < 0)
                 slotIndex = Data.InventoryWidth - 1;
 
-            int a = GetSelected();
-            player.selectedBlockIndex = a;
-            if (a < 128) {
-                blockName.text = world.blockTypes[a].blockName;
-                hand.GenerateMesh(a);
-            } else {
-                blockName.text = ItemRegistry.GetItem(a).GetName();
+            if(player.inventory.GetItemStack(GetSelected()) != null) {
+                player.selectedBlockIndex = player.inventory.GetItemStack(GetSelected()).id;
                 hand.GenerateMesh(0);
             }
             highlight.position = toolbarImages[slotIndex].transform.position;
@@ -161,14 +153,14 @@ public class UserInterface : MonoBehaviour {
 
             Sprite a = nothing;
 
-            if(player.inventory.GetItemStack(i) != null) {
+            if (player.inventory.GetItemStack(i) != null) {
 
                 a = world.itemTypes[player.inventory.GetItemStack(i).id - 256].sprite;
 
-            }
+                if (i < 8) {
+                    toolbarImages[i].sprite = a;
+                }
 
-            if(i < 8) {
-                toolbarImages[i].sprite = a;
             }
             images[i].sprite = a;
         }

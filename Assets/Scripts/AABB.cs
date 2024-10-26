@@ -2,6 +2,7 @@ using System;
 
 public class AABB {
 
+
     public double minX;
     public double minY;
     public double minZ;

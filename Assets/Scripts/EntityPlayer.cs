@@ -1,20 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityPlayer : Entity {
+public class EntityPlayer : EntityLiving {
 
-    public float rotationX;
-    public byte selectedBlockIndex = 0;
+    private Vector2Int chunkCoord;
+    private Vector2Int lastChunkCoord;
 
-    public EntityPlayer (World world, float maxHealth) : base(world, maxHealth) {
+    public EntityPlayer (World world) : base(world) {
+
+        Vector3 a = world.GetSpawnPoint();
+        SetPosition(a.x, a.y, a.z);
 
     }
 
+    public override void Update () {
 
-    public override void AAA () {
+        base.Update();
 
-        Vector3 a = worldObj.GetSpawnPoint() + new Vector3(0.5f, 1, 0.5f);
-        SetPosition(a.x, a.y, a.z);
+        chunkCoord = Data.Vector3ToChunkVoxel(new((float)posX, (float)posY, (float)posZ)).c;
+        if (chunkCoord != lastChunkCoord) {
+            world.CheckViewDistance(chunkCoord);
+            lastChunkCoord = chunkCoord;
+        }
     }
 }

@@ -25,6 +25,6 @@ public class ItemStack {
         return this.GetMaxStackSize() > 1;
     }
     public int GetMaxStackSize () {
-        return ItemRegistry.GetItem(GetItemID()).getItemStackLimit();
+        return ItemRegistry.GetItem(GetItemID()).GetItemStackLimit();
     }
 }

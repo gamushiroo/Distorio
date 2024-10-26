@@ -55,7 +55,7 @@ public class World : MonoBehaviour {
 
         InitNoise();
         GenerateWorld();
-        //SummonEntities();
+
     }
     private void LateUpdate () {
         UpdateEntities();
@@ -80,14 +80,14 @@ public class World : MonoBehaviour {
 
     public void SummonEntity (Vector3 pos) {
 
-        entities.Add(new EntityItem(this, 50000f));
+        //entities.Add(new EntityItem(this));
 
 
     }
     private void UpdateEntities () {
         for (int i = 0; i < entities.Count; i++) {
 
-            entities[i].Apply();
+            entities[i].Update();
         }
     }
 
@@ -214,17 +214,17 @@ public class World : MonoBehaviour {
     public float GetTemp (Vector3 pos) {
         return (Noise.Get2DPerlin(new(pos.x, pos.z), 0.002f) + 0.5f) * 60 - 20;
     }
-    public Vector3Int GetSpawnPoint () {
-        Vector3Int pos = Vector3Int.zero;
+    public Vector3 GetSpawnPoint () {
         if (chunks.ContainsKey(Vector2Int.zero)) {
             for (int y = 0; y < Data.ChunkHeight; y++) {
                 if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
-                    pos = new Vector3Int(0, y, 0);
-                    break;
+
+                    return new Vector3Int(0, y, 0) + new Vector3(0.5f, 0, 0.5f);
+
                 }
             }
         }
-        return pos;
+        return Vector3.zero;
     }
     public void AddMod (Queue<VoxelAndPos> aadd) {
         modifications.Enqueue(aadd);

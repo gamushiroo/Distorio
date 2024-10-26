@@ -1,28 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
-
 public class Item {
 
-    protected int maxStackSize = 256;
+    protected int maxStackSize = 512;
     protected string name;
 
 
-    public Item SetName(string name) {
-
+    public Item SetName (string name) {
         this.name = name;
         return this;
-
     }
-
     public string GetName () {
         return name;
-    }
-
-    public int getItemStackLimit () {
-        return this.maxStackSize;
     }
 
     public Item SetMaxStackSize (int maxStackSize) {
@@ -33,6 +20,11 @@ public class Item {
         return maxStackSize;
     }
     public static void RegisterItems () {
+
+        RegisterItem(0, new Item().SetName("Stone").SetMaxStackSize(64));
+        RegisterItem(1, new Item().SetName("Dirt").SetMaxStackSize(64));
+        RegisterItem(2, new Item().SetName("Gravel").SetMaxStackSize(64));
+        RegisterItem(3, new Item().SetName("Sand").SetMaxStackSize(64));
 
         RegisterItem(256, new ItemSpade().SetName("iron_shovel"));
         RegisterItem(257, new ItemSpade().SetName("iron_shovel"));
