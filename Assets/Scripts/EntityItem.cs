@@ -9,7 +9,8 @@ public class EntityItem : Entity{
 
     }
 
-    public override void Update () {
+    private protected override void Update () {
+        /*
         float radius = 3;
         double a = world.player.entity.posX - posX;
         double b = world.player.entity.posY - posY;
@@ -21,5 +22,6 @@ public class EntityItem : Entity{
         if (distiance.magnitude < 0.5f) {
         }
         base.Update();
+        */
     }
 }

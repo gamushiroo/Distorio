@@ -515,19 +515,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 163ebf44c3e900140990a842a8c9250a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationX: 0
-  selectedBlockIndex: 0
-  world: {fileID: 1482468890}
-  hand: {fileID: 1439694691}
-  camera: {fileID: 963194228}
-  blockHighlight: {fileID: 2109980259}
-  miningEffect: {fileID: 485163719}
-  miningProgresBarObj: {fileID: 790624905}
-  miningProgresBar: {fileID: 790624907}
-  tryPlacingPos: {x: 0, y: 0, z: 0}
-  SelectingPos: {x: 0, y: 0, z: 0}
-  miningSpeed: 0
-  locked: 0
 --- !u!1 &340895051
 GameObject:
   m_ObjectHideFlags: 0
@@ -6722,6 +6709,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5385bbdb8ac5b004386ec86292929b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hpBar: {fileID: 786760891}
+  hpText: {fileID: 1828601337}
   audioClip: {fileID: 8300000, guid: fd1cbe11262003c48bf9edac1a499d12, type: 3}
   biome: {fileID: 11400000, guid: 12cce7ccb08750442b3ce218c3965c8f, type: 2}
   material: {fileID: 2100000, guid: e92221d114e6e854f8578be0f5db3b98, type: 2}
@@ -6988,6 +6977,13 @@ MonoBehaviour:
     mineSpeed: 0
   backGround: {fileID: 1933486333}
   player: {fileID: 270149130}
+  cam: {fileID: 963194228}
+  hand: {fileID: 1439694691}
+  miningProgresBarObj: {fileID: 790624905}
+  userInter: {fileID: 1505735812}
+  blockHighlight: {fileID: 2109980259}
+  miningEffect: {fileID: 485163719}
+  miningProgresBar: {fileID: 790624907}
 --- !u!1 &1505735810
 GameObject:
   m_ObjectHideFlags: 0
@@ -7032,6 +7028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 545d6a8f9acb54e4d970a72f724181a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedBlockIndex: 0
   slot: {fileID: 21300000, guid: c6662f2f1b05cab469b4475bec882c8e, type: 3}
   nothing: {fileID: 21300000, guid: 223386f7d475133429222aefb8631ede, type: 3}
   inventoryBackGround: {fileID: 1933486332}
@@ -7042,8 +7039,6 @@ MonoBehaviour:
   world: {fileID: 1482468890}
   highlight: {fileID: 2096473317}
   slotIndex: 0
-  hpBar: {fileID: 786760891}
-  hpText: {fileID: 1828601337}
   inUI: 0
   blockName: {fileID: 40919616}
   hand: {fileID: 0}

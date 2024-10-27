@@ -7,24 +7,24 @@ public abstract class Entity {
     private float width;
     private float height;
     private bool isCollidedVertically;
-    private bool onGround;
     private AABB boundingBox;
 
+    private bool isDead;
+    private protected bool isGrounded;
     private protected double gravityVelocity;
     private protected Vector3 velocity;
-    private protected readonly GameObject obj;
+    private protected readonly GameObject playerObject;
     private protected readonly World world;
-
-    public double posX;
-    public double posY;
-    public double posZ;
+    private protected double posX;
+    private protected double posY;
+    private protected double posZ;
 
     public Entity (World world) {
 
         this.world = world;
-        obj = new();
-        obj.AddComponent<MeshRenderer>().material = world.material;
-        meshFilter = obj.AddComponent<MeshFilter>();
+        playerObject = new();
+        playerObject.AddComponent<MeshRenderer>().material = world.material;
+        meshFilter = playerObject.AddComponent<MeshFilter>();
 
         width = 0.6F;
         height = 1.8F;
@@ -35,52 +35,12 @@ public abstract class Entity {
         GenerateMesh(10);
     }
 
-    public void AddVel (Vector3 vel) {
-        velocity += Data.playerSpeed * Time.deltaTime * vel;
-    }
-    public void TryJump () {
-        if (onGround) {
-            gravityVelocity -= 10;
+    public void UpdateIfNotDead () {
+        if (!isDead) {
+            Update();
         }
     }
-    public bool IsCollide (Vector3Int selectedPos) {
-        return Data.ABCheck(new WWWEe(new((float)posX, (float)posY, (float)posZ), new(width, height, width), velocity, onGround), selectedPos + Vector3.one * 0.5f);
-    }
 
-    public virtual void Update () {
-        gravityVelocity += Data.gravityScale * Time.deltaTime;
-        velocity += (float)gravityVelocity * Time.deltaTime * Vector3.down;
-        MoveEntity(velocity.x, velocity.y, velocity.z);
-        if (onGround) {
-            OnLanded();
-        }
-        if (isCollidedVertically) {
-            gravityVelocity = 0;
-        }
-        velocity = Vector3.zero;
-    }
-
-    protected virtual void OnLanded () {
-    }
-
-    private protected void SetSize (float width, float height) {
-        if (width != this.width || height != this.height) {
-            this.width = width;
-            this.height = height;
-
-            float f = width / 2.0F;
-            boundingBox = new(f, 0, f, f, height, f);
-            GenerateMesh(10);
-        }
-    }
-    private protected void SetPosition (double x, double y, double z) {
-        posX = x;
-        posY = y;
-        posZ = z;
-        float f = width / 2.0F;
-        boundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
-        obj.transform.position = new((float)posX, (float)posY, (float)posZ);
-    }
     private void AddPosition (double x, double y, double z) {
         SetPosition(posX + x, posY + y, posZ + z);
     }
@@ -100,7 +60,7 @@ public abstract class Entity {
         }
         AddPosition(0.0D, 0.0D, _z);
         isCollidedVertically = y != _y;
-        onGround = isCollidedVertically && y < 0.0D;
+        isGrounded = isCollidedVertically && y < 0.0D;
     }
     private void GenerateMesh (byte skin) {
         int vertexIndex = 0;
@@ -129,5 +89,47 @@ public abstract class Entity {
         };
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
+    }
+    private protected bool IsCollide (Vector3Int selectedPos) {
+        return Data.ABCheck(new WWWEe(new((float)posX, (float)posY, (float)posZ), new(width, height, width), velocity, isGrounded), selectedPos + Vector3.one * 0.5f);
+    }
+    private protected void AddVelocity (Vector3 vel) {
+        velocity += Data.playerSpeed * Time.deltaTime * vel;
+    }
+    private protected void Die () {
+        isDead = true;
+        playerObject.SetActive(false);
+    }
+    private protected void SetSize (float width, float height) {
+        if (width != this.width || height != this.height) {
+            this.width = width;
+            this.height = height;
+
+            float f = width / 2.0F;
+            boundingBox = new(f, 0, f, f, height, f);
+            GenerateMesh(10);
+        }
+    }
+    private protected void SetPosition (double x, double y, double z) {
+        posX = x;
+        posY = y;
+        posZ = z;
+        float f = width / 2.0F;
+        boundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
+        playerObject.transform.position = new((float)posX, (float)posY, (float)posZ);
+    }
+    private protected virtual void Update () {
+        gravityVelocity += Data.gravityScale * Time.deltaTime;
+        velocity += (float)gravityVelocity * Time.deltaTime * Vector3.down;
+        MoveEntity(velocity.x, velocity.y, velocity.z);
+        if (isGrounded) {
+            OnLanded();
+        }
+        if (isCollidedVertically) {
+            gravityVelocity = 0;
+        }
+        velocity = Vector3.zero;
+    }
+    private protected virtual void OnLanded () {
     }
 }

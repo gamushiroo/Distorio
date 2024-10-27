@@ -3,20 +3,19 @@ using UnityEngine.UI;
 
 public class UserInterface : MonoBehaviour {
 
+    public Inventory inventory;
+    public int selectedBlockIndex = 0;
     public Sprite slot;
     public Sprite nothing;
     public GameObject inventoryBackGround;
     public GameObject toolbarBackGround;
     public GameObject toolbar;
     public GameObject inventoryObj;
-    public Player player;
     public World world;
     public RectTransform highlight;
     public readonly Image[] images = new Image[Data.InventoryWidth * Data.InventoryHeight];
     public readonly Image[] toolbarImages = new Image[Data.InventoryWidth];
     public int slotIndex = 0;
-    public Slider hpBar;
-    public Text hpText;
     public bool inUI;
 
     [SerializeField] public Text blockName;
@@ -26,45 +25,30 @@ public class UserInterface : MonoBehaviour {
 
         hand = GameObject.Find("Hand").GetComponent<Hand>();
 
-        player.inventory.AddItemStackToInventory(new ItemStack(256, 1));
-        player.inventory.AddItemStackToInventory(new ItemStack(257, 1));
-        player.inventory.AddItemStackToInventory(new ItemStack(258, 1));
-        player.inventory.AddItemStackToInventory(new ItemStack(259, 1));
-        player.inventory.AddItemStackToInventory(new ItemStack(0, 4));
-        player.inventory.AddItemStackToInventory(new ItemStack(1, 4));
-        player.inventory.AddItemStackToInventory(new ItemStack(2, 4));
-        player.inventory.AddItemStackToInventory(new ItemStack(3, 4));
+        inventory.AddItemStackToInventory(new ItemStack(256, 1));
+        inventory.AddItemStackToInventory(new ItemStack(257, 1));
+        inventory.AddItemStackToInventory(new ItemStack(258, 1));
+        inventory.AddItemStackToInventory(new ItemStack(259, 1));
+        inventory.AddItemStackToInventory(new ItemStack(0, 4));
+        inventory.AddItemStackToInventory(new ItemStack(1, 4));
+        inventory.AddItemStackToInventory(new ItemStack(2, 4));
+        inventory.AddItemStackToInventory(new ItemStack(3, 4));
+
         Cursor.lockState = CursorLockMode.Locked;
         SetSprites();
         inventoryBackGround.SetActive(false);
         inventoryObj.SetActive(false);
         highlight.position = toolbarImages[0].transform.position;
         RenderSprites();
-        player.selectedBlockIndex = GetSelected();
+        selectedBlockIndex = GetSelected();
     }
     private int GetSelected () {
-        return player.inventory.GetItemStack(slotIndex).id;
+        return inventory.GetItemStack(slotIndex).id;
     }
     private void Update () {
 
         Scroll();
         SetSlidebarValues();
-
-        if (!inUI) {
-            if (Input.GetMouseButtonDown(1) && world.GetInventory(player.SelectingPos)) {
-                inUI = true;
-                inventoryBackGround.SetActive(true);
-                inventoryObj.SetActive(true);
-
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                player.inUI = true;
-
-            } else if (Input.GetMouseButtonDown(1) && !world.blockTypes[world.GetVoxelID(player.tryPlacingPos)].hasCollision && player.selectedBlockIndex < 128 && world.blockTypes[world.GetVoxelID(player.SelectingPos)].hasCollision) {
-
-                player.SetBlock(player.tryPlacingPos, player.selectedBlockIndex);
-            }
-        }
 
         if (Input.GetKeyDown(KeyCode.E)) {
             inUI = false;
@@ -72,12 +56,9 @@ public class UserInterface : MonoBehaviour {
             inventoryObj.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            player.inUI = false;
         }
     }
     private void SetSlidebarValues () {
-        hpBar.value = player.entity.health / 20;
-        hpText.text = Mathf.FloorToInt(player.entity.health).ToString("#,#");
     }
     private void Scroll () {
         float value = Input.GetAxis("Mouse ScrollWheel");
@@ -92,12 +73,12 @@ public class UserInterface : MonoBehaviour {
             else if (slotIndex < 0)
                 slotIndex = Data.InventoryWidth - 1;
 
-            if(player.inventory.GetItemStack(GetSelected()) != null) {
-                player.selectedBlockIndex = player.inventory.GetItemStack(GetSelected()).id;
+            if(inventory.GetItemStack(GetSelected()) != null) {
+                selectedBlockIndex = inventory.GetItemStack(GetSelected()).id;
                 hand.GenerateMesh(0);
             }
             highlight.position = toolbarImages[slotIndex].transform.position;
-            player.selectedBlockIndex = GetSelected();
+            selectedBlockIndex = GetSelected();
         }
     }
     private void SetSprites () {
@@ -153,9 +134,9 @@ public class UserInterface : MonoBehaviour {
 
             Sprite a = nothing;
 
-            if (player.inventory.GetItemStack(i) != null) {
+            if (inventory.GetItemStack(i) != null) {
 
-                a = world.itemTypes[player.inventory.GetItemStack(i).id - 256].sprite;
+                a = world.itemTypes[inventory.GetItemStack(i).id - 256].sprite;
 
                 if (i < 8) {
                     toolbarImages[i].sprite = a;
