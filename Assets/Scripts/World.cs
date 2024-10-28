@@ -5,9 +5,12 @@ using UnityEngine.UI;
 
 public class World : MonoBehaviour {
 
+
+    public GameObject particle;
+
     public Slider hpBar;
     public Text hpText;
-    public AudioClip audioClip;
+    public AudioClip gunSound;
     public BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
@@ -20,7 +23,6 @@ public class World : MonoBehaviour {
     public UserInterface userInter;
     public GameObject blockHighlight;
     public GameObject miningEffect; public Slider miningProgresBar;
-
     private Vector2 offset;
     private readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
@@ -31,10 +33,20 @@ public class World : MonoBehaviour {
 
         Item.RegisterItems();
         InitNoise();
+
         GenerateWorld();
+        ModifyChunks();
+        UpdateChunks();
+
+
+    }
+
+    private void Start () {
 
         userInter.inventory = new();
-        entities.Add(new EntityPlayer(this));
+
+        entities.Add(new EntityPlayer(this, cam, GetSpawnPoint()));
+        entities.Add(new EntityEnemy(this));
 
     }
     private void LateUpdate () {
@@ -45,7 +57,9 @@ public class World : MonoBehaviour {
 
         ModifyChunks();
         UpdateChunks();
-        DrawChunks();
+        if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable) {
+            chunksToDraw.Dequeue().GenerateMesh();
+        }
     }
 
     public void CheckViewDistance (Vector2Int playerPos) {
@@ -110,11 +124,8 @@ public class World : MonoBehaviour {
                         modifications.Enqueue(a);
                     }
                 }
-            }
-            if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
-                if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
-                    lock (modifications) {
-
+                if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
+                    if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
                         if (temp < -5f) {
                         } else if (temp < 20f) {
                             modifications.Enqueue(Structure.MakeTree(pos));
@@ -122,6 +133,11 @@ public class World : MonoBehaviour {
                             modifications.Enqueue(Structure.MakeCactus(pos));
                         }
                     }
+                }
+                if (new System.Random().Next(0, 30) == 0) {
+                    Queue<VoxelAndPos> a = new();
+                    a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f), 8));
+                    modifications.Enqueue(a);
                 }
             }
         }
@@ -225,19 +241,13 @@ public class World : MonoBehaviour {
     private void UpdateChunks () {
         if (chunksToUpdate.Count > 0) {
             for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
-
                 if (chunksToUpdate[i].IsEditable) {
                     chunksToUpdate[i].UpdateChunk();
                     chunksToDraw.Enqueue(chunksToUpdate[i]);
                     chunksToUpdate.RemoveAt(i);
-
                 }
             }
         }
-    }
-    private void DrawChunks () {
-        if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable)
-            chunksToDraw.Dequeue().GenerateMesh();
     }
 }
 [System.Serializable]
@@ -255,7 +265,6 @@ public class BlockType {
     public int bottomFaceTexture;
     public int leftFaceTexture;
     public int rightFaceTexture;
-
     public int GetTextureID (int faceIndex) {
         return faceIndex switch {
             0 => backFaceTexture,

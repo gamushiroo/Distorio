@@ -5,14 +5,19 @@ public static class Data {
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
 
-    public static double gravityScale = 27;
     public static readonly int InventoryWidth = 8;
     public static readonly int InventoryHeight = 4;
 
-    public static readonly int ChunkLoadRange =6;
+
+    public static readonly float gravityScale = 27;
+    public static readonly float jumpScale = 1;
+    public static readonly float playerSpeed = 13.0F / 3.0F;
+    public static readonly float resistance = 10.0F;
+
+
+    public static readonly int ChunkLoadRange = 6;
     public static readonly int TextureSize = 16;
-    public static readonly float playerSpeed = 4.5f;
-    public static readonly float mouseSens = 100;
+    public static readonly float mouseSens = 115;
 
 
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
@@ -83,11 +88,9 @@ public static class Data {
     };
 
 
-    public static bool ABCheck (WWWEe posAndVel_, Vector3 ttt) {
-        WWWEe b2 = new(ttt, Vector3.one, Vector3.zero, false);
-        Vector3 b1p = posAndVel_.pos + posAndVel_.size;
-        Vector3 b2p = b2.pos + b2.size;
-        return !(b2.pos.x >= b1p.x || posAndVel_.pos.x >= b2p.x || b2.pos.y >= b1p.y || posAndVel_.pos.y >= b2p.y || b2.pos.z >= b1p.z || posAndVel_.pos.z >= b2p.z);
+    public static bool ABCheck (AABB ccc, AABB ddd) {
+
+        return !(ddd.minX >= ccc.maxX || ccc.minX >= ddd.maxX || ddd.minY >= ccc.maxY || ccc.minY >= ddd.maxY || ddd.minZ >= ccc.maxZ || ccc.minZ >= ddd.maxZ);
     }
 
     public static readonly int[] order = new int[6]{
@@ -130,7 +133,7 @@ public static class Data {
         int x = 0;
         int y = 0;
         int z = 0;
-        int dash = 0;
+        float dash = 0;
 
         if (Input.GetKey(KeyCode.D))
             x++;
@@ -141,7 +144,7 @@ public static class Data {
         if (Input.GetKey(KeyCode.S))
             z--;
         if (z == 1 && Input.GetKey(KeyCode.LeftShift))
-            dash++;
+            dash = 1.0F / 3.0F;
 
         return new Vector3(x, y, z).normalized + dash * Vector3.forward;
 

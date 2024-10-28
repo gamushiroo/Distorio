@@ -1,9 +1,6 @@
-using Org.BouncyCastle.Security;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public static class ItemRegistry  {
+public static class ItemRegistry {
 
     private static Dictionary<int, Item> register = new();
 

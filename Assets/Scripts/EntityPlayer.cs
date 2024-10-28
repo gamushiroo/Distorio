@@ -14,12 +14,16 @@ public class EntityPlayer : EntityLiving {
     private readonly Transform cam;
     private float miningProgress;
     private float mineSpeed;
+    private Vector3 forceAcc;
+    private float distance;
 
-    public EntityPlayer (World world) : base(world) {
 
-        Vector3 pos = world.GetSpawnPoint();
+
+    public EntityPlayer (World world, Transform cam, Vector3 pos) : base(world) {
+
         SetPosition(pos.x, pos.y, pos.z);
-        cam = world.cam;
+        this.cam = cam;
+        mineSpeed = 2.5f;
 
     }
 
@@ -28,13 +32,15 @@ public class EntityPlayer : EntityLiving {
         rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
         rotationY += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
         rotationX = Mathf.Clamp(rotationX, -90, 90);
-        mineSpeed = 4;
 
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            gravityVelocity -= 10;
+            velocity += Vector3.up * Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
         }
-        AddVelocity(Quaternion.Euler(0, rotationY, 0) * Data.GetPlayerVel());
 
+        forceAcc = Vector3.zero;
+        forceAcc = Data.resistance * (Quaternion.Euler(0, rotationY, 0) * Data.GetPlayerVel() * Data.playerSpeed - inputVelocity);
+        inputVelocity += forceAcc * Time.deltaTime;
+        distance += inputVelocity.magnitude * Time.deltaTime;
         base.Update();
 
         cam.position = new Vector3((float)posX, (float)posY, (float)posZ) + Vector3.up * 1.625f;
@@ -73,7 +79,7 @@ public class EntityPlayer : EntityLiving {
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
 
         world.hpBar.value = health / 20;
-        world.hpText.text = Mathf.FloorToInt(health).ToString("#,#");
+        world.hpText.text = forceAcc.magnitude.ToString("F") + "m/s^2\n" + (inputVelocity).magnitude.ToString("F") + "m/s\n" + distance.ToString("F") + "m\n";
     }
     private void CalculateSelectingPos () {
         Vector3 _camPos = cam.position;
