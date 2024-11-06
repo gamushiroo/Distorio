@@ -9,15 +9,17 @@ public static class Data {
     public static readonly int InventoryHeight = 4;
 
 
-    public static readonly float gravityScale = 27;
+    public static readonly float gravityScale = 25.0F;
     public static readonly float jumpScale = 1;
-    public static readonly float playerSpeed = 13.0F / 3.0F;
-    public static readonly float resistance = 10.0F;
+    //public static readonly float playerSpeed = 13.0F / 3.0F;
+    public static readonly float playerSpeed = 50;
+    public static readonly float resistance = 14.0F;
 
 
     public static readonly int ChunkLoadRange = 6;
     public static readonly int TextureSize = 16;
-    public static readonly float mouseSens = 115;
+    public static readonly float mouseSens = 0.60F;
+    public static readonly float mouseSensitivityFactor = 1.63250F;
 
 
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
@@ -139,6 +141,10 @@ public static class Data {
             x++;
         if (Input.GetKey(KeyCode.A))
             x--;
+        if (Input.GetKey(KeyCode.E))
+            y++;
+        if (Input.GetKey(KeyCode.Q))
+            y--;
         if (Input.GetKey(KeyCode.W))
             z++;
         if (Input.GetKey(KeyCode.S))

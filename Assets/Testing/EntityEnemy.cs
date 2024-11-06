@@ -22,7 +22,7 @@ public class EntityEnemy : EntityLiving {
         isZeroGravity = true;
 
         a = this.playerObject.AddComponent<AudioSource>();
-        a.volume = 0.2f;
+        a.volume = 0.1f;
     }
 
     private protected override void Update () {

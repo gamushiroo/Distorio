@@ -7,7 +7,7 @@ public class World : MonoBehaviour {
 
 
     public GameObject particle;
-
+    public PathRenderer pathrend;
     public Slider hpBar;
     public Text hpText;
     public AudioClip gunSound;
@@ -85,63 +85,61 @@ public class World : MonoBehaviour {
         }
         previouslyActiveChunks.Clear();
     }
+
+
+
     public byte GetVoxel (Vector3Int pos) {
-        float terrainHeight = GetHeight(pos);
-        float temp = GetTemp(pos);
+
         byte VoxelValue = 0;
-        if (pos.y < terrainHeight) {
-            if (pos.y == terrainHeight - 1) {
-                if (temp < -5f) {
-                    VoxelValue = 12;
-                } else if (temp < 20f) {
-                    VoxelValue = 1;
-                } else {
-                    VoxelValue = 6;
-                }
-            } else if (pos.y < terrainHeight - 1 && pos.y >= terrainHeight - 4) {
-                VoxelValue = 2;
-            } else {
+        int terrainHeight = Mathf.FloorToInt(GetHeight(new(pos.x, pos.z)));
+
+        switch (pos.y - terrainHeight) {
+            case < -4:
                 VoxelValue = 3;
-            }
+                break;
+            case < -1:
+                VoxelValue = 2;
+                break;
+            case < 0:
+                VoxelValue = 1;
+                break;
+            default:
+                break;
         }
+
         if (pos.y == terrainHeight) {
             lock (modifications) {
-                int add = 0;
-                byte type = 0;
-                if (temp < -5f) {
-                } else if (temp < 20f) {
-                    add = 32;
-                    type = 15;
-                } else {
-                    add = 128;
-                    type = 14;
-                }
-                float www = Mathf.Max(0, Noise.Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f) * add;
                 if (Noise.Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
-                    if (new System.Random().Next(0, Mathf.FloorToInt(www) + 2) == 0) {
+
+                    float www = Mathf.Max(0, Noise.Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f);
+
+                    if (new System.Random().Next(0, Mathf.FloorToInt(www * 32) + 2) == 0) {
                         Queue<VoxelAndPos> a = new();
-                        a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f), type));
+                        a.Enqueue(new(Data.Vector3ToChunkVoxel(pos), 15));
                         modifications.Enqueue(a);
                     }
                 }
                 if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
                     if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
-                        if (temp < -5f) {
-                        } else if (temp < 20f) {
-                            modifications.Enqueue(Structure.MakeTree(pos));
-                        } else {
-                            modifications.Enqueue(Structure.MakeCactus(pos));
-                        }
+                        modifications.Enqueue(Structure.MakeTree(pos));
                     }
-                }
-                if (new System.Random().Next(0, 30) == 0) {
-                    Queue<VoxelAndPos> a = new();
-                    a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3.one * 0.5f), 8));
-                    modifications.Enqueue(a);
                 }
             }
         }
         return VoxelValue;
+    }
+    public bool SetBlock (Vector3 position, Vector3 selectingPos) {
+
+        if (userInter.selectedBlockIndex != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
+
+            Queue<VoxelAndPos> queue = new();
+            queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), userInter.selectedBlockIndex));
+            AddMod(queue);
+
+            hand.placeEase = 0;
+            return true;
+        }
+        return false;
     }
     public bool IsEditable (Vector2Int pos) {
         return chunks.ContainsKey(pos) && chunks[pos].IsEditable;
@@ -196,17 +194,13 @@ public class World : MonoBehaviour {
     private float GetTemp (Vector3 pos) {
         return (Noise.Get2DPerlin(new(pos.x, pos.z), 0.002f) + 0.5f) * 60 - 20;
     }
-    private float GetHeight (Vector3Int pos) {
+    private float GetHeight (Vector2Int pos) {
+
         float terrainHeight = 0;
         for (int i = 0; i < 4; i++) {
-            terrainHeight += biome.terrainHeight * Noise.Get2DPerlin(new(pos.x, pos.z), biome.terrainScale / Mathf.Pow(2, i));
+            terrainHeight += Noise.Get2DPerlin(pos, biome.terrainScale / Mathf.Pow(2, i));
         }
-        terrainHeight /= Noise.Get2DPerlin(new(pos.x, pos.z), 0.05f) / 5000 + 1;
-
-        float sec = Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.029f) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(new(pos.x, pos.z), 0.005f) * 4);
-        terrainHeight *= sec / 2;
-        terrainHeight = Mathf.FloorToInt(terrainHeight + biome.solidGroundHeight);
-        return terrainHeight;
+        return terrainHeight * biome.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029f) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005f) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + biome.solidGroundHeight;
     }
     private void InitNoise () {
         Random.InitState((int)System.DateTime.Now.Ticks);
@@ -214,8 +208,8 @@ public class World : MonoBehaviour {
         Noise.SetOffset(offset);
     }
     private void GenerateWorld () {
-        for (int x = -8; x < 8; x++) {
-            for (int y = -8; y < 8; y++) {
+        for (int x = -Data.ChunkLoadRange; x < Data.ChunkLoadRange; x++) {
+            for (int y = -Data.ChunkLoadRange; y < Data.ChunkLoadRange; y++) {
                 Vector2Int pos = new(x, y);
                 chunks.Add(pos, new(pos, this));
                 chunksToUpdate.Add(chunks[pos]);

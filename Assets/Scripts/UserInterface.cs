@@ -47,6 +47,7 @@ public class UserInterface : MonoBehaviour {
     }
     private void Update () {
 
+
         Scroll();
         SetSlidebarValues();
 

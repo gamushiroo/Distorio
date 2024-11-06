@@ -1,26 +1,5 @@
-using System.CodeDom.Compiler;
-using System.Drawing;
 using UnityEngine;
-using UnityEngine.UI;
 
-[System.Serializable]
-public struct WWWEe {
-    public WWWEe (Vector3 pos, Vector3 size, Vector3 vel, bool isGrounded) {
-
-        this.pos = pos;
-        this.size = size;
-        this.vel = vel;
-        this.isGrounded = isGrounded;
-
-        aabbData = new AABBData();
-    }
-
-    public AABBData aabbData;
-    public Vector3 pos;
-    public Vector3 size;
-    public Vector3 vel;
-    public bool isGrounded;
-}
 
 public struct VoxelAndPos {
 
@@ -73,4 +52,20 @@ public struct ChunkVoxel {
 
     public Vector2Int c;
     public Vector3Int v;
+}
+
+[System.Serializable]
+public struct Node {
+
+    public Node (float G, float H, float F, Vector3Int pointer) {
+
+        this.G = G;
+        this.H = H;
+        this.F = F;
+        this.pointer = pointer;
+    }
+
+    public float G, H, F;
+    public Vector3Int pointer;
+
 }

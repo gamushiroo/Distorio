@@ -1,11 +1,17 @@
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class EntityPlayer : EntityLiving {
+
+
+
 
     private Vector2Int chunkCoord;
     private Vector2Int lastChunkCoord;
     private Vector3Int tryPlacingPos;
+    private Vector3Int lastTryPlacingPos;
     private Vector3Int SelectingPos;
     private float rotationX;
     private float rotationY;
@@ -17,18 +23,49 @@ public class EntityPlayer : EntityLiving {
     private Vector3 forceAcc;
     private float distance;
 
+    private float coolDown;
 
+    private bool nextFramePlaced;
+
+    private Vector3Int spawnpoint;
+
+
+
+    bool doesUpdate = true;
 
     public EntityPlayer (World world, Transform cam, Vector3 pos) : base(world) {
-
+        lastTryPlacingPos = Vector3Int.zero;
+        coolDown = 0;
         SetPosition(pos.x, pos.y, pos.z);
         this.cam = cam;
         mineSpeed = 2.5f;
+        spawnpoint = Vector3Int.FloorToInt(pos);
 
     }
 
     private protected override void Update () {
 
+
+
+
+
+        if (Input.GetKeyDown(KeyCode.T)) {
+            doesUpdate = !doesUpdate;
+        }
+        if (doesUpdate) {
+
+            world.pathrend.AAA(PathFinder.FindPath(new Vector3Int((int)posX, (int)posY, (int)posZ), spawnpoint, world, isGrounded));
+        }
+
+
+
+
+
+
+
+
+
+        coolDown += Time.deltaTime;
         rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
         rotationY += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
         rotationX = Mathf.Clamp(rotationX, -90, 90);
@@ -66,9 +103,18 @@ public class EntityPlayer : EntityLiving {
             world.miningProgresBar.value = miningProgress / world.blockTypes[world.GetVoxelID(SelectingPos)].hardness;
         }
 
-        if (Input.GetMouseButtonDown(1) && !world.blockTypes[world.GetVoxelID(tryPlacingPos)].hasCollision && world.userInter.selectedBlockIndex < 128 && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision) {
-
-            SetBlock(tryPlacingPos, world.userInter.selectedBlockIndex);
+        if (nextFramePlaced) {
+            lastTryPlacingPos = tryPlacingPos;
+            nextFramePlaced = false;
+        }
+        if (!IsCollide(tryPlacingPos)) {
+            if (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1) || Input.GetMouseButton(1) && tryPlacingPos != lastTryPlacingPos) {
+                if (world.SetBlock(tryPlacingPos, SelectingPos)) {
+                    coolDown = 0;
+                    lastTryPlacingPos = tryPlacingPos;
+                    nextFramePlaced = true;
+                }
+            }
         }
 
         world.blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
@@ -107,18 +153,7 @@ public class EntityPlayer : EntityLiving {
         }
         return normal;
     }
-    private void SetBlock (Vector3 position, int id) {
 
-        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
-        if (id != 0 && !world.blockTypes[world.GetVoxelID(tryPlacingPos)].hasCollision && !IsCollide(tryPlacingPos)) {
-
-            Queue<VoxelAndPos> queue = new();
-            queue.Enqueue(new(pos, id));
-            world.AddMod(queue);
-
-            world.hand.placeEase = 0;
-        }
-    }
     private void DestroyBlock (Vector3 position) {
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
         Queue<VoxelAndPos> queue = new();

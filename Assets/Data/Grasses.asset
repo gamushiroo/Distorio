@@ -12,12 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e085820c1fa23b4bbe80345dad7d1ef, type: 3}
   m_Name: Grasses
   m_EditorClassIdentifier: 
-  biomeName: 
-  solidGroundHeight: 64
+  solidGroundHeight: 48
   terrainHeight: 12
   terrainScale: 0.03
-  terrainHeight2: 0
-  terrainScale2: 0.005
   treeZoneScale: 0.02
   treeZoneThreshold: 0.1
   treePlacementScale: 1.03
