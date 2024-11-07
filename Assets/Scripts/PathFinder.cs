@@ -19,13 +19,15 @@ public static class PathFinder {
         //  10000 times because it might do a infinite loop
         for (int q = 0; q < 10000; q++) {
 
-            //  Find the cell with the lowest F from open cells, and set it to current cell
+            //  Find the cell with the lowest F from open cells, and set it to current
             KeyValuePair<Vector3Int, Cell> current = init;
             foreach (KeyValuePair<Vector3Int, Cell> entry in open) {
                 if (entry.Value.F < current.Value.F) {
                     current = entry;
                 }
             }
+
+            //  Close this cell
             open.Remove(current.Key);
             closed.Add(current.Key, current.Value);
 
@@ -41,7 +43,7 @@ public static class PathFinder {
 
                         Vector3Int currentNeighbour = new Vector3Int(x, y, z) + current.Key;
 
-                        //  Skip this cell if it is unreachable or is closed
+                        //  Skip this neighbour if is unreachable or is closed
                         if (closed.ContainsKey(currentNeighbour) || !(world.GetVoxelID(currentNeighbour + start + Vector3Int.down) != 0) || world.GetVoxelID(currentNeighbour + start) != 0) {
                             continue;
                         }
@@ -69,6 +71,8 @@ public static class PathFinder {
             pos = closed[pos].parent;
         }
 
+
+        //  Generate some stuffs and return it
         foreach (Vector3Int _pos in closed.Keys) {
             values.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 19));
         }
