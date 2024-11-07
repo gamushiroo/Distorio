@@ -14,9 +14,11 @@ public static class PathFinder {
         Dictionary<Vector3Int, Cell> closed = new();
         Vector3Int localEnd = end - start;
 
+
+        //  Open the first cell
         open.Add(Vector3Int.zero, new(Vector3Int.zero, 0, 0, 0));
 
-        //  10000 times because it might do a infinite loop
+        //  not while(true) because it might do a infinite loop xdddd
         for (int q = 0; q < 10000; q++) {
 
             //  Find the cell with the lowest F from open cells, and set it to current
