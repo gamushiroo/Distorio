@@ -47,8 +47,8 @@ public static class PathFinder {
                         }
 
                         float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
-                        Vector3Int value = localEnd - currentNeighbour;
-                        int H = Mathf.Abs(value.x) + Mathf.Abs(value.y) + Mathf.Abs(value.z);
+                        Vector3Int a = localEnd - currentNeighbour;
+                        int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
 
                         if (!open.ContainsKey(currentNeighbour)) {
                             open.Add(currentNeighbour, new Cell(current.Key, G, H, G + H));
@@ -86,9 +86,9 @@ public static class PathFinder {
 [System.Serializable]
 public struct Cell {
 
-    public Vector3Int parent;  //  Parent of this cell
-    public float G;  //  Steps from the start node till the current node
-    public int H;  //  Heuristic distance from this cell till the end node
+    public Vector3Int parent;
+    public float G;  //  Steps from the start node till this
+    public int H;  //  Heuristic distance from this till the end
     public float F;  //  G + H
 
     public Cell (Vector3Int parent, float G, int H, float F) {
