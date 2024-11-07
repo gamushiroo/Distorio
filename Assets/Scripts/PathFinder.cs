@@ -18,7 +18,8 @@ public static class PathFinder {
 
         for (int q = 0; q < 10000; q++) {
 
-            if(open.Count == 0) {
+            //  Return if end is unreachable
+            if (open.Count == 0) {
                 return new();
             }
 
