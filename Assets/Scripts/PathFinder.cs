@@ -83,7 +83,6 @@ public static class PathFinder {
     }
 }
 
-[System.Serializable]
 public struct Cell {
 
     public Vector3Int parent;
