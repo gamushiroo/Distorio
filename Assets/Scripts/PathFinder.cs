@@ -9,10 +9,9 @@ public static class PathFinder {
 
     public static Queue<VoxelAndPos> FindPath (Vector3Int start, Vector3Int end, World world) {
 
-        Queue<VoxelAndPos> values = new();
+        Vector3Int localEnd = end - start;
         Dictionary<Vector3Int, Cell> open = new();
         Dictionary<Vector3Int, Cell> closed = new();
-        Vector3Int localEnd = end - start;
 
         //  Open the first cell
         open.Add(Vector3Int.zero, new(Vector3Int.zero, 0, 0, 0));
@@ -70,16 +69,17 @@ public static class PathFinder {
         }
 
         //  Generate stuff
+        Queue<VoxelAndPos> value = new();
         foreach (Vector3Int _pos in closed.Keys) {
-            values.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 19));
+            value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 19));
         }
         foreach (Vector3Int _pos in open.Keys) {
-            values.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 18));
+            value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 18));
         }
         foreach (Vector3Int _pos in path) {
-            values.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 20));
+            value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 20));
         }
-        return values;
+        return value;
     }
 }
 
