@@ -48,7 +48,7 @@ public class AABB {
     }
 
     public double CalculateXOffset (AABB other, double offsetX) {
-        if (other.maxY > minY && other.minY < maxY && other.maxZ > minZ && other.minZ < maxZ) {
+        if (!(other.maxY <= minY || other.minY >= maxY || other.maxZ <= minZ || other.minZ >= maxZ)) {
             if (offsetX > 0.0D && other.maxX <= minX) {
                 double d1 = minX - other.maxX;
                 if (d1 < offsetX) {
