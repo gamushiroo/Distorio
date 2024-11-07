@@ -39,21 +39,21 @@ public static class PathFinder {
                 for (int y = -1; y < 2; y++) {
                     for (int z = -1; z < 2; z++) {
 
-                        Vector3Int currentNeighbour = new Vector3Int(x, y, z) + current.Key;
+                        Vector3Int neighbour = new Vector3Int(x, y, z) + current.Key;
 
                         //  Skip this neighbour if is closed or is unreachable
-                        if (closed.ContainsKey(currentNeighbour) || world.GetVoxelID(currentNeighbour + start + Vector3Int.down) == 0 || world.GetVoxelID(currentNeighbour + start) != 0) {
+                        if (closed.ContainsKey(neighbour) || world.GetVoxelID(neighbour + start + Vector3Int.down) == 0 || world.GetVoxelID(neighbour + start) != 0) {
                             continue;
                         }
 
                         float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
-                        Vector3Int a = localEnd - currentNeighbour;
+                        Vector3Int a = localEnd - neighbour;
                         int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
 
-                        if (!open.ContainsKey(currentNeighbour)) {
-                            open.Add(currentNeighbour, new Cell(current.Key, G, H, G + H));
-                        } else if (G < open[currentNeighbour].G) {
-                            open[currentNeighbour] = new Cell(current.Key, G, H, G + H);
+                        if (!open.ContainsKey(neighbour)) {
+                            open.Add(neighbour, new Cell(current.Key, G, H, G + H));
+                        } else if (G < open[neighbour].G) {
+                            open[neighbour] = new Cell(current.Key, G, H, G + H);
                         }
                     }
                 }
