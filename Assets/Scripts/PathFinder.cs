@@ -41,7 +41,7 @@ public static class PathFinder {
 
                         Vector3Int currentNeighbour = new Vector3Int(x, y, z) + current.Key;
 
-                        //  Skip this if is closed or is unreachable
+                        //  Skip this neighbour if is closed or is unreachable
                         if (closed.ContainsKey(currentNeighbour) || world.GetVoxelID(currentNeighbour + start + Vector3Int.down) == 0 || world.GetVoxelID(currentNeighbour + start) != 0) {
                             continue;
                         }
@@ -87,8 +87,8 @@ public static class PathFinder {
 public struct Cell {
 
     public Vector3Int parent;
-    public float G;  //  Steps from the start node till this
-    public int H;  //  Heuristic distance from this till the end
+    public float G;  //  Steps from the start cell till this cell
+    public int H;  //  Heuristic distance from the end cell till this cell
     public float F;  //  G + H
 
     public Cell (Vector3Int parent, float G, int H, float F) {
