@@ -51,10 +51,10 @@ public static class PathFinder {
                             continue;
                         }
 
-                        float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
-                        Vector3Int a = localEnd - neighbour;
-                        int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
 
+                        //  Open this neighbour if it's not open. If this neighbour is already open, update this neighbour in some case
+                        float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
+                        int H = Mathf.Abs((localEnd - neighbour).x) + Mathf.Abs((localEnd - neighbour).y) + Mathf.Abs((localEnd - neighbour).z);
                         if (!open.ContainsKey(neighbour)) {
                             open.Add(neighbour, new(current.Key, G, H, G + H));
                         } else if (G < open[neighbour].G) {
