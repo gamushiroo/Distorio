@@ -4,8 +4,8 @@ using UnityEngine;
 public static class PathFinder {
 
     //  Cache the results of calls to Sqrt() for performance
-    static readonly float[] sqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
-    static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0, Mathf.Infinity));
+    private static readonly float[] sqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
+    private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0, Mathf.Infinity));
 
     public static Queue<VoxelAndPos> FindPath (Vector3Int start, Vector3Int end, World world) {
 
