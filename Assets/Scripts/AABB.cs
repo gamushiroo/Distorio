@@ -2,7 +2,6 @@ using System;
 
 public class AABB {
 
-
     public double minX;
     public double minY;
     public double minZ;
@@ -10,42 +9,42 @@ public class AABB {
     public double maxY;
     public double maxZ;
 
-
     public AABB (double x1, double y1, double z1, double x2, double y2, double z2) {
+
         minX = Math.Min(x1, x2);
         minY = Math.Min(y1, y2);
         minZ = Math.Min(z1, z2);
         maxX = Math.Max(x1, x2);
         maxY = Math.Max(y1, y2);
         maxZ = Math.Max(z1, z2);
-    }
-    public AABB Offset (double x, double y, double z) {
-        return new AABB(minX + x, minY + y, minZ + z, maxX + x, maxY + y, maxZ + z);
+
     }
 
     public AABB AddCoord (double x, double y, double z) {
+
         double d0 = minX;
         double d1 = minY;
         double d2 = minZ;
         double d3 = maxX;
         double d4 = maxY;
         double d5 = maxZ;
-        if (x < 0.0d) {
-            d0 += x;
-        } else {
+
+        if (x >= 0.0D) {
             d3 += x;
-        }
-        if (y < 0.0d) {
-            d1 += y;
-        } else  {
-            d4 += y;
-        }
-        if (z < 0.0d) {
-            d2 += z;
         } else {
-            d5 += z;
+            d0 += x;
         }
-        return new AABB(d0, d1, d2, d3, d4, d5);
+        if (y >= 0.0D) {
+            d4 += y;
+        } else {
+            d1 += y;
+        }
+        if (z >= 0.0D) {
+            d5 += z;
+        } else {
+            d2 += z;
+        }
+        return new(d0, d1, d2, d3, d4, d5);
     }
 
     public double CalculateXOffset (AABB other, double offsetX) {
