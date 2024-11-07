@@ -93,7 +93,7 @@ public struct Cell {
     public float G;  //  Steps from the start till this cell
     public int H;  //  Heuristic distance from this cell till the end
     public float F;  //  G + H
-    public static Cell zero = new(Vector3Int.zero, 0, 0, 0);
+    public static readonly Cell zero = new(Vector3Int.zero, 0, 0, 0);
 
     public Cell (Vector3Int parent, float G, int H, float F) {
         this.parent = parent;
