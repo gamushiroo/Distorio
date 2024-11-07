@@ -53,19 +53,3 @@ public struct ChunkVoxel {
     public Vector2Int c;
     public Vector3Int v;
 }
-
-[System.Serializable]
-public struct Node {
-
-    public Node (float G, float H, float F, Vector3Int pointer) {
-
-        this.G = G;
-        this.H = H;
-        this.F = F;
-        this.pointer = pointer;
-    }
-
-    public float G, H, F;
-    public Vector3Int pointer;
-
-}

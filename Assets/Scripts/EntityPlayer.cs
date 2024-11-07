@@ -5,9 +5,6 @@ using UnityEngine.UIElements;
 
 public class EntityPlayer : EntityLiving {
 
-
-
-
     private Vector2Int chunkCoord;
     private Vector2Int lastChunkCoord;
     private Vector3Int tryPlacingPos;
@@ -22,16 +19,10 @@ public class EntityPlayer : EntityLiving {
     private float mineSpeed;
     private Vector3 forceAcc;
     private float distance;
-
     private float coolDown;
-
     private bool nextFramePlaced;
-
     private Vector3Int spawnpoint;
-
-
-
-    bool doesUpdate = true;
+    bool doPathFind = true;
 
     public EntityPlayer (World world, Transform cam, Vector3 pos) : base(world) {
         lastTryPlacingPos = Vector3Int.zero;
@@ -45,25 +36,12 @@ public class EntityPlayer : EntityLiving {
 
     private protected override void Update () {
 
-
-
-
-
         if (Input.GetKeyDown(KeyCode.T)) {
-            doesUpdate = !doesUpdate;
+            doPathFind = !doPathFind;
         }
-        if (doesUpdate && isGrounded) {
-            world.pathrend.AAA(PathFinder.FindPath(new Vector3Int((int)posX, (int)posY, (int)posZ), spawnpoint, world, true));
-
+        if (doPathFind && isGrounded) {
+            world.pathrend.AAA(PathFinder.FindPath(new Vector3Int((int)posX, (int)posY, (int)posZ), spawnpoint, world));
         }
-
-
-
-
-
-
-
-
 
         coolDown += Time.deltaTime;
         rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
