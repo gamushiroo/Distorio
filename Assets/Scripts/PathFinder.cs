@@ -18,11 +18,6 @@ public static class PathFinder {
 
         for (int q = 0; q < 10000; q++) {
 
-            //  Return if end is unreachable
-            if (open.Count == 0) {
-                return new();
-            }
-
             //  Find the cell with the lowest F from open cells
             KeyValuePair<Vector3Int, Cell> current = init;
             foreach (KeyValuePair<Vector3Int, Cell> entry in open) {
@@ -62,6 +57,11 @@ public static class PathFinder {
                     }
                 }
             }
+
+            //  Return if end is unreachable
+            if (open.Count == 0) {
+                return new();
+            }
         }
 
         //  Follow the parent in each cell due to generate the path
@@ -93,7 +93,6 @@ public struct Cell {
     public float G;  //  Steps from the start till this cell
     public int H;  //  Heuristic distance from this cell till the end
     public float F;  //  G + H
-
     public static Cell zero = new(Vector3Int.zero, 0, 0, 0);
 
     public Cell (Vector3Int parent, float G, int H, float F) {
