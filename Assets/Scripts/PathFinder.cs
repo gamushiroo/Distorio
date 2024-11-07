@@ -45,7 +45,7 @@ public static class PathFinder {
 
                         Vector3Int currentNeighbour = new Vector3Int(x, y, z) + current.Key;
 
-                        //  Skip this neighbour if is unreachable or is closed
+                        //  Skip this neighbour if is closed or is unreachable
                         if (closed.ContainsKey(currentNeighbour) || !(world.GetVoxelID(currentNeighbour + start + Vector3Int.down) != 0) || world.GetVoxelID(currentNeighbour + start) != 0) {
                             continue;
                         }
