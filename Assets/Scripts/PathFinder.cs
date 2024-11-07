@@ -49,9 +49,7 @@ public static class PathFinder {
                         //  Open this neighbour if it's not open. If this neighbour is already open, update this neighbour in some case
                         float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
                         int H = Mathf.Abs((localEnd - neighbour).x) + Mathf.Abs((localEnd - neighbour).y) + Mathf.Abs((localEnd - neighbour).z);
-                        if (!open.ContainsKey(neighbour)) {
-                            open.Add(neighbour, new(current.Key, G, H, G + H));
-                        } else if (G < open[neighbour].G) {
+                        if (!open.TryAdd(neighbour, new(current.Key, G, H, G + H)) && G < open[neighbour].G) {
                             open[neighbour] = new(current.Key, G, H, G + H);
                         }
                     }
