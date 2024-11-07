@@ -18,6 +18,10 @@ public static class PathFinder {
 
         for (int q = 0; q < 10000; q++) {
 
+            if(open.Count == 0) {
+                return new();
+            }
+
             //  Find the cell with the lowest F from open cells
             KeyValuePair<Vector3Int, Cell> current = init;
             foreach (KeyValuePair<Vector3Int, Cell> entry in open) {
