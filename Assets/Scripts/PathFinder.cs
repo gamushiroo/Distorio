@@ -56,9 +56,9 @@ public static class PathFinder {
                         int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
 
                         if (!open.ContainsKey(neighbour)) {
-                            open.Add(neighbour, new Cell(current.Key, G, H, G + H));
+                            open.Add(neighbour, new(current.Key, G, H, G + H));
                         } else if (G < open[neighbour].G) {
-                            open[neighbour] = new Cell(current.Key, G, H, G + H);
+                            open[neighbour] = new(current.Key, G, H, G + H);
                         }
                     }
                 }
