@@ -126,6 +126,10 @@ public class World : MonoBehaviour {
                 }
             }
         }
+
+        //superFlat
+        //VoxelValue = pos.y > 4 ? (byte)0 : (byte)1;
+
         return VoxelValue;
     }
     public bool SetBlock (Vector3 position, Vector3 selectingPos) {

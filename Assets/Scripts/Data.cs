@@ -11,8 +11,7 @@ public static class Data {
 
     public static readonly float gravityScale = 25.0F;
     public static readonly float jumpScale = 1;
-    //public static readonly float playerSpeed = 13.0F / 3.0F;
-    public static readonly float playerSpeed = 50;
+    public static readonly float playerSpeed = 13.0F / 3.0F;
     public static readonly float resistance = 14.0F;
 
 

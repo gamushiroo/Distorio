@@ -52,9 +52,9 @@ public class EntityPlayer : EntityLiving {
         if (Input.GetKeyDown(KeyCode.T)) {
             doesUpdate = !doesUpdate;
         }
-        if (doesUpdate) {
+        if (doesUpdate && isGrounded) {
+            world.pathrend.AAA(PathFinder.FindPath(new Vector3Int((int)posX, (int)posY, (int)posZ), spawnpoint, world, true));
 
-            world.pathrend.AAA(PathFinder.FindPath(new Vector3Int((int)posX, (int)posY, (int)posZ), spawnpoint, world, isGrounded));
         }
 
 
