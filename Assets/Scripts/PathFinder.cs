@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 public static class PathFinder {
+
     private static readonly int maxSteps = 5000;
     private static readonly float[] cachedSqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
     private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0));
+
     public static List<Vector3Int> FindPath (Vector3Int start, Vector3Int end, World world) {
+
         Vector3Int localEnd = end - start;
         Dictionary<Vector3Int, Cell> open = new();
         Dictionary<Vector3Int, Cell> closed = new();
@@ -23,6 +26,7 @@ public static class PathFinder {
                     current = entry;
                 }
             }
+
             //  Close this cell
             open.Remove(current.Key);
             closed.Add(current.Key, current.Value);
@@ -38,10 +42,12 @@ public static class PathFinder {
                 }
                 return path;
             }
+
             //  Check the neighbour
             for (int x = -1; x < 2; x++) {
                 for (int y = -1; y < 2; y++) {
                     for (int z = -1; z < 2; z++) {
+
                         Vector3Int neighbour = new Vector3Int(x, y, z) + current.Key;
                         Vector3Int foo = neighbour + start;
 
@@ -58,6 +64,7 @@ public static class PathFinder {
                     }
                 }
             }
+
             //  Break if end is unreachable
             if (open.Count == 0) {
                 break;
@@ -67,14 +74,12 @@ public static class PathFinder {
     }
 }
 public struct Cell {
+
     public Vector3Int? parent;
-
-    //  Steps from the start cell till this cell
-    public float G;
-
-    //  Heuristic distance from this cell till the end cell
-    public float H;
+    public float G; //  Steps from the start cell till this cell
+    public float H; //  Heuristic distance from this cell till the end cell
     public readonly float F => G + H;
+
     public Cell (Vector3Int? parent, float G, float H) {
         this.parent = parent;
         this.G = G;
