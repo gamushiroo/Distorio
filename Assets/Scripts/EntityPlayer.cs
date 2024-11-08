@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
@@ -40,9 +41,8 @@ public class EntityPlayer : EntityLiving {
             doPathFind = !doPathFind;
         }
         if (doPathFind && isGrounded) {
-            world.pathrend.AAA(PathFinder.FindPath(new((int)posX, (int)posY, (int)posZ), spawnpoint, world));
+            world.pathrend.AAA(PathFinder.FindPath(new((int)Math.Floor(posX), (int)Math.Floor(posY), (int)Math.Floor(posZ)), spawnpoint, world));
         }
-
         coolDown += Time.deltaTime;
         rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
         rotationY += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;

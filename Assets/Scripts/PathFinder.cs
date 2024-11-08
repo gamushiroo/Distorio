@@ -1,13 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public static class PathFinder {
 
     private static readonly int maxSteps = 5000;
-
-    //  Cache the results of calls to Sqrt() for performance
-    private static readonly float[] sqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
-    private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0, Mathf.Infinity));
+    private static readonly float[] cachedSqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
+    private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0));
 
     public static List<Vector3Int> FindPath (Vector3Int start, Vector3Int end, World world) {
 
@@ -16,7 +16,7 @@ public static class PathFinder {
         Dictionary<Vector3Int, Cell> closed = new();
 
         //  Open the first cell
-        open.Add(Vector3Int.zero, Cell.zero);
+        open.Add(Vector3Int.zero, new(null, 0, 0));
 
         for (int q = 0; q < maxSteps; q++) {
 
@@ -36,10 +36,10 @@ public static class PathFinder {
 
                 //  Follow the parent in each cell due to generate the path
                 List<Vector3Int> path = new();
-                Vector3Int pos = localEnd;
-                while (pos != Vector3Int.zero) {
-                    path.Add(pos + start);
-                    pos = closed[pos].parent;
+                Vector3Int? pos = localEnd;
+                while (pos != null) {
+                    path.Add((Vector3Int)pos + start);
+                    pos = closed[(Vector3Int)pos].parent;
                 }
                 return path;
             }
@@ -56,10 +56,9 @@ public static class PathFinder {
                         if (!closed.ContainsKey(neighbour) && world.GetVoxelID(foo + Vector3Int.down) != 0 && world.GetVoxelID(foo) == 0) {
 
                             //  Open this neighbour if it's not open. If this neighbour is already open, update this neighbour in some case
-                            float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
-                            Vector3Int a = localEnd - neighbour;
-                            int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
-                            Cell bar = new(current.Key, G, H, G + H);
+                            float G = cachedSqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
+                            float H = (localEnd - neighbour).magnitude;
+                            Cell bar = new(current.Key, G, H);
                             if (!open.TryAdd(neighbour, bar) && G < open[neighbour].G) {
                                 open[neighbour] = bar;
                             }
@@ -70,7 +69,7 @@ public static class PathFinder {
 
             //  Return if end is unreachable
             if (open.Count == 0) {
-                return new();
+                break;
             }
         }
         return new();
@@ -79,16 +78,14 @@ public static class PathFinder {
 
 public struct Cell {
 
-    public Vector3Int parent;
+    public Vector3Int? parent;
     public float G;  //  Steps from the start till this cell
-    public int H;  //  Heuristic distance from this cell till the end
-    public float F;  //  G + H
-    public static readonly Cell zero = new(Vector3Int.zero, 0, 0, 0);
+    public float H;  //  Heuristic distance from this cell till the end
+    public readonly float F => G + H;
 
-    public Cell (Vector3Int parent, float G, int H, float F) {
+    public Cell (Vector3Int? parent, float G, float H) {
         this.parent = parent;
         this.G = G;
         this.H = H;
-        this.F = F;
     }
 }
