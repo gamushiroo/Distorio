@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class PathFinder {
@@ -40,19 +41,19 @@ public static class PathFinder {
                     for (int z = -1; z < 2; z++) {
 
                         Vector3Int neighbour = new Vector3Int(x, y, z) + current.Key;
+                        Vector3Int foo = neighbour + start;
 
                         //  Skip this neighbour if is closed or is unreachable
-                        if (closed.ContainsKey(neighbour) || world.GetVoxelID(neighbour + Vector3Int.down + start) == 0 || world.GetVoxelID(neighbour + start) != 0) {
-                            continue;
-                        }
+                        if (!closed.ContainsKey(neighbour) && world.GetVoxelID(foo + Vector3Int.down) != 0 && world.GetVoxelID(foo) == 0) {
 
-                        //  Open this neighbour if it's not open. If this neighbour is already open, update this neighbour in some case
-                        float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
-                        Vector3Int a = localEnd - neighbour;
-                        int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
-                        Cell foo = new(current.Key, G, H, G + H);
-                        if (!(open.TryAdd(neighbour, foo) || G >= open[neighbour].G)) {
-                            open[neighbour] = foo;
+                            //  Open this neighbour if it's not open. If this neighbour is already open, update this neighbour in some case
+                            float G = sqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
+                            Vector3Int a = localEnd - neighbour;
+                            int H = Mathf.Abs(a.x) + Mathf.Abs(a.y) + Mathf.Abs(a.z);
+                            Cell bar = new(current.Key, G, H, G + H);
+                            if (!open.TryAdd(neighbour, bar) && G < open[neighbour].G) {
+                                open[neighbour] = bar;
+                            }
                         }
                     }
                 }
