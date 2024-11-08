@@ -9,7 +9,7 @@ public static class PathFinder {
     private static readonly float[] sqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
     private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0, Mathf.Infinity));
 
-    public static Queue<VoxelAndPos> FindPath (Vector3Int start, Vector3Int end, World world) {
+    public static List<Vector3Int> FindPath (Vector3Int start, Vector3Int end, World world) {
 
         Vector3Int localEnd = end - start;
         Dictionary<Vector3Int, Cell> open = new();
@@ -37,24 +37,11 @@ public static class PathFinder {
                 //  Follow the parent in each cell due to generate the path
                 List<Vector3Int> path = new();
                 Vector3Int pos = localEnd;
-
                 while (pos != Vector3Int.zero) {
-                    path.Add(pos);
+                    path.Add(pos + start);
                     pos = closed[pos].parent;
                 }
-
-                //  Generate stuff
-                Queue<VoxelAndPos> value = new();
-                foreach (Vector3Int _pos in closed.Keys) {
-                    value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 19));
-                }
-                foreach (Vector3Int _pos in open.Keys) {
-                    value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 18));
-                }
-                foreach (Vector3Int _pos in path) {
-                    value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 20));
-                }
-                return value;
+                return path;
             }
 
             //  Check the neighbour
@@ -83,7 +70,7 @@ public static class PathFinder {
 
             //  Return if end is unreachable
             if (open.Count == 0) {
-                break;
+                return new();
             }
         }
         return new();

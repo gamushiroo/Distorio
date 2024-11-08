@@ -1,6 +1,9 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathRenderer : MonoBehaviour {
@@ -13,14 +16,16 @@ public class PathRenderer : MonoBehaviour {
     private readonly List<int> triangles = new();
     private readonly List<Vector2> uvs = new();
 
-
+    /*
+    
+    */
 
     public MeshFilter meshFilter;
 
     public World world;
 
 
-    public void AAA (Queue<VoxelAndPos> a) {
+    public void AAA (List<Vector3Int> path) {
 
         vertexIndex = 0;
         vertices.Clear();
@@ -28,10 +33,16 @@ public class PathRenderer : MonoBehaviour {
         uvs.Clear();
 
 
-        while (a.Count > 0) {
+
+        Queue<VoxelAndPos> ddddd = new();
+        foreach (Vector3Int _pos in path) {
+            ddddd.Enqueue(new(Data.Vector3ToChunkVoxel(_pos), 20));
+        }
+
+        while (ddddd.Count > 0) {
 
 
-            DDDD(a.Dequeue());
+            DDDD(ddddd.Dequeue());
 
 
 

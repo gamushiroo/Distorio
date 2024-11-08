@@ -40,7 +40,7 @@ public class EntityPlayer : EntityLiving {
             doPathFind = !doPathFind;
         }
         if (doPathFind && isGrounded) {
-            world.pathrend.AAA(PathFinder.FindPath(new ((int)posX, (int)posY, (int)posZ), spawnpoint, world));
+            world.pathrend.AAA(PathFinder.FindPath(new((int)posX, (int)posY, (int)posZ), spawnpoint, world));
         }
 
         coolDown += Time.deltaTime;
