@@ -2,15 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-
 public static class PathFinder {
-
     private static readonly int maxSteps = 5000;
     private static readonly float[] cachedSqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
     private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0));
-
     public static List<Vector3Int> FindPath (Vector3Int start, Vector3Int end, World world) {
-
         Vector3Int localEnd = end - start;
         Dictionary<Vector3Int, Cell> open = new();
         Dictionary<Vector3Int, Cell> closed = new();
@@ -27,7 +23,6 @@ public static class PathFinder {
                     current = entry;
                 }
             }
-
             //  Close this cell
             open.Remove(current.Key);
             closed.Add(current.Key, current.Value);
@@ -43,12 +38,10 @@ public static class PathFinder {
                 }
                 return path;
             }
-
             //  Check the neighbour
             for (int x = -1; x < 2; x++) {
                 for (int y = -1; y < 2; y++) {
                     for (int z = -1; z < 2; z++) {
-
                         Vector3Int neighbour = new Vector3Int(x, y, z) + current.Key;
                         Vector3Int foo = neighbour + start;
 
@@ -57,8 +50,7 @@ public static class PathFinder {
 
                             //  Open this neighbour if it's not open. If this neighbour is already open, update this neighbour in some case
                             float G = cachedSqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
-                            float H = (localEnd - neighbour).magnitude;
-                            Cell bar = new(current.Key, G, H);
+                            Cell bar = new(current.Key, G, (localEnd - neighbour).magnitude);
                             if (!open.TryAdd(neighbour, bar) && G < open[neighbour].G) {
                                 open[neighbour] = bar;
                             }
@@ -66,8 +58,7 @@ public static class PathFinder {
                     }
                 }
             }
-
-            //  Return if end is unreachable
+            //  Break if end is unreachable
             if (open.Count == 0) {
                 break;
             }
@@ -75,14 +66,15 @@ public static class PathFinder {
         return new();
     }
 }
-
 public struct Cell {
-
     public Vector3Int? parent;
-    public float G;  //  Steps from the start till this cell
-    public float H;  //  Heuristic distance from this cell till the end
-    public readonly float F => G + H;
 
+    //  Steps from the start cell till this cell
+    public float G;
+
+    //  Heuristic distance from this cell till the end cell
+    public float H;
+    public readonly float F => G + H;
     public Cell (Vector3Int? parent, float G, float H) {
         this.parent = parent;
         this.G = G;
