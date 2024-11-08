@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+
 public static class PathFinder {
 
     private static readonly int maxSteps = 5000;
@@ -54,8 +53,7 @@ public static class PathFinder {
                         //  Skip this neighbour if is closed or is unreachable
                         if (!closed.ContainsKey(neighbour) && world.GetVoxelID(foo + Vector3Int.down) != 0 && world.GetVoxelID(foo) == 0) {
 
-                            //  Open this neighbour if it's not open
-                            //  If it's already open, update this neighbour in some case
+                            //  Open this neighbour if it's not open.  If it's already open, update this neighbour in some case
                             float G = cachedSqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
                             Cell bar = new(current.Key, G, (localEnd - neighbour).magnitude);
                             if (!open.TryAdd(neighbour, bar) && G < open[neighbour].G) {
