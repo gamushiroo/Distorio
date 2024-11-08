@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public static class PathFinder {
+
+    private static readonly int maxSteps = 5000;
 
     //  Cache the results of calls to Sqrt() for performance
     private static readonly float[] sqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
@@ -17,7 +18,7 @@ public static class PathFinder {
         //  Open the first cell
         open.Add(Vector3Int.zero, Cell.zero);
 
-        for (int q = 0; q < 10000; q++) {
+        for (int q = 0; q < maxSteps; q++) {
 
             //  Find the cell with the lowest F from open cells
             KeyValuePair<Vector3Int, Cell> current = init;
@@ -32,7 +33,28 @@ public static class PathFinder {
             closed.Add(current.Key, current.Value);
 
             if (current.Key == localEnd) {
-                break;
+
+                //  Follow the parent in each cell due to generate the path
+                List<Vector3Int> path = new();
+                Vector3Int pos = localEnd;
+
+                while (pos != Vector3Int.zero) {
+                    path.Add(pos);
+                    pos = closed[pos].parent;
+                }
+
+                //  Generate stuff
+                Queue<VoxelAndPos> value = new();
+                foreach (Vector3Int _pos in closed.Keys) {
+                    value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 19));
+                }
+                foreach (Vector3Int _pos in open.Keys) {
+                    value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 18));
+                }
+                foreach (Vector3Int _pos in path) {
+                    value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 20));
+                }
+                return value;
             }
 
             //  Check the neighbour
@@ -61,30 +83,10 @@ public static class PathFinder {
 
             //  Return if end is unreachable
             if (open.Count == 0) {
-                return new();
+                break;
             }
         }
-
-        //  Follow the parent in each cell due to generate the path
-        List<Vector3Int> path = new();
-        Vector3Int pos = localEnd;
-        while (pos != Vector3Int.zero) {
-            path.Add(pos);
-            pos = closed[pos].parent;
-        }
-
-        //  Generate stuff
-        Queue<VoxelAndPos> value = new();
-        foreach (Vector3Int _pos in closed.Keys) {
-            value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 19));
-        }
-        foreach (Vector3Int _pos in open.Keys) {
-            value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 18));
-        }
-        foreach (Vector3Int _pos in path) {
-            value.Enqueue(new(Data.Vector3ToChunkVoxel(_pos + start), 20));
-        }
-        return value;
+        return new();
     }
 }
 
