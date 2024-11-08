@@ -30,6 +30,7 @@ public static class PathFinder {
             open.Remove(current.Key);
             closed.Add(current.Key, current.Value);
 
+            //  If this cell is the end
             if (current.Key == localEnd) {
 
                 //  Follow the parent in each cell due to generate the path
