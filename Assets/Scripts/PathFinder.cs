@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class PathFinder {
+
     private static readonly int MaxSteps = 5000;
     private static readonly float[] SqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
     private static readonly KeyValuePair<Vector3Int, Cell> Initialize = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0));
+
     public static List<Vector3Int> FindPath (Vector3Int start, Vector3Int end, World world) {
         Vector3Int localEnd = end - start;
         Dictionary<Vector3Int, Cell> open = new();
