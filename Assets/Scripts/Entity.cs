@@ -75,8 +75,6 @@ public abstract class Entity {
         if (z != _z) {
             inputVelocity.z = velocity.z = 0;
         }
-
-
         isGrounded = y != _y && y < 0.0D;
     }
     private protected void GenerateMesh (byte skin) {

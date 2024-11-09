@@ -16,9 +16,9 @@ public class PathRenderer : MonoBehaviour {
     private readonly List<int> triangles = new();
     private readonly List<Vector2> uvs = new();
 
-    /*
     
-    */
+
+
 
     public MeshFilter meshFilter;
 
