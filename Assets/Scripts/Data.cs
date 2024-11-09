@@ -17,7 +17,6 @@ public static class Data {
     public static readonly int TextureSize = 16;
     public static readonly float mouseSens = 0.60F;
 
-    public static readonly int[] order = new int[6] { 0, 1, 2, 2, 1, 3 };
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new(0.0F, 0.0F, 0.0F),
         new(1.0F, 0.0F, 0.0F),
@@ -34,6 +33,7 @@ public static class Data {
         new(1.0F, 0.0F),
         new(1.0F, 1.0F)
     };
+    public static readonly int[] order = new int[6] { 0, 1, 2, 2, 1, 3 };
 
     public static readonly Vector3[] halfVoxelVerts = new Vector3[8] {
         new(0.0f, 0.0f, 0.0f),
@@ -138,5 +138,27 @@ public static class Data {
 
         return new Vector3(x, y, z).normalized + dash * Vector3.forward;
 
+    }
+}
+public struct VoxelAndPos {
+    public ChunkVoxel pos;
+    public int id;
+    public VoxelAndPos (ChunkVoxel pos, int id) {
+        this.pos = pos;
+        this.id = id;
+    }
+}
+[System.Serializable]
+public struct ItemType {
+    public string itemName;
+    public Sprite sprite;
+    public float mineSpeed;
+}
+public struct ChunkVoxel {
+    public Vector2Int c;
+    public Vector3Int v;
+    public ChunkVoxel (Vector2Int c, Vector3Int v) {
+        this.c = c;
+        this.v = v;
     }
 }
