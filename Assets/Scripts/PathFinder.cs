@@ -12,7 +12,7 @@ public static class PathFinder {
         Dictionary<Vector3Int, Cell> open = new();
         Dictionary<Vector3Int, Cell> closed = new();
         open.Add(Vector3Int.zero, new(null, 0, 0));
-        for (int q = 0; q < MaxSteps; q++) {
+        for (int i = 0; i < MaxSteps; i++) {
             KeyValuePair<Vector3Int, Cell> current = Initialize;
             foreach (KeyValuePair<Vector3Int, Cell> entry in open) {
                 if (entry.Value.F < current.Value.F) {
@@ -53,10 +53,12 @@ public static class PathFinder {
     }
 }
 public struct Cell {
+
     public Vector3Int? parent;
     public float G;
     public float H;
     public readonly float F => G + H;
+
     public Cell (Vector3Int? parent, float G, float H) {
         this.parent = parent;
         this.G = G;
