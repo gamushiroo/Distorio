@@ -3,9 +3,9 @@ using UnityEngine;
 
 public static class PathFinder {
 
-    private static readonly int maxSteps = 5000;
-    private static readonly float[] cachedSqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
-    private static readonly KeyValuePair<Vector3Int, Cell> init = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0));
+    private static readonly int MaxSteps = 5000;
+    private static readonly float[] SqrtValues = new float[3] { 1, Mathf.Sqrt(2), Mathf.Sqrt(3) };
+    private static readonly KeyValuePair<Vector3Int, Cell> Initialize = new(Vector3Int.zero, new(Vector3Int.zero, Mathf.Infinity, 0));
 
     public static List<Vector3Int> FindPath (Vector3Int start, Vector3Int end, World world) {
 
@@ -16,10 +16,10 @@ public static class PathFinder {
         //  Open the first cell
         open.Add(Vector3Int.zero, new(null, 0, 0));
 
-        for (int q = 0; q < maxSteps; q++) {
+        for (int q = 0; q < MaxSteps; q++) {
 
             //  Find the cell with the lowest F from open cells
-            KeyValuePair<Vector3Int, Cell> current = init;
+            KeyValuePair<Vector3Int, Cell> current = Initialize;
             foreach (KeyValuePair<Vector3Int, Cell> entry in open) {
                 if (entry.Value.F < current.Value.F) {
                     current = entry;
@@ -55,7 +55,7 @@ public static class PathFinder {
                         if (!closed.ContainsKey(neighbour) && world.GetVoxelID(foo + Vector3Int.down) != 0 && world.GetVoxelID(foo) == 0) {
 
                             //  Open this neighbour if it's not open.  If it's already open, update this neighbour in some case
-                            float G = cachedSqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
+                            float G = SqrtValues[new Vector3Int(x, y, z).sqrMagnitude - 1] + current.Value.G;
                             Cell bar = new(current.Key, G, (localEnd - neighbour).magnitude);
                             if (!open.TryAdd(neighbour, bar) && G < open[neighbour].G) {
                                 open[neighbour] = bar;
