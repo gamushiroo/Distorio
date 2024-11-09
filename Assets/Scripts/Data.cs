@@ -8,43 +8,42 @@ public static class Data {
     public static readonly int InventoryWidth = 8;
     public static readonly int InventoryHeight = 4;
 
-
     public static readonly float gravityScale = 25.0F;
     public static readonly float jumpScale = 1;
     public static readonly float playerSpeed = 13.0F / 3.0F;
     public static readonly float resistance = 14.0F;
 
-
     public static readonly int ChunkLoadRange = 6;
     public static readonly int TextureSize = 16;
     public static readonly float mouseSens = 0.60F;
-    public static readonly float mouseSensitivityFactor = 1.63250F;
 
-
+    public static readonly int[] order = new int[6] { 0, 1, 2, 2, 1, 3 };
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
-
-        new Vector3(0.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 1.0f, 1.0f),
-        new Vector3(0.0f, 1.0f, 1.0f)
-
+        new(0.0F, 0.0F, 0.0F),
+        new(1.0F, 0.0F, 0.0F),
+        new(1.0F, 1.0F, 0.0F),
+        new(0.0F, 1.0F, 0.0F),
+        new(0.0F, 0.0F, 1.0F),
+        new(1.0F, 0.0F, 1.0F),
+        new(1.0F, 1.0F, 1.0F),
+        new(0.0F, 1.0F, 1.0F)
+    };
+    public static readonly Vector2[] voxelUVs = new Vector2[4] {
+        new(0.0F, 0.0F),
+        new(0.0F, 1.0F),
+        new(1.0F, 0.0F),
+        new(1.0F, 1.0F)
     };
 
     public static readonly Vector3[] halfVoxelVerts = new Vector3[8] {
-
-        new Vector3(0.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.5f, 0.0f),
-        new Vector3(0.0f, 0.5f, 0.0f),
-        new Vector3(0.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 0.5f, 1.0f),
-        new Vector3(0.0f, 0.5f, 1.0f)
-
+        new(0.0f, 0.0f, 0.0f),
+        new(1.0f, 0.0f, 0.0f),
+        new(1.0f, 0.5f, 0.0f),
+        new(0.0f, 0.5f, 0.0f),
+        new(0.0f, 0.0f, 1.0f),
+        new(1.0f, 0.0f, 1.0f),
+        new(1.0f, 0.5f, 1.0f),
+        new(0.0f, 0.5f, 1.0f)
     };
 
     public static readonly byte[,,] trees = new byte[5, 7, 5] {
@@ -59,12 +58,12 @@ public static class Data {
 
     public static readonly Vector3Int[] faceChecks = new Vector3Int[6] {
 
-        new Vector3Int(0, 0, -1),
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(0, -1, 0),
-        new Vector3Int(-1, 0, 0),
-        new Vector3Int(1, 0, 0)
+        new(0, 0, -1),
+        new(0, 0, 1),
+        new(0, 1, 0),
+        new(0, -1, 0),
+        new(-1, 0, 0),
+        new(1, 0, 0)
 
     };
 
@@ -94,20 +93,6 @@ public static class Data {
         return !(ddd.minX >= ccc.maxX || ccc.minX >= ddd.maxX || ddd.minY >= ccc.maxY || ccc.minY >= ddd.maxY || ddd.minZ >= ccc.maxZ || ccc.minZ >= ddd.maxZ);
     }
 
-    public static readonly int[] order = new int[6]{
-
-        0, 1, 2, 2, 1, 3
-
-    };
-
-    public static readonly Vector2[] voxelUVs = new Vector2[4] {
-
-        new Vector2(0.0f, 0.0f),
-        new Vector2(0.0f, 1.0f),
-        new Vector2(1.0f, 0.0f),
-        new Vector2(1.0f, 1.0f)
-
-    };
 
 
     public static Vector2 TexturePos (int ID) {
