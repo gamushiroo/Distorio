@@ -46,16 +46,12 @@ public abstract class Entity {
         }
     }
 
-    private protected void AddPosition (double x, double y, double z) {
-        SetPosition(posX + x, posY + y, posZ + z);
-    }
-    private void TryMoveEntity (double x, double y, double z) {
+    protected void TryMoveEntity (double x, double y, double z) {
 
+        List<AABB> boundingBoxes = world.CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
         double _x = x;
         double _y = y;
         double _z = z;
-
-        List<AABB> boundingBoxes = world.CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
 
         CalculateYOffset();
 
@@ -105,6 +101,9 @@ public abstract class Entity {
             }
             AddPosition(0.0D, 0.0D, _z);
         }
+        void AddPosition (double x, double y, double z) {
+            SetPosition(posX + x, posY + y, posZ + z);
+        }
     }
     private protected void GenerateMesh (byte skin) {
         int vertexIndex = 0;
@@ -137,29 +136,18 @@ public abstract class Entity {
     private protected bool IsCollide (Vector3Int selectedPos) {
         return Data.ABCheck(boundingBox, new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
     }
-    private protected void AddForce (Vector3 vel) {
-        acceleration += vel;
-    }
     private protected void Die () {
         isDead = true;
     }
-    private protected void SetSize (float width, float height) {
-        if (width != this.width || height != this.height) {
-            this.width = width;
-            this.height = height;
-
-            float f = width / 2.0F;
-            boundingBox = new(f, 0, f, f, height, f);
-            GenerateMesh(10);
-        }
-    }
     private protected void SetPosition (double x, double y, double z) {
+
         posX = x;
         posY = y;
         posZ = z;
         float f = width / 2.0F;
         boundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
         playerTransform.position = new((float)posX, (float)posY, (float)posZ);
+
     }
     private protected virtual void Update () {
         if (!isZeroGravity) {
@@ -167,8 +155,8 @@ public abstract class Entity {
         }
         velocity += acceleration * Time.deltaTime;
 
-        Vector3 a = inputVelocity + velocity;
-        TryMoveEntity(a.x * Time.deltaTime, a.y * Time.deltaTime, a.z * Time.deltaTime);
+        Vector3 a = (inputVelocity + velocity) * Time.deltaTime;
+        TryMoveEntity(a.x, a.y, a.z);
         acceleration = Vector3.zero;
     }
     private protected virtual void OnGrounded () {

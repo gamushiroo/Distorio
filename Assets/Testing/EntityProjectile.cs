@@ -20,7 +20,7 @@ public class EntityProjectile : EntityLiving {
 
         Vector3 aaa = rot * Vector3.forward * 20 * Time.deltaTime;
 
-        AddPosition(aaa.x, aaa.y, aaa.z);
+        TryMoveEntity(aaa.x, aaa.y, aaa.z);
         AddHealth(-Time.deltaTime);
     }
 }
