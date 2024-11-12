@@ -12,7 +12,7 @@ public class AABB {
         maxY = Math.Max(y1, y2);
         maxZ = Math.Max(z1, z2);
     }
-    public AABB AddCoord (double x, double y, double z) {
+    public AABB Extend (double x, double y, double z) {
         double d0 = minX;
         double d1 = minY;
         double d2 = minZ;

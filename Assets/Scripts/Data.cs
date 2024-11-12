@@ -113,32 +113,6 @@ public static class Data {
 
     }
 
-
-    public static Vector3 GetPlayerVel () {
-
-        int x = 0;
-        int y = 0;
-        int z = 0;
-        float dash = 0;
-
-        if (Input.GetKey(KeyCode.D))
-            x++;
-        if (Input.GetKey(KeyCode.A))
-            x--;
-        if (Input.GetKey(KeyCode.E))
-            y++;
-        if (Input.GetKey(KeyCode.Q))
-            y--;
-        if (Input.GetKey(KeyCode.W))
-            z++;
-        if (Input.GetKey(KeyCode.S))
-            z--;
-        if (z == 1 && Input.GetKey(KeyCode.LeftShift))
-            dash = 1.0F / 3.0F;
-
-        return new Vector3(x, y, z).normalized + dash * Vector3.forward;
-
-    }
 }
 public struct VoxelAndPos {
     public ChunkVoxel pos;

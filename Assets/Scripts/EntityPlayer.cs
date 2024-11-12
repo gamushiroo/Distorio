@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class EntityPlayer : EntityLiving {
 
@@ -16,32 +13,32 @@ public class EntityPlayer : EntityLiving {
     private bool isMining;
     private Vector3Int miningPos;
     private readonly Transform cam;
+    private readonly Camera camObj;
     private float miningProgress;
     private float mineSpeed;
     private Vector3 forceAcc;
     private float distance;
     private float coolDown;
     private bool nextFramePlaced;
-    private Vector3Int spawnpoint;
-    bool doPathFind = true;
 
-    public EntityPlayer (World world, Transform cam, Vector3 pos) : base(world) {
+
+    public EntityPlayer (World world, Vector3 pos) : base(world) {
         lastTryPlacingPos = Vector3Int.zero;
         coolDown = 0;
         SetPosition(pos.x, pos.y, pos.z);
-        this.cam = cam;
+        camObj = world.camObj;
+        cam = world.cam;
         mineSpeed = 2.5f;
-        spawnpoint = Vector3Int.FloorToInt(pos);
 
     }
 
     private protected override void Update () {
 
-        if (Input.GetKeyDown(KeyCode.T)) {
-            doPathFind = !doPathFind;
-        }
-        if (doPathFind && isGrounded) {
-            world.pathrend.AAA(PathFinder.FindPath(new((int)Math.Floor(posX), (int)Math.Floor(posY), (int)Math.Floor(posZ)), spawnpoint, world));
+
+        if (Input.GetKey(KeyCode.C)) {
+            camObj.fieldOfView = 20;
+        } else {
+            camObj.fieldOfView = 70;
         }
         coolDown += Time.deltaTime;
         rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
@@ -53,12 +50,12 @@ public class EntityPlayer : EntityLiving {
         }
 
         forceAcc = Vector3.zero;
-        forceAcc = Data.resistance * (Quaternion.Euler(0, rotationY, 0) * Data.GetPlayerVel() * Data.playerSpeed - inputVelocity);
+        forceAcc = Data.resistance * (Quaternion.Euler(0, rotationY, 0) * PlayerVel() * Data.playerSpeed - inputVelocity);
         inputVelocity += forceAcc * Time.deltaTime;
         distance += inputVelocity.magnitude * Time.deltaTime;
         base.Update();
 
-        cam.position = new Vector3((float)posX, (float)posY, (float)posZ) + Vector3.up * 1.625f;
+        cam.position = new Vector3((float)posX, (float)posY, (float)posZ) + Vector3.up * EyeHeight();
         cam.rotation = Quaternion.Euler(rotationX, rotationY, 0);
         chunkCoord = Data.Vector3ToChunkVoxel(new((float)posX, (float)posY, (float)posZ)).c;
         if (chunkCoord != lastChunkCoord) {
@@ -105,6 +102,13 @@ public class EntityPlayer : EntityLiving {
         world.hpBar.value = health / 20;
         world.hpText.text = forceAcc.magnitude.ToString("F") + "m/s^2\n" + (inputVelocity).magnitude.ToString("F") + "m/s\n" + distance.ToString("F") + "m\n";
     }
+    private float EyeHeight () {
+        float value = 1.62F;
+        if (Input.GetKey(KeyCode.LeftShift)) {
+            value -= 0.08F;
+        }
+        return value;
+    }
     private void CalculateSelectingPos () {
         Vector3 _camPos = cam.position;
         for (int i = 0; i < 300; i++) {
@@ -131,11 +135,43 @@ public class EntityPlayer : EntityLiving {
         }
         return normal;
     }
+    private protected override void OnGrounded () {
 
+        AddHealth(Mathf.Min(0, 13 + velocity.y));
+    }
     private void DestroyBlock (Vector3 position) {
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
         Queue<VoxelAndPos> queue = new();
         queue.Enqueue(new(pos, 0));
         world.AddMod(queue);
+    }
+
+    public static Vector3 PlayerVel () {
+
+        int x = 0;
+        int y = 0;
+        int z = 0;
+        float dash = 0;
+        float shift = 1;
+
+        if (Input.GetKey(KeyCode.D))
+            x++;
+        if (Input.GetKey(KeyCode.A))
+            x--;
+        if (Input.GetKey(KeyCode.E))
+            y++;
+        if (Input.GetKey(KeyCode.Q))
+            y--;
+        if (Input.GetKey(KeyCode.W))
+            z++;
+        if (Input.GetKey(KeyCode.S))
+            z--;
+        if (z == 1 && Input.GetKey(KeyCode.LeftControl))
+            dash = 1.0F / 3.0F;
+        if (Input.GetKey(KeyCode.LeftShift))
+            shift = 0.4F;
+
+        return (new Vector3(x, y, z).normalized + dash * Vector3.forward) * shift;
+
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public abstract class Entity {
     private AABB boundingBox;
 
 
-
+    private bool alreadyGrounded;
     private bool isDead;
 
     private protected bool isZeroGravity;
@@ -48,34 +49,62 @@ public abstract class Entity {
     private protected void AddPosition (double x, double y, double z) {
         SetPosition(posX + x, posY + y, posZ + z);
     }
-    private void MoveEntity (double _x, double _y, double _z) {
-        double x = _x;
-        double y = _y;
-        double z = _z;
-        List<AABB> AABBs = world.Ajj(boundingBox.AddCoord(_x, _y, _z));
-        foreach (AABB value in AABBs) {
-            _y = value.CalculateYOffset(boundingBox, _y);
-        }
-        AddPosition(0.0D, _y, 0.0D);
-        foreach (AABB value in AABBs) {
-            _x = value.CalculateXOffset(boundingBox, _x);
-        }
-        AddPosition(_x, 0.0D, 0.0D);
-        foreach (AABB value in AABBs) {
-            _z = value.CalculateZOffset(boundingBox, _z);
-        }
-        AddPosition(0.0D, 0.0D, _z);
+    private void TryMoveEntity (double x, double y, double z) {
 
-        if (x != _x) {
-            inputVelocity.x = velocity.x = 0;
+        double _x = x;
+        double _y = y;
+        double _z = z;
+        List<AABB> boundingBoxes = world.CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
+
+        CalculateYOffset();
+        if (Math.Abs(x) > Math.Abs(z)) {
+            CalculateXOffset();
+            CalculateZOffset();
+        } else {
+            CalculateZOffset();
+            CalculateXOffset();
         }
-        if (y != _y) {
-            inputVelocity.y = velocity.y = 0;
+
+        isGrounded = _y != y && _y < 0.0D;
+
+        if (!isGrounded) {
+            alreadyGrounded = false;
+        } else if (!alreadyGrounded) {
+            OnGrounded();
+            alreadyGrounded = true;
         }
-        if (z != _z) {
-            inputVelocity.z = velocity.z = 0;
+
+        if (_x != x) {
+            velocity.x = 0;
+            inputVelocity.x = 0;
         }
-        isGrounded = y != _y && y < 0.0D;
+        if (_y != y) {
+            velocity.y = 0;
+            inputVelocity.y = 0;
+        }
+        if (_z != z) {
+            velocity.z = 0;
+            inputVelocity.z = 0;
+        }
+
+        void CalculateXOffset () {
+            foreach (AABB value in boundingBoxes) {
+                x = value.CalculateXOffset(boundingBox, x);
+            }
+            AddPosition(x, 0.0D, 0.0D);
+        }
+        void CalculateYOffset () {
+            foreach (AABB value in boundingBoxes) {
+                y = value.CalculateYOffset(boundingBox, y);
+            }
+            AddPosition(0.0D, y, 0.0D);
+        }
+        void CalculateZOffset () {
+            foreach (AABB value in boundingBoxes) {
+                z = value.CalculateZOffset(boundingBox, z);
+            }
+            AddPosition(0.0D, 0.0D, z);
+        }
     }
     private protected void GenerateMesh (byte skin) {
         int vertexIndex = 0;
@@ -139,12 +168,9 @@ public abstract class Entity {
         velocity += acceleration * Time.deltaTime;
 
         Vector3 a = inputVelocity + velocity;
-        MoveEntity(a.x * Time.deltaTime, a.y * Time.deltaTime, a.z * Time.deltaTime);
-        if (isGrounded) {
-            OnLanded();
-        }
+        TryMoveEntity(a.x * Time.deltaTime, a.y * Time.deltaTime, a.z * Time.deltaTime);
         acceleration = Vector3.zero;
     }
-    private protected virtual void OnLanded () {
+    private protected virtual void OnGrounded () {
     }
 }

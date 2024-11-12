@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class World : MonoBehaviour {
     public List<Entity> entities = new();
     public Transform backGround;
     public Transform cam;
+    public Camera camObj;
     public Hand hand;
     public GameObject miningProgresBarObj;
     public UserInterface userInter;
@@ -45,8 +47,8 @@ public class World : MonoBehaviour {
 
         userInter.inventory = new();
 
-        entities.Add(new EntityPlayer(this, cam, GetSpawnPoint()));
-        entities.Add(new EntityEnemy(this));
+        entities.Add(new EntityPlayer(this, GetSpawnPoint()));
+        //entities.Add(new EntityEnemy(this));
 
     }
     private void LateUpdate () {
@@ -164,15 +166,19 @@ public class World : MonoBehaviour {
         return chunks.ContainsKey(pos.c) && chunks[pos.c].IsEditable && chunks[pos.c].GetInventory(pos.v);
 
     }
-    public List<AABB> Ajj (AABB aaa) {
+    public List<AABB> CollidingBoundingBoxes (AABB aabb) {
         List<AABB> a = new();
-        Vector3 ttt = new((float)aaa.minX, (float)aaa.minY, (float)aaa.minZ);
-        for (int __X = -2; __X < 2; __X++) {
-            for (int __Y = -2; __Y < 3; __Y++) {
-                for (int __Z = -2; __Z < 2; __Z++) {
-                    Vector3Int pos = Vector3Int.FloorToInt(ttt + new Vector3Int(__X, __Y, __Z));
-                    if (blockTypes[GetVoxelID(pos)].hasCollision) {
-                        a.Add(new(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1));
+        int jp = (int)Math.Floor(aabb.minX);
+        int jn = (int)Math.Floor(aabb.maxX) + 1;
+        int kp = (int)Math.Floor(aabb.minY);
+        int kn = (int)Math.Floor(aabb.maxY) + 1;
+        int lp = (int)Math.Floor(aabb.minZ);
+        int ln = (int)Math.Floor(aabb.maxZ) + 1;
+        for (int x = jp; x < jn; x++) {
+            for (int y = kp; y < kn; y++) {
+                for (int z = lp; z < ln; z++) {
+                    if (blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
+                        a.Add(new(x, y, z, x + 1, y + 1, z + 1));
                     }
                 }
             }
@@ -207,8 +213,8 @@ public class World : MonoBehaviour {
         return terrainHeight * biome.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029f) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005f) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + biome.solidGroundHeight;
     }
     private void InitNoise () {
-        Random.InitState((int)System.DateTime.Now.Ticks);
-        offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
+        UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
+        offset = new(UnityEngine.Random.Range(-66666.6f, 66666.6f), UnityEngine.Random.Range(-66666.6f, 66666.6f));
         Noise.SetOffset(offset);
     }
     private void GenerateWorld () {
