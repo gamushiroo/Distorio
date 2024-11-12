@@ -67,7 +67,7 @@ public abstract class Entity {
             CalculateXOffset();
         }
 
-        isGrounded = _y != y && _y < 0.0D;
+        isGrounded = _y != y && y < 0.0D;
 
         if (!isGrounded) {
             alreadyGrounded = false;
@@ -89,21 +89,21 @@ public abstract class Entity {
         }
         void CalculateXOffset () {
             foreach (AABB value in boundingBoxes) {
-                x = value.CalculateXOffset(boundingBox, x);
+                _x = value.CalculateXOffset(boundingBox, _x);
             }
-            AddPosition(x, 0.0D, 0.0D);
+            AddPosition(_x, 0.0D, 0.0D);
         }
         void CalculateYOffset () {
             foreach (AABB value in boundingBoxes) {
-                y = value.CalculateYOffset(boundingBox, y);
+                _y = value.CalculateYOffset(boundingBox, _y);
             }
-            AddPosition(0.0D, y, 0.0D);
+            AddPosition(0.0D, _y, 0.0D);
         }
         void CalculateZOffset () {
             foreach (AABB value in boundingBoxes) {
-                z = value.CalculateZOffset(boundingBox, z);
+                _z = value.CalculateZOffset(boundingBox, _z);
             }
-            AddPosition(0.0D, 0.0D, z);
+            AddPosition(0.0D, 0.0D, _z);
         }
     }
     private protected void GenerateMesh (byte skin) {
