@@ -54,9 +54,11 @@ public abstract class Entity {
         double _x = x;
         double _y = y;
         double _z = z;
+
         List<AABB> boundingBoxes = world.CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
 
         CalculateYOffset();
+
         if (Math.Abs(x) > Math.Abs(z)) {
             CalculateXOffset();
             CalculateZOffset();
@@ -73,7 +75,6 @@ public abstract class Entity {
             OnGrounded();
             alreadyGrounded = true;
         }
-
         if (_x != x) {
             velocity.x = 0;
             inputVelocity.x = 0;
@@ -86,7 +87,6 @@ public abstract class Entity {
             velocity.z = 0;
             inputVelocity.z = 0;
         }
-
         void CalculateXOffset () {
             foreach (AABB value in boundingBoxes) {
                 x = value.CalculateXOffset(boundingBox, x);
