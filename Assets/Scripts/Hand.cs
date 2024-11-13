@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,14 +10,14 @@ public class Hand : MonoBehaviour {
     public float switchEase;
     public float placeEase;
 
-    void Start() {
+    void Start () {
 
         switchEase = 1;
         placeEase = 1;
 
     }
 
-    void Update() {
+    void Update () {
 
         switchEase += Time.deltaTime;
         switchEase = Mathf.Clamp(switchEase, 0, 1);
@@ -31,7 +29,7 @@ public class Hand : MonoBehaviour {
         handBlock.localRotation = Quaternion.Euler((1 - EaseSqu(placeEase)) * 45, 0, 0);
     }
 
-    public float EaseSqu(float pos) {
+    public float EaseSqu (float pos) {
 
         return pos == 1 ? 1 : 1 - Mathf.Pow(2, -10 * pos);
 
@@ -48,7 +46,7 @@ public class Hand : MonoBehaviour {
             for (int p = 0; p < 6; p++) {
                 for (int i = 0; i < 4; i++) {
                     vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]]);
-                    uvs.Add(( Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[selectedBlockIndex].GetTextureID(p)) ) / Data.TextureSize);
+                    uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[selectedBlockIndex].GetTextureID(p))) / Data.TextureSize);
                 }
                 for (int i = 0; i < 6; i++)
                     triangles.Add(Data.order[i] + vertexIndex);

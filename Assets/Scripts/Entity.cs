@@ -17,16 +17,12 @@ public abstract class Entity {
     private protected float rotationPitch;
     private protected float rotationYaw;
     private protected bool isZeroGravity;
+    private protected bool isGrounded;
     private protected float width;
     private protected float height;
-    private protected bool isGrounded;
-    private protected double posX;
-    private protected double posY;
-    private protected double posZ;
     private protected Vector3 inputVelocity;
-    private protected double motionX;
-    private protected double motionY;
-    private protected double motionZ;
+    private protected double motionX, motionY, motionZ;
+    private protected double posX, posY, posZ;
 
     public Entity (World world) {
 

@@ -26,7 +26,7 @@ public class Chunk {
             for (int x = 0; x < Data.ChunkWidth; x++) {
                 for (int y = 0; y < Data.ChunkHeight; y++) {
                     for (int z = 0; z < Data.ChunkWidth; z++) {
-                        voxelMap[x, y, z] = world.GetVoxel(new Vector3Int(x + pos.x * Data.ChunkWidth, y, z + pos.y * Data.ChunkWidth));
+                        voxelMap[x, y, z] = world.GetVoxel(new(x + pos.x * Data.ChunkWidth, y, z + pos.y * Data.ChunkWidth));
                     }
                 }
             }
@@ -55,7 +55,7 @@ public class Chunk {
                 VoxelAndPos vmod = modifications.Dequeue();
                 voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
                 if (world.blockTypes[vmod.id].hasInventory) {
-                    Inventories.Add(vmod.pos.v, new Inventory());
+                    Inventories.Add(vmod.pos.v, new());
                 }
             }
         }
@@ -70,7 +70,6 @@ public class Chunk {
                 for (int y = 0; y < Data.ChunkHeight; y++) {
                     for (int z = 0; z < Data.ChunkWidth; z++) {
                         if (voxelMap[x, y, z] != 0) {
-
                             switch (world.blockTypes[voxelMap[x, y, z]].meshTypes) {
                                 case 0:
                                     NormalMesh(x, y, z);

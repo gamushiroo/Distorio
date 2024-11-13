@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
 public class World : MonoBehaviour {
@@ -214,7 +212,7 @@ public class World : MonoBehaviour {
                 }
             }
         }
-        return Vector3.zero;
+        return new(0, Data.ChunkHeight, 0);
     }
     public void AddMod (Queue<VoxelAndPos> aadd) {
         modifications.Enqueue(aadd);

@@ -25,14 +25,14 @@ public class UserInterface : MonoBehaviour {
 
         hand = GameObject.Find("Hand").GetComponent<Hand>();
 
-        inventory.AddItemStackToInventory(new ItemStack(256, 1));
-        inventory.AddItemStackToInventory(new ItemStack(257, 1));
-        inventory.AddItemStackToInventory(new ItemStack(258, 1));
-        inventory.AddItemStackToInventory(new ItemStack(259, 1));
-        inventory.AddItemStackToInventory(new ItemStack(0, 4));
-        inventory.AddItemStackToInventory(new ItemStack(1, 4));
-        inventory.AddItemStackToInventory(new ItemStack(2, 4));
-        inventory.AddItemStackToInventory(new ItemStack(3, 4));
+        inventory.AddItemStackToInventory(new (256, 1));
+        inventory.AddItemStackToInventory(new (257, 1));
+        inventory.AddItemStackToInventory(new (258, 1));
+        inventory.AddItemStackToInventory(new (259, 1));
+        inventory.AddItemStackToInventory(new (0, 4));
+        inventory.AddItemStackToInventory(new (1, 4));
+        inventory.AddItemStackToInventory(new (2, 4));
+        inventory.AddItemStackToInventory(new (3, 4));
 
         Cursor.lockState = CursorLockMode.Locked;
         SetSprites();
@@ -74,7 +74,7 @@ public class UserInterface : MonoBehaviour {
             else if (slotIndex < 0)
                 slotIndex = Data.InventoryWidth - 1;
 
-            if(inventory.GetItemStack(GetSelected()) != null) {
+            if (inventory.GetItemStack(GetSelected()) != null) {
                 selectedBlockIndex = inventory.GetItemStack(GetSelected()).id;
                 hand.GenerateMesh(0);
             }

@@ -1,11 +1,10 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public static class Noise {
 
     private static Vector2 offset;
 
-    public static void SetOffset (Vector2  offset) {
+    public static void SetOffset (Vector2 offset) {
 
         Noise.offset = offset;
 
@@ -28,7 +27,7 @@ public static class Noise {
         float CB = Mathf.PerlinNoise(pos.z, pos.y);
         float CA = Mathf.PerlinNoise(pos.z, pos.x);
 
-        return ( AB + BC + AC + BA + CB + CA ) / 6;
+        return (AB + BC + AC + BA + CB + CA) / 6;
 
     }
 }

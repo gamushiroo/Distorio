@@ -1,23 +1,12 @@
-using Newtonsoft.Json.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathRenderer : MonoBehaviour {
-
-
-
 
     private int vertexIndex = 0;
     private readonly List<Vector3> vertices = new();
     private readonly List<int> triangles = new();
     private readonly List<Vector2> uvs = new();
-
-    
-
 
 
     public MeshFilter meshFilter;
@@ -44,8 +33,6 @@ public class PathRenderer : MonoBehaviour {
 
             DDDD(ddddd.Dequeue());
 
-
-
         }
 
         GenerateMesh();
@@ -57,11 +44,7 @@ public class PathRenderer : MonoBehaviour {
             for (int i = 0; i < 4; i++) {
                 vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3Int(vp.pos.c.x, 0, vp.pos.c.y) * 16 + vp.pos.v);
 
-
-
                 uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[vp.id].GetTextureID(p))) / Data.TextureSize);
-
-
 
             }
             for (int i = 0; i < 6; i++) {

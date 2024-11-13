@@ -3,14 +3,12 @@ using UnityEngine;
 
 public class EntityLiving : Entity {
 
-    private readonly float maxHealth;
+    private protected readonly float maxHealth = 20;
     private protected float health;
-    private bool isHealing;
     private float healthBefore;
 
     public EntityLiving (World world) : base(world) {
 
-        maxHealth = 20;
         health = maxHealth;
 
     }
@@ -24,7 +22,7 @@ public class EntityLiving : Entity {
         base.Update();
 
 
-        if(health > healthBefore) {
+        if (health > healthBefore) {
             Debug.Log(Time.deltaTime);
             world.healing.SetActive(true);
         } else {

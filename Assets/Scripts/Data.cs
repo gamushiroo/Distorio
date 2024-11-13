@@ -26,8 +26,6 @@ public static class Data {
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;
 
-
-
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new(0.0F, 0.0F, 0.0F),
         new(1.0F, 0.0F, 0.0F),

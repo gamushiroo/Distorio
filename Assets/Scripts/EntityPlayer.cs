@@ -39,7 +39,7 @@ public class EntityPlayer : EntityLiving {
 
         base.Update();
 
-        camTransform.position = new Vector3((float)posX, (float)posY + GetEyeHeight(), (float)posZ);
+        camTransform.position = new((float)posX, (float)posY + GetEyeHeight(), (float)posZ);
         camTransform.rotation = Quaternion.Euler(rotationPitch, rotationYaw, 0);
         chunkCoord = Data.Vector3ToChunkVoxel(new((float)posX, (float)posY, (float)posZ)).c;
         if (chunkCoord != lastChunkCoord) {
@@ -88,7 +88,7 @@ public class EntityPlayer : EntityLiving {
         world.miningProgresBarObj.SetActive(isMining);
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
 
-        world.hpBar.value = health / 20;
+        world.hpBar.value = health / maxHealth;
     }
     private float GetJumpPower () {
         return Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
