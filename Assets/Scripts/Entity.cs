@@ -20,7 +20,6 @@ public abstract class Entity {
     private protected bool isGrounded;
     private protected float width;
     private protected float height;
-    private protected Vector3 inputVelocity;
     private protected double motionX, motionY, motionZ;
     private protected double posX, posY, posZ;
 
@@ -86,15 +85,12 @@ public abstract class Entity {
         }
         if (_x != x) {
             motionX = 0;
-            inputVelocity.x = 0;
         }
         if (_y != y) {
             motionY = 0;
-            inputVelocity.y = 0;
         }
         if (_z != z) {
             motionZ = 0;
-            inputVelocity.z = 0;
         }
         void CalculateXOffset () {
             foreach (AABB value in boundingBoxes) {
@@ -140,8 +136,7 @@ public abstract class Entity {
             AddVelocity(sss.x, sss.y, sss.z);
         }
 
-        Vector3 a = inputVelocity * Time.deltaTime;
-        TryMoveEntity(a.x + motionX * Time.deltaTime, a.y + motionY * Time.deltaTime, a.z + motionZ * Time.deltaTime);
+        TryMoveEntity(motionX * Time.deltaTime, motionY * Time.deltaTime, motionZ * Time.deltaTime);
     }
     private protected virtual void OnGrounded () {
     }
