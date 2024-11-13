@@ -9,7 +9,7 @@ public class EntityProjectile : EntityLiving {
         width = 0.8F;
         height = 0.8F;
         GenerateMesh(20);
-        Object.Instantiate(world.particle).transform.SetParent(playerObject.transform);
+        Object.Instantiate(world.particle).transform.SetParent(obj.transform);
         SetPosition(pos.x, pos.y, pos.z);
         isZeroGravity = true;
         this.rot = rot;

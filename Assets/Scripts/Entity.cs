@@ -7,31 +7,30 @@ public abstract class Entity {
     private readonly MeshFilter meshFilter;
     private AABB boundingBox;
 
-
     private bool alreadyGrounded;
     private bool isDead;
+
+    private protected readonly GameObject obj;
+    private protected readonly Transform playerTransform;
+    private protected readonly World world;
 
     private protected bool isZeroGravity;
     private protected float width;
     private protected float height;
     private protected bool isGrounded;
-    private protected Vector3 velocity;
-    private protected Vector3 acceleration;
-    private protected readonly GameObject playerObject;
-    private protected readonly Transform playerTransform;
-    private protected readonly World world;
     private protected double posX;
     private protected double posY;
     private protected double posZ;
+    private protected Vector3 velocity;
     private protected Vector3 inputVelocity;
 
     public Entity (World world) {
 
         this.world = world;
-        playerObject = new();
-        playerObject.AddComponent<MeshRenderer>().material = world.material;
-        playerTransform = playerObject.transform;
-        meshFilter = playerObject.AddComponent<MeshFilter>();
+        obj = new();
+        obj.AddComponent<MeshRenderer>().material = world.material;
+        playerTransform = obj.transform;
+        meshFilter = obj.AddComponent<MeshFilter>();
         width = 0.6F;
         height = 1.8F;
         GenerateMesh(10);
@@ -155,14 +154,15 @@ public abstract class Entity {
     }
     private protected virtual void Update () {
         if (!isZeroGravity) {
-            acceleration += Data.gravityScale * Vector3.down;
+            velocity += Data.gravityScale * Time.deltaTime * Vector3.down;
         }
-        velocity += acceleration * Time.deltaTime;
 
         Vector3 a = (inputVelocity + velocity) * Time.deltaTime;
         TryMoveEntity(a.x, a.y, a.z);
-        acceleration = Vector3.zero;
     }
     private protected virtual void OnGrounded () {
+    }
+    protected void AddVelocity (Vector3 velocity) {
+        this.velocity += velocity;
     }
 }

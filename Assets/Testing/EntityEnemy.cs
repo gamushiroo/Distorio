@@ -21,7 +21,7 @@ public class EntityEnemy : EntityLiving {
         SetPosition(pos.x, pos.y, pos.z);
         isZeroGravity = true;
 
-        a = this.playerObject.AddComponent<AudioSource>();
+        a = this.obj.AddComponent<AudioSource>();
         a.volume = 0.1f;
     }
 
@@ -41,7 +41,7 @@ public class EntityEnemy : EntityLiving {
 
         }
 
-        playerObject.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+        obj.transform.rotation = Quaternion.Euler(0, rotationY, 0);
     }
 
 }

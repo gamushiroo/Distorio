@@ -16,7 +16,6 @@ public class EntityPlayer : EntityLiving {
     private readonly Camera camObj;
     private float miningProgress;
     private float mineSpeed;
-    private Vector3 forceAcc;
     private float distance;
     private float coolDown;
     private bool nextFramePlaced;
@@ -35,13 +34,17 @@ public class EntityPlayer : EntityLiving {
     private protected override void Update () {
 
         camObj.fieldOfView = GetFieldOfView();
+
         RotateEntity();
+
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            velocity += Vector3.up * GetJumpPower();
+
+            AddVelocity(GetJumpPower() * Vector3.up);
+
         }
-        float a = isGrounded ? Data.resistance : Data.resistance * 0.2F;
-        forceAcc = a * (Quaternion.Euler(0, rotationY, 0) * PlayerVel() * Data.playerSpeed - inputVelocity);
-        inputVelocity += forceAcc * Time.deltaTime;
+
+        inputVelocity += ((isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationY, 0) * PlayerVel() * Data.playerSpeed - inputVelocity)) * Time.deltaTime;
+
         base.Update();
 
         distance += inputVelocity.magnitude * Time.deltaTime;
@@ -95,7 +98,7 @@ public class EntityPlayer : EntityLiving {
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
 
         world.hpBar.value = health / 20;
-        world.hpText.text = forceAcc.magnitude.ToString("F") + "m/s^2\n" + (inputVelocity).magnitude.ToString("F") + "m/s\n" + distance.ToString("F") + "m\n";
+        world.hpText.text = (inputVelocity).magnitude.ToString("F") + "m/s\n" + distance.ToString("F") + "m\n";
     }
     private float GetJumpPower () {
         return Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
