@@ -14,7 +14,6 @@ public class World : MonoBehaviour {
     public Slider hpBar;
     public Text hpText;
     public AudioClip gunSound;
-    public BiomeAttributes biome;
     public Material material;
     public List<BlockType> blockTypes = new();
     public List<ItemType> itemTypes = new();
@@ -124,8 +123,8 @@ public class World : MonoBehaviour {
                         modifications.Enqueue(a);
                     }
                 }
-                if (Noise.Get2DPerlin(new(pos.x, pos.z), biome.treeZoneScale) > biome.treeZoneThreshold) {
-                    if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), biome.treePlacementScale) > biome.treePlacementThreshold) {
+                if (Noise.Get2DPerlin(new(pos.x, pos.z), Data.treeZoneScale) > Data.treeZoneThreshold) {
+                    if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), Data.treePlacementScale) > Data.treePlacementThreshold) {
                         modifications.Enqueue(Structure.MakeTree(pos));
                     }
                 }
@@ -228,9 +227,9 @@ public class World : MonoBehaviour {
 
         float terrainHeight = 0;
         for (int i = 0; i < 4; i++) {
-            terrainHeight += Noise.Get2DPerlin(pos, biome.terrainScale / Mathf.Pow(2, i));
+            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
         }
-        return terrainHeight * biome.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029f) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005f) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + biome.solidGroundHeight;
+        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029f) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005f) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
     }
     private void InitNoise () {
         UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
