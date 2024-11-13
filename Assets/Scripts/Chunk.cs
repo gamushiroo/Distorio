@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 public class Chunk {
+    private readonly World world;
+    private readonly MeshFilter meshFilter;
     private bool isTerrainMapGenerated;
-    private bool threadLocked;
+    private bool threadLocked = true;
     private bool isActive = true;
-    private int vertexIndex = 0;
     private readonly int[,,] voxelMap = new int[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
     private readonly Dictionary<Vector3Int, Inventory> Inventories = new();
     private readonly Queue<VoxelAndPos> modifications = new();
@@ -13,18 +14,13 @@ public class Chunk {
     private readonly GameObject chunkObject = new();
     private readonly List<int> triangles = new();
     private readonly List<Vector2> uvs = new();
-    private readonly MeshFilter meshFilter;
-    private readonly Vector2Int pos;
-    private readonly World world;
-    public bool IsEditable => !(!isTerrainMapGenerated || threadLocked);
+    public bool IsEditable => isTerrainMapGenerated && !threadLocked;
     public Chunk (Vector2Int pos, World world) {
-        this.pos = pos;
         this.world = world;
         chunkObject.transform.parent = world.transform;
         chunkObject.transform.position = Data.ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
         chunkObject.AddComponent<MeshRenderer>().material = world.material;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
-        threadLocked = true;
         new Thread(new ThreadStart(GenerateTerrainData)).Start();
         void GenerateTerrainData () {
             for (int x = 0; x < Data.ChunkWidth; x++) {
@@ -39,11 +35,9 @@ public class Chunk {
         }
     }
     public int GetVoxelIDChunk (Vector3Int pos) {
-        if (pos.x < 0 || pos.x >= Data.ChunkWidth || pos.y < 0 || pos.y >= Data.ChunkHeight || pos.z < 0 || pos.z >= Data.ChunkWidth)
-            return 0;
-        return voxelMap[pos.x, pos.y, pos.z];
+        return pos.x >= 0 && pos.x < Data.ChunkWidth && pos.y >= 0 && pos.y < Data.ChunkHeight && pos.z >= 0 && pos.z < Data.ChunkWidth ? voxelMap[pos.x, pos.y, pos.z] : 0;
     }
-    public bool GetInventory(Vector3Int pos) {
+    public bool GetInventory (Vector3Int pos) {
         return Inventories.ContainsKey(pos);
     }
     public void EnqueueVoxelMod (VoxelAndPos voxelMod) {
@@ -68,7 +62,7 @@ public class Chunk {
         threadLocked = true;
         new Thread(new ThreadStart(AAA)).Start();
         void AAA () {
-            vertexIndex = 0;
+            int vertexIndex = 0;
             vertices.Clear();
             triangles.Clear();
             uvs.Clear();
