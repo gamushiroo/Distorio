@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EntityEnemy : EntityLiving {
@@ -9,7 +6,7 @@ public class EntityEnemy : EntityLiving {
 
     float rotationY;
 
-    AudioSource a;
+    readonly AudioSource a;
 
     public EntityEnemy (World world) : base(world) {
 
@@ -21,13 +18,13 @@ public class EntityEnemy : EntityLiving {
         SetPosition(pos.x, pos.y, pos.z);
         isZeroGravity = true;
 
-        a = this.obj.AddComponent<AudioSource>();
+        a = obj.AddComponent<AudioSource>();
         a.volume = 0.1f;
     }
 
     private protected override void Update () {
 
-        if(Input.GetKey(KeyCode.J)) {
+        if (Input.GetKey(KeyCode.J)) {
             rotationY += 120 * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.L)) {

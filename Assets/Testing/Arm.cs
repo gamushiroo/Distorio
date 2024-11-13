@@ -37,7 +37,7 @@ public class Arm : MonoBehaviour {
                 target = transform.position + new Vector3(0, 0.5f, 1);
                 targetRot = Quaternion.Euler(-90, 0, 0);
             } else {
-                time-= 4;
+                time -= 4;
                 target = transform.position + new Vector3(0, 0.5f, -1);
                 targetRot = Quaternion.identity;
             }
