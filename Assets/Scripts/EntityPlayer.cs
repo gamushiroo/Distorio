@@ -34,34 +34,28 @@ public class EntityPlayer : EntityLiving {
 
     private protected override void Update () {
 
-
-        if (Input.GetKey(KeyCode.C)) {
-            camObj.fieldOfView = 20;
-        } else {
-            camObj.fieldOfView = 70;
-        }
-        coolDown += Time.deltaTime;
-        rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
-        rotationY += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
-        rotationX = Mathf.Clamp(rotationX, -90, 90);
-
+        camObj.fieldOfView = GetFieldOfView();
+        RotateEntity();
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            velocity += Vector3.up * Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
+            velocity += Vector3.up * GetJumpPower();
         }
-
-        forceAcc = Vector3.zero;
-        forceAcc = Data.resistance * (Quaternion.Euler(0, rotationY, 0) * PlayerVel() * Data.playerSpeed - inputVelocity);
+        float a = isGrounded ? Data.resistance : Data.resistance * 0.2F;
+        forceAcc = a * (Quaternion.Euler(0, rotationY, 0) * PlayerVel() * Data.playerSpeed - inputVelocity);
         inputVelocity += forceAcc * Time.deltaTime;
-        distance += inputVelocity.magnitude * Time.deltaTime;
         base.Update();
 
-        cam.position = new Vector3((float)posX, (float)posY, (float)posZ) + Vector3.up * EyeHeight();
+        distance += inputVelocity.magnitude * Time.deltaTime;
+        cam.position = new Vector3((float)posX, (float)posY, (float)posZ) + Vector3.up * GetEyeHeight();
         cam.rotation = Quaternion.Euler(rotationX, rotationY, 0);
         chunkCoord = Data.Vector3ToChunkVoxel(new((float)posX, (float)posY, (float)posZ)).c;
         if (chunkCoord != lastChunkCoord) {
             lastChunkCoord = chunkCoord;
             world.CheckViewDistance(chunkCoord);
         }
+
+        if (IsTouching(15)) {
+            AddHealth(3 * Time.deltaTime);
+        };
 
         CalculateSelectingPos();
 
@@ -82,6 +76,7 @@ public class EntityPlayer : EntityLiving {
             lastTryPlacingPos = tryPlacingPos;
             nextFramePlaced = false;
         }
+        coolDown += Time.deltaTime;
         if (!IsCollide(tryPlacingPos)) {
             if (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1) || Input.GetMouseButton(1) && tryPlacingPos != lastTryPlacingPos) {
                 if (world.SetBlock(tryPlacingPos, SelectingPos)) {
@@ -102,7 +97,31 @@ public class EntityPlayer : EntityLiving {
         world.hpBar.value = health / 20;
         world.hpText.text = forceAcc.magnitude.ToString("F") + "m/s^2\n" + (inputVelocity).magnitude.ToString("F") + "m/s\n" + distance.ToString("F") + "m\n";
     }
-    private float EyeHeight () {
+    private float GetJumpPower () {
+        return Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
+    }
+    private void RotateEntity () {
+        rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
+        rotationY += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
+        rotationX = Mathf.Clamp(rotationX, -90, 90);
+    }
+    private float GetFieldOfView () {
+        if (Input.GetKey(KeyCode.C)) {
+            return 20;
+        } else {
+            return 70;
+        }
+    }
+    private bool IsTouching (int check) {
+        List<int> ids = CollidingIDs();
+        foreach (int id in ids) {
+            if (id == check) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private float GetEyeHeight () {
         float value = 1.62F;
         if (Input.GetKey(KeyCode.LeftShift)) {
             value -= 0.08F;
@@ -145,15 +164,12 @@ public class EntityPlayer : EntityLiving {
         queue.Enqueue(new(pos, 0));
         world.AddMod(queue);
     }
-
     public static Vector3 PlayerVel () {
-
         int x = 0;
         int y = 0;
         int z = 0;
         float dash = 0;
         float shift = 1;
-
         if (Input.GetKey(KeyCode.D))
             x++;
         if (Input.GetKey(KeyCode.A))
@@ -170,8 +186,6 @@ public class EntityPlayer : EntityLiving {
             dash = 1.0F / 3.0F;
         if (Input.GetKey(KeyCode.LeftShift))
             shift = 0.4F;
-
         return (new Vector3(x, y, z).normalized + dash * Vector3.forward) * shift;
-
     }
 }

@@ -46,6 +46,10 @@ public abstract class Entity {
         }
     }
 
+    protected List<int> CollidingIDs () {
+        return world.CollidingIDs(boundingBox);
+    }
+
     protected void TryMoveEntity (double x, double y, double z) {
 
         List<AABB> boundingBoxes = world.CollidingBoundingBoxes(boundingBox.Extend(x, y, z));

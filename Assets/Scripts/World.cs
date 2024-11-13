@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
 public class World : MonoBehaviour {
@@ -30,6 +32,7 @@ public class World : MonoBehaviour {
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly List<Chunk> chunksToUpdate = new();
     private readonly Queue<Chunk> chunksToDraw = new();
+    public GameObject healing;
 
     private void Awake () {
 
@@ -169,17 +172,34 @@ public class World : MonoBehaviour {
     public List<AABB> CollidingBoundingBoxes (AABB aabb) {
         List<AABB> a = new();
         int jp = (int)Math.Floor(aabb.minX);
-        int jn = (int)Math.Floor(aabb.maxX) + 1;
+        int jn = (int)Math.Ceiling(aabb.maxX);
         int kp = (int)Math.Floor(aabb.minY);
-        int kn = (int)Math.Floor(aabb.maxY) + 1;
+        int kn = (int)Math.Ceiling(aabb.maxY);
         int lp = (int)Math.Floor(aabb.minZ);
-        int ln = (int)Math.Floor(aabb.maxZ) + 1;
+        int ln = (int)Math.Ceiling(aabb.maxZ);
         for (int x = jp; x < jn; x++) {
             for (int y = kp; y < kn; y++) {
                 for (int z = lp; z < ln; z++) {
                     if (blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
                         a.Add(new(x, y, z, x + 1, y + 1, z + 1));
                     }
+                }
+            }
+        }
+        return a;
+    }
+    public List<int> CollidingIDs (AABB aabb) {
+        List<int> a = new();
+        int jp = (int)Math.Floor(aabb.minX);
+        int jn = (int)Math.Ceiling(aabb.maxX);
+        int kp = (int)Math.Floor(aabb.minY);
+        int kn = (int)Math.Ceiling(aabb.maxY);
+        int lp = (int)Math.Floor(aabb.minZ);
+        int ln = (int)Math.Ceiling(aabb.maxZ);
+        for (int x = jp; x < jn; x++) {
+            for (int y = kp; y < kn; y++) {
+                for (int z = lp; z < ln; z++) {
+                    a.Add(GetVoxelID(new(x, y, z)));
                 }
             }
         }
