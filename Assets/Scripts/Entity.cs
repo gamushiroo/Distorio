@@ -14,6 +14,8 @@ public abstract class Entity {
     private protected readonly Transform playerTransform;
     private protected readonly World world;
 
+    private protected float rotationPitch;
+    private protected float rotationYaw;
     private protected bool isZeroGravity;
     private protected float width;
     private protected float height;
@@ -21,8 +23,10 @@ public abstract class Entity {
     private protected double posX;
     private protected double posY;
     private protected double posZ;
-    private protected Vector3 velocity;
     private protected Vector3 inputVelocity;
+    private protected double motionX;
+    private protected double motionY;
+    private protected double motionZ;
 
     public Entity (World world) {
 
@@ -34,9 +38,9 @@ public abstract class Entity {
         width = 0.6F;
         height = 1.8F;
         GenerateMesh(10);
-        velocity = Vector3.zero;
-        SetPosition(0.0D, 0.0D, 0.0D);
 
+        SetVelocity(0.0D, 0.0D, 0.0D);
+        SetPosition(0.0D, 0.0D, 0.0D);
     }
 
     public void UpdateIfNotDead () {
@@ -47,6 +51,16 @@ public abstract class Entity {
 
     protected List<int> CollidingIDs () {
         return world.CollidingIDs(boundingBox);
+    }
+    protected void AddVelocity (double x, double y, double z) {
+        motionX += x;
+        motionY += y;
+        motionZ += z;
+    }
+    protected void SetVelocity (double x, double y, double z) {
+        motionX = x;
+        motionY = y;
+        motionZ = z;
     }
 
     protected void TryMoveEntity (double x, double y, double z) {
@@ -75,15 +89,15 @@ public abstract class Entity {
             alreadyGrounded = true;
         }
         if (_x != x) {
-            velocity.x = 0;
+            motionX = 0;
             inputVelocity.x = 0;
         }
         if (_y != y) {
-            velocity.y = 0;
+            motionY = 0;
             inputVelocity.y = 0;
         }
         if (_z != z) {
-            velocity.z = 0;
+            motionZ = 0;
             inputVelocity.z = 0;
         }
         void CalculateXOffset () {
@@ -107,6 +121,33 @@ public abstract class Entity {
         void AddPosition (double x, double y, double z) {
             SetPosition(posX + x, posY + y, posZ + z);
         }
+    }
+    private protected bool IsCollide (Vector3Int selectedPos) {
+        return Data.ABCheck(boundingBox, new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
+    }
+    private protected void Die () {
+        isDead = true;
+    }
+    private protected void SetPosition (double x, double y, double z) {
+
+        posX = x;
+        posY = y;
+        posZ = z;
+        float f = width / 2.0F;
+        boundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
+        playerTransform.position = new((float)posX, (float)posY, (float)posZ);
+
+    }
+    private protected virtual void Update () {
+        if (!isZeroGravity) {
+            Vector3 sss = Data.gravityScale * Time.deltaTime * Vector3.down;
+            AddVelocity(sss.x, sss.y, sss.z);
+        }
+
+        Vector3 a = inputVelocity * Time.deltaTime;
+        TryMoveEntity(a.x + motionX * Time.deltaTime, a.y + motionY * Time.deltaTime, a.z + motionZ * Time.deltaTime);
+    }
+    private protected virtual void OnGrounded () {
     }
     private protected void GenerateMesh (byte skin) {
         int vertexIndex = 0;
@@ -135,34 +176,5 @@ public abstract class Entity {
         };
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
-    }
-    private protected bool IsCollide (Vector3Int selectedPos) {
-        return Data.ABCheck(boundingBox, new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
-    }
-    private protected void Die () {
-        isDead = true;
-    }
-    private protected void SetPosition (double x, double y, double z) {
-
-        posX = x;
-        posY = y;
-        posZ = z;
-        float f = width / 2.0F;
-        boundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
-        playerTransform.position = new((float)posX, (float)posY, (float)posZ);
-
-    }
-    private protected virtual void Update () {
-        if (!isZeroGravity) {
-            velocity += Data.gravityScale * Time.deltaTime * Vector3.down;
-        }
-
-        Vector3 a = (inputVelocity + velocity) * Time.deltaTime;
-        TryMoveEntity(a.x, a.y, a.z);
-    }
-    private protected virtual void OnGrounded () {
-    }
-    protected void AddVelocity (Vector3 velocity) {
-        this.velocity += velocity;
     }
 }

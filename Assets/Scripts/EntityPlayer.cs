@@ -8,48 +8,39 @@ public class EntityPlayer : EntityLiving {
     private Vector3Int tryPlacingPos;
     private Vector3Int lastTryPlacingPos;
     private Vector3Int SelectingPos;
-    private float rotationX;
-    private float rotationY;
     private bool isMining;
     private Vector3Int miningPos;
-    private readonly Transform cam;
-    private readonly Camera camObj;
+    private readonly Transform camTransform;
+    private readonly Camera cam;
     private float miningProgress;
     private float mineSpeed;
-    private float distance;
     private float coolDown;
     private bool nextFramePlaced;
-
 
     public EntityPlayer (World world, Vector3 pos) : base(world) {
         lastTryPlacingPos = Vector3Int.zero;
         coolDown = 0;
         SetPosition(pos.x, pos.y, pos.z);
-        camObj = world.camObj;
-        cam = world.cam;
+        cam = world.camObj;
+        camTransform = world.cam;
         mineSpeed = 2.5f;
 
     }
 
     private protected override void Update () {
 
-        camObj.fieldOfView = GetFieldOfView();
-
-        RotateEntity();
-
+        cam.fieldOfView = GetFieldOfView();
+        ApplyRotation();
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-
-            AddVelocity(GetJumpPower() * Vector3.up);
-
+            AddVelocity(0, GetJumpPower(), 0);
         }
 
-        inputVelocity += ((isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationY, 0) * PlayerVel() * Data.playerSpeed - inputVelocity)) * Time.deltaTime;
+        inputVelocity += ((isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationYaw, 0) * PlayerVel() * Data.playerSpeed - inputVelocity)) * Time.deltaTime;
 
         base.Update();
 
-        distance += inputVelocity.magnitude * Time.deltaTime;
-        cam.position = new Vector3((float)posX, (float)posY, (float)posZ) + Vector3.up * GetEyeHeight();
-        cam.rotation = Quaternion.Euler(rotationX, rotationY, 0);
+        camTransform.position = new Vector3((float)posX, (float)posY + GetEyeHeight(), (float)posZ);
+        camTransform.rotation = Quaternion.Euler(rotationPitch, rotationYaw, 0);
         chunkCoord = Data.Vector3ToChunkVoxel(new((float)posX, (float)posY, (float)posZ)).c;
         if (chunkCoord != lastChunkCoord) {
             lastChunkCoord = chunkCoord;
@@ -98,15 +89,14 @@ public class EntityPlayer : EntityLiving {
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
 
         world.hpBar.value = health / 20;
-        world.hpText.text = (inputVelocity).magnitude.ToString("F") + "m/s\n" + distance.ToString("F") + "m\n";
     }
     private float GetJumpPower () {
         return Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
     }
-    private void RotateEntity () {
-        rotationX -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
-        rotationY += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
-        rotationX = Mathf.Clamp(rotationX, -90, 90);
+    private void ApplyRotation () {
+        rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
+        rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
+        rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
     }
     private float GetFieldOfView () {
         if (Input.GetKey(KeyCode.C)) {
@@ -132,34 +122,34 @@ public class EntityPlayer : EntityLiving {
         return value;
     }
     private void CalculateSelectingPos () {
-        Vector3 _camPos = cam.position;
+        Vector3 _camPos = camTransform.position;
         for (int i = 0; i < 300; i++) {
             if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
                 break;
             }
-            _camPos += cam.forward * 0.02f;
+            _camPos += camTransform.forward * 0.02f;
         }
         SelectingPos = Vector3Int.FloorToInt(_camPos);
         tryPlacingPos = Vector3Int.FloorToInt(CalculateNormal(_camPos) + _camPos);
-    }
-    private Vector3Int CalculateNormal (Vector3 pp) {
 
-        Vector3Int normal = Vector3Int.zero;
-        Vector3 p = new Vector3(pp.x < 0 ? 1 : 0, pp.y < 0 ? 1 : 0, pp.z < 0 ? 1 : 0) + new Vector3(pp.x % 1, pp.y % 1, pp.z % 1) - Vector3.one * 0.5f;
-        Vector3 v = new(Mathf.Abs(p.x), Mathf.Abs(p.y), Mathf.Abs(p.z));
+        Vector3Int CalculateNormal (Vector3 pp) {
+            Vector3Int normal = Vector3Int.zero;
+            Vector3 p = new Vector3(pp.x < 0 ? 1 : 0, pp.y < 0 ? 1 : 0, pp.z < 0 ? 1 : 0) + new Vector3(pp.x % 1, pp.y % 1, pp.z % 1) - Vector3.one * 0.5f;
+            Vector3 v = new(Mathf.Abs(p.x), Mathf.Abs(p.y), Mathf.Abs(p.z));
 
-        if (v.x < v.z && v.y < v.z) {
-            normal += Vector3Int.forward * Mathf.RoundToInt(Mathf.Sign(p.z));
-        } else if (v.x < v.y) {
-            normal += Vector3Int.up * Mathf.RoundToInt(Mathf.Sign(p.y));
-        } else if (v.x > v.y) {
-            normal += Vector3Int.right * Mathf.RoundToInt(Mathf.Sign(p.x));
+            if (v.x < v.z && v.y < v.z) {
+                normal += Vector3Int.forward * Mathf.RoundToInt(Mathf.Sign(p.z));
+            } else if (v.x < v.y) {
+                normal += Vector3Int.up * Mathf.RoundToInt(Mathf.Sign(p.y));
+            } else if (v.x > v.y) {
+                normal += Vector3Int.right * Mathf.RoundToInt(Mathf.Sign(p.x));
+            }
+            return normal;
         }
-        return normal;
     }
     private protected override void OnGrounded () {
 
-        AddHealth(Mathf.Min(0, 13 + velocity.y));
+        AddHealth(Mathf.Min(0, 13 + (float)motionY));
     }
     private void DestroyBlock (Vector3 position) {
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
@@ -167,7 +157,7 @@ public class EntityPlayer : EntityLiving {
         queue.Enqueue(new(pos, 0));
         world.AddMod(queue);
     }
-    public static Vector3 PlayerVel () {
+    private Vector3 PlayerVel () {
         int x = 0;
         int y = 0;
         int z = 0;
