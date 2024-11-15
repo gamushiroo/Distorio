@@ -7,13 +7,12 @@ public class Chunk {
     private bool isTerrainMapGenerated;
     private bool threadLocked = true;
     private bool isActive = true;
-    private readonly int[,,] voxelMap = new int[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
-    private readonly Dictionary<Vector3Int, Inventory> Inventories = new();
-    private readonly Queue<VoxelAndPos> modifications = new();
-    private readonly List<Vector3> vertices = new();
     private readonly GameObject chunkObject = new();
-    private readonly List<int> triangles = new();
+    private readonly Queue<VoxelAndPos> modifications = new();
+    private readonly int[,,] voxelMap = new int[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
+    private readonly List<Vector3> vertices = new();
     private readonly List<Vector2> uvs = new();
+    private readonly List<int> triangles = new();
     public bool IsEditable => isTerrainMapGenerated && !threadLocked;
     public Chunk (Vector2Int pos, World world) {
         this.world = world;
@@ -37,9 +36,6 @@ public class Chunk {
     public int GetVoxelIDChunk (Vector3Int pos) {
         return pos.x >= 0 && pos.x < Data.ChunkWidth && pos.y >= 0 && pos.y < Data.ChunkHeight && pos.z >= 0 && pos.z < Data.ChunkWidth ? voxelMap[pos.x, pos.y, pos.z] : 0;
     }
-    public bool GetInventory (Vector3Int pos) {
-        return Inventories.ContainsKey(pos);
-    }
     public void EnqueueVoxelMod (VoxelAndPos voxelMod) {
         modifications.Enqueue(voxelMod);
     }
@@ -54,9 +50,6 @@ public class Chunk {
             while (modifications.Count > 0) {
                 VoxelAndPos vmod = modifications.Dequeue();
                 voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
-                if (world.blockTypes[vmod.id].hasInventory) {
-                    Inventories.Add(vmod.pos.v, new());
-                }
             }
         }
         threadLocked = true;

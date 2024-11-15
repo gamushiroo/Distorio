@@ -52,7 +52,6 @@ public class World : MonoBehaviour {
 
     }
     private void LateUpdate () {
-
         foreach (Entity entity in entities) {
             entity.UpdateIfNotDead();
         }
@@ -151,32 +150,14 @@ public class World : MonoBehaviour {
         return chunks.ContainsKey(pos) && chunks[pos].IsEditable;
     }
     public int GetVoxelID (Vector3 position) {
-
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
-
-        if (chunks.ContainsKey(pos.c) && chunks[pos.c].IsEditable)
-            return chunks[pos.c].GetVoxelIDChunk(pos.v);
-        else
-            return 0;
-    }
-    public bool GetInventory (Vector3 position) {
-
-
-        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
-        return chunks.ContainsKey(pos.c) && chunks[pos.c].IsEditable && chunks[pos.c].GetInventory(pos.v);
-
+        return chunks.ContainsKey(pos.c) && chunks[pos.c].IsEditable ? chunks[pos.c].GetVoxelIDChunk(pos.v) : 0;
     }
     public List<AABB> CollidingBoundingBoxes (AABB aabb) {
         List<AABB> a = new();
-        int jp = (int)Math.Floor(aabb.minX);
-        int jn = (int)Math.Ceiling(aabb.maxX);
-        int kp = (int)Math.Floor(aabb.minY);
-        int kn = (int)Math.Ceiling(aabb.maxY);
-        int lp = (int)Math.Floor(aabb.minZ);
-        int ln = (int)Math.Ceiling(aabb.maxZ);
-        for (int x = jp; x < jn; x++) {
-            for (int y = kp; y < kn; y++) {
-                for (int z = lp; z < ln; z++) {
+        for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
+            for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
+                for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
                     if (blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
                         a.Add(new(x, y, z, x + 1, y + 1, z + 1));
                     }
