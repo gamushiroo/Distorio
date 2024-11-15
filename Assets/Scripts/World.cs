@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class World : MonoBehaviour {
-
-
     public GameObject particle;
     public PathRenderer pathrend;
     public Slider hpBar;
@@ -30,39 +27,27 @@ public class World : MonoBehaviour {
     private readonly List<Chunk> chunksToUpdate = new();
     private readonly Queue<Chunk> chunksToDraw = new();
     public GameObject healing;
-
     private void Awake () {
-
         Item.RegisterItems();
         InitNoise();
-
         GenerateWorld();
         ModifyChunks();
         UpdateChunks();
-
-
     }
-
     private void Start () {
-
         userInter.inventory = new();
-
         entities.Add(new EntityPlayer(this, GetSpawnPoint()));
-        //entities.Add(new EntityEnemy(this));
-
     }
     private void LateUpdate () {
         foreach (Entity entity in entities) {
             entity.UpdateIfNotDead();
         }
-
         ModifyChunks();
         UpdateChunks();
         if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable) {
             chunksToDraw.Dequeue().GenerateMesh();
         }
     }
-
     public void CheckViewDistance (Vector2Int playerPos) {
         List<Vector2Int> previouslyActiveChunks = chunks.Keys.ToList();
         for (int x = playerPos.x - Data.ChunkLoadRange; x < playerPos.x + Data.ChunkLoadRange; x++) {
@@ -86,14 +71,9 @@ public class World : MonoBehaviour {
         }
         previouslyActiveChunks.Clear();
     }
-
-
-
     public byte GetVoxel (Vector3Int pos) {
-
         byte VoxelValue = 0;
         int terrainHeight = Mathf.FloorToInt(GetHeight(new(pos.x, pos.z)));
-
         switch (pos.y - terrainHeight) {
             case < -4:
                 VoxelValue = 3;
@@ -107,13 +87,10 @@ public class World : MonoBehaviour {
             default:
                 break;
         }
-
         if (pos.y == terrainHeight) {
             lock (modifications) {
                 if (Noise.Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
-
                     float www = Mathf.Max(0, Noise.Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f);
-
                     if (new System.Random().Next(0, Mathf.FloorToInt(www * 32) + 2) == 0) {
                         Queue<VoxelAndPos> a = new();
                         a.Enqueue(new(Data.Vector3ToChunkVoxel(pos), 15));
@@ -127,20 +104,13 @@ public class World : MonoBehaviour {
                 }
             }
         }
-
-        //superFlat
-        //VoxelValue = pos.y > 4 ? (byte)0 : (byte)1;
-
         return VoxelValue;
     }
     public bool SetBlock (Vector3 position, Vector3 selectingPos) {
-
         if (userInter.selectedBlockIndex != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
-
             Queue<VoxelAndPos> queue = new();
             queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), userInter.selectedBlockIndex));
             AddMod(queue);
-
             hand.placeEase = 0;
             return true;
         }
@@ -168,29 +138,21 @@ public class World : MonoBehaviour {
     }
     public List<int> CollidingIDs (AABB aabb) {
         List<int> a = new();
-        int jp = (int)Math.Floor(aabb.minX);
-        int jn = (int)Math.Ceiling(aabb.maxX);
-        int kp = (int)Math.Floor(aabb.minY);
-        int kn = (int)Math.Ceiling(aabb.maxY);
-        int lp = (int)Math.Floor(aabb.minZ);
-        int ln = (int)Math.Ceiling(aabb.maxZ);
-        for (int x = jp; x < jn; x++) {
-            for (int y = kp; y < kn; y++) {
-                for (int z = lp; z < ln; z++) {
-                    a.Add(GetVoxelID(new(x, y, z)));
+        for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
+            for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
+                for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
+                    if (blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
+                        a.Add(GetVoxelID(new(x, y, z)));
+                    }
                 }
             }
         }
         return a;
     }
     public Vector3 GetSpawnPoint () {
-        if (chunks.ContainsKey(Vector2Int.zero)) {
-            for (int y = 0; y < Data.ChunkHeight; y++) {
-                if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
-
-                    return new Vector3Int(0, y, 0) + new Vector3(0.5f, 0, 0.5f);
-
-                }
+        for (int y = 0; y < Data.ChunkHeight; y++) {
+            if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
+                return new Vector3(0.5F, y, 0.5F);
             }
         }
         return new(0, Data.ChunkHeight, 0);
@@ -198,12 +160,7 @@ public class World : MonoBehaviour {
     public void AddMod (Queue<VoxelAndPos> aadd) {
         modifications.Enqueue(aadd);
     }
-
-    private float GetTemp (Vector3 pos) {
-        return (Noise.Get2DPerlin(new(pos.x, pos.z), 0.002f) + 0.5f) * 60 - 20;
-    }
     private float GetHeight (Vector2Int pos) {
-
         float terrainHeight = 0;
         for (int i = 0; i < 4; i++) {
             terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
@@ -234,8 +191,9 @@ public class World : MonoBehaviour {
                         chunks.Add(vmod.pos.c, new(vmod.pos.c, this));
                     }
                     chunks[vmod.pos.c].EnqueueVoxelMod(vmod);
-                    if (!chunksToUpdate.Contains(chunks[vmod.pos.c]))
+                    if (!chunksToUpdate.Contains(chunks[vmod.pos.c])) {
                         chunksToUpdate.Add(chunks[vmod.pos.c]);
+                    }
                 }
             }
         }
