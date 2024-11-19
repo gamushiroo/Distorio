@@ -16,7 +16,7 @@ public abstract class Entity {
 
     private protected float rotationPitch;
     private protected float rotationYaw;
-    private protected bool isZeroGravity;
+    private protected bool hasGravity = true;
     private protected bool isGrounded;
     private protected float width;
     private protected float height;
@@ -45,7 +45,7 @@ public abstract class Entity {
     }
 
     protected List<int> CollidingIDs () {
-        return CollidingIDs(boundingBox);
+        return world.CollidingIDs(boundingBox);
     }
     protected void AddVelocity (double x, double y, double z) {
         motionX += x;
@@ -57,21 +57,9 @@ public abstract class Entity {
         motionY = y;
         motionZ = z;
     }
-
-    public List<int> CollidingIDs (AABB aabb) {
-        List<int> a = new();
-        for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
-            for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
-                for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
-                    a.Add(world.GetVoxelID(new(x, y, z)));
-                }
-            }
-        }
-        return a;
-    }
     protected void TryMoveEntity (double x, double y, double z) {
 
-        List<AABB> boundingBoxes = CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
+        List<AABB> boundingBoxes = world.GetCollidingBoundingBoxes(boundingBox.AddCoord(x, y, z));
         double _x = x;
         double _y = y;
         double _z = z;
@@ -86,7 +74,7 @@ public abstract class Entity {
             CalculateXOffset();
         }
 
-        isGrounded = _y != y && y < 0.0D;
+        isGrounded = y != _y && _y < 0.0D;
 
         if (!isGrounded) {
             alreadyGrounded = false;
@@ -94,45 +82,32 @@ public abstract class Entity {
             OnGrounded();
             alreadyGrounded = true;
         }
-        if (_x != x) {
+        if (x != _x) {
             motionX = 0;
         }
-        if (_y != y) {
+        if (y != _y) {
             motionY = 0;
         }
-        if (_z != z) {
+        if (z != _z) {
             motionZ = 0;
-        }
-        List<AABB> CollidingBoundingBoxes (AABB aabb) {
-            List<AABB> a = new();
-            for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
-                for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
-                    for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
-                        if (world.blockTypes[world.GetVoxelID(new(x, y, z))].hasCollision) {
-                            a.Add(new(x, y, z, x + 1, y + 1, z + 1));
-                        }
-                    }
-                }
-            }
-            return a;
         }
         void CalculateXOffset () {
             foreach (AABB value in boundingBoxes) {
-                _x = value.CalculateXOffset(boundingBox, _x);
+                x = value.CalculateXOffset(boundingBox, x);
             }
-            AddPosition(_x, 0.0D, 0.0D);
+            AddPosition(x, 0.0D, 0.0D);
         }
         void CalculateYOffset () {
             foreach (AABB value in boundingBoxes) {
-                _y = value.CalculateYOffset(boundingBox, _y);
+                y = value.CalculateYOffset(boundingBox, y);
             }
-            AddPosition(0.0D, _y, 0.0D);
+            AddPosition(0.0D, y, 0.0D);
         }
         void CalculateZOffset () {
             foreach (AABB value in boundingBoxes) {
-                _z = value.CalculateZOffset(boundingBox, _z);
+                z = value.CalculateZOffset(boundingBox, z);
             }
-            AddPosition(0.0D, 0.0D, _z);
+            AddPosition(0.0D, 0.0D, z);
         }
         void AddPosition (double x, double y, double z) {
             SetPosition(posX + x, posY + y, posZ + z);
@@ -155,11 +130,9 @@ public abstract class Entity {
 
     }
     private protected virtual void Update () {
-        if (!isZeroGravity) {
-            Vector3 sss = Data.gravityScale * Time.deltaTime * Vector3.down;
-            AddVelocity(sss.x, sss.y, sss.z);
+        if (hasGravity) {
+            AddVelocity(0, -Data.gravityScale * Time.deltaTime, 0);
         }
-
         TryMoveEntity(motionX * Time.deltaTime, motionY * Time.deltaTime, motionZ * Time.deltaTime);
     }
     private protected virtual void OnGrounded () {

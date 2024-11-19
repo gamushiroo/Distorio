@@ -11,7 +11,7 @@ public class EntityProjectile : EntityLiving {
         GenerateMesh(20);
         Object.Instantiate(world.particle).transform.SetParent(obj.transform);
         SetPosition(pos.x, pos.y, pos.z);
-        isZeroGravity = true;
+        hasGravity = false;
         this.rot = rot;
     }
 

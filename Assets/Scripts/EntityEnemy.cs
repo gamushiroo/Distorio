@@ -15,7 +15,7 @@ public class EntityEnemy : EntityLiving {
         GenerateMesh(19);
 
         SetPosition(pos.x, pos.y, pos.z);
-        isZeroGravity = true;
+        hasGravity = false;
 
         a = obj.AddComponent<AudioSource>();
         a.volume = 0.1f;

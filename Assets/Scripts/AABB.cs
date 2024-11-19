@@ -9,29 +9,29 @@ public class AABB {
         maxY = Math.Max(y1, y2);
         maxZ = Math.Max(z1, z2);
     }
-    public AABB Extend (double x, double y, double z) {
-        double d0 = minX;
-        double d1 = minY;
-        double d2 = minZ;
-        double d3 = maxX;
-        double d4 = maxY;
-        double d5 = maxZ;
-        if (x > 0.0D) {
-            d3 += x;
+    public AABB AddCoord (double x, double y, double z) {
+        double x1 = minX;
+        double y1 = minY;
+        double z1 = minZ;
+        double x2 = maxX;
+        double y2 = maxY;
+        double z2 = maxZ;
+        if (x < 0.0D) {
+            x1 += x;
         } else {
-            d0 += x;
+            x2 += x;
         }
-        if (y > 0.0D) {
-            d4 += y;
+        if (y < 0.0D) {
+            y1 += y;
         } else {
-            d1 += y;
+            y2 += y;
         }
-        if (z > 0.0D) {
-            d5 += z;
+        if (z < 0.0D) {
+            z1 += z;
         } else {
-            d2 += z;
+            z2 += z;
         }
-        return new(d0, d1, d2, d3, d4, d5);
+        return new(x1, y1, z1, x2, y2, z2);
     }
     public bool IntersectsWith (AABB other) {
         return other.minX < maxX && minX < other.maxX && other.minY < maxY && minY < other.maxY && other.minZ < maxZ && minZ < other.maxZ;

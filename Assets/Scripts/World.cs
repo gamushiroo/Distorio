@@ -54,16 +54,145 @@ public class World : MonoBehaviour {
     }
     private void Start () {
         userInter.inventory = new();
-        entities.Add(new EntityPlayer(this, GetSpawnPoint()));
+        entities.Add(new EntityPlayer(this));
 
-        Vector3 GetSpawnPoint () {
-            for (int y = 0; y < Data.ChunkHeight; y++) {
-                if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
-                    return new Vector3(0.5F, y, 0.5F);
+    }
+
+    /*
+    public MovingObjectPosition rayTraceBlocks (Vec3 eyePos, Vec3 to, bool stopOnLiquid, bool returnLastUncollidableBlock) {
+        int toX = MathHelper.FloorDouble(to.xCoord);
+        int toY = MathHelper.FloorDouble(to.yCoord);
+        int toZ = MathHelper.FloorDouble(to.zCoord);
+        int eyeX = MathHelper.FloorDouble(eyePos.xCoord);
+        int eyeY = MathHelper.FloorDouble(eyePos.yCoord);
+        int eyeZ = MathHelper.FloorDouble(eyePos.zCoord);
+        BlockPos blockpos = new BlockPos(eyeX, eyeY, eyeZ);
+        IBlockState iblockstate = this.getBlockState(blockpos);
+        Block block = iblockstate.getBlock();
+
+        if (( block.getCollisionBoundingBox(this, blockpos, iblockstate) != null) && block.canCollideCheck(iblockstate, stopOnLiquid)) {
+            MovingObjectPosition movingobjectposition = block.collisionRayTrace(this, blockpos, eyePos, to);
+
+            if (movingobjectposition != null) {
+                return movingobjectposition;
+            }
+        }
+
+        MovingObjectPosition movingobjectposition2 = null;
+        int k1 = 200;
+
+        while (k1-- >= 0) {
+
+            if (eyeX == toX && eyeY == toY && eyeZ == toZ) {
+                return returnLastUncollidableBlock ? movingobjectposition2 : null;
+            }
+
+            bool flag2 = true;
+            bool flag = true;
+            bool flag1 = true;
+            double d0 = 999.0D;
+            double d1 = 999.0D;
+            double d2 = 999.0D;
+
+            if (toX > eyeX) {
+                d0 = eyeX + 1.0D;
+            } else if (toX < eyeX) {
+                d0 = eyeX + 0.0D;
+            } else {
+                flag2 = false;
+            }
+
+            if (toY > eyeY) {
+                d1 = eyeY + 1.0D;
+            } else if (toY < eyeY) {
+                d1 = eyeY + 0.0D;
+            } else {
+                flag = false;
+            }
+
+            if (toZ > eyeZ) {
+                d2 = eyeZ + 1.0D;
+            } else if (toZ < eyeZ) {
+                d2 = eyeZ + 0.0D;
+            } else {
+                flag1 = false;
+            }
+
+            double d3 = 999.0D;
+            double d4 = 999.0D;
+            double d5 = 999.0D;
+            double diffX = to.xCoord - eyePos.xCoord;
+            double diffY = to.yCoord - eyePos.yCoord;
+            double diffZ = to.zCoord - eyePos.zCoord;
+
+            if (flag2) {
+                d3 = (d0 - eyePos.xCoord) / diffX;
+            }
+
+            if (flag) {
+                d4 = (d1 - eyePos.yCoord) / diffY;
+            }
+
+            if (flag1) {
+                d5 = (d2 - eyePos.zCoord) / diffZ;
+            }
+
+            if (d3 == -0.0D) {
+                d3 = -1.0E-4D;
+            }
+
+            if (d4 == -0.0D) {
+                d4 = -1.0E-4D;
+            }
+
+            if (d5 == -0.0D) {
+                d5 = -1.0E-4D;
+            }
+
+            EnumFacing enumfacing;
+
+            if (d3 < d4 && d3 < d5) {
+                enumfacing = toX > eyeX ? EnumFacing.WEST : EnumFacing.EAST;
+                eyePos = new Vec3(d0, eyePos.yCoord + diffY * d3, eyePos.zCoord + diffZ * d3);
+            } else if (d4 < d5) {
+                enumfacing = toY > eyeY ? EnumFacing.DOWN : EnumFacing.UP;
+                eyePos = new Vec3(eyePos.xCoord + diffX * d4, d1, eyePos.zCoord + diffZ * d4);
+            } else {
+                enumfacing = toZ > eyeZ ? EnumFacing.NORTH : EnumFacing.SOUTH;
+                eyePos = new Vec3(eyePos.xCoord + diffX * d5, eyePos.yCoord + diffY * d5, d2);
+            }
+
+            eyeX = MathHelper.FloorDouble(eyePos.xCoord) - (enumfacing == EnumFacing.EAST ? 1 : 0);
+            eyeY = MathHelper.FloorDouble(eyePos.yCoord) - (enumfacing == EnumFacing.UP ? 1 : 0);
+            eyeZ = MathHelper.FloorDouble(eyePos.zCoord) - (enumfacing == EnumFacing.SOUTH ? 1 : 0);
+
+            blockpos = new BlockPos(eyeX, eyeY, eyeZ);
+            IBlockState iblockstate1 = this.getBlockState(blockpos);
+            Block block1 = iblockstate1.getBlock();
+
+            if ( block1.getCollisionBoundingBox(this, blockpos, iblockstate1) != null) {
+                if (block1.canCollideCheck(iblockstate1, stopOnLiquid)) {
+                    MovingObjectPosition movingobjectposition1 = block1.collisionRayTrace(this, blockpos, eyePos, to);
+
+                    if (movingobjectposition1 != null) {
+                        return movingobjectposition1;
+                    }
+                } else {
+                    movingobjectposition2 = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, eyePos, enumfacing, blockpos);
                 }
             }
-            return new(0, Data.ChunkHeight, 0);
         }
+        return returnLastUncollidableBlock ? movingobjectposition2 : null;
+    }
+    */
+
+    public Vector3 GetSpawnPoint () {
+        for (int y = 0; y < Data.ChunkHeight; y++) {
+            if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
+                return new Vector3(0.5F, y, 0.5F);
+            }
+        }
+        return new(0, Data.ChunkHeight, 0);
     }
     private void LateUpdate () {
 
@@ -103,6 +232,30 @@ public class World : MonoBehaviour {
         foreach (Vector2Int c in previouslyActiveChunks) {
             chunks[c].SetActiveState(false);
         }
+    }
+    public List<int> CollidingIDs (AABB aabb) {
+        List<int> a = new();
+        for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
+            for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
+                for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
+                    a.Add(GetVoxelID(new(x, y, z)));
+                }
+            }
+        }
+        return a;
+    }
+    public List<AABB> GetCollidingBoundingBoxes (AABB aabb) {
+        List<AABB> a = new();
+        for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
+            for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
+                for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
+                    if (blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
+                        a.Add(new(x, y, z, x + 1, y + 1, z + 1));
+                    }
+                }
+            }
+        }
+        return a;
     }
     public byte GetVoxel (Vector3Int pos) {
         byte VoxelValue = 0;

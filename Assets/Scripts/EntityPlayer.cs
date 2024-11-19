@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 public class EntityPlayer : EntityLiving {
     private Vector2Int chunkCoord;
     private Vector2Int lastChunkCoord;
@@ -13,12 +14,18 @@ public class EntityPlayer : EntityLiving {
     private readonly float mineSpeed = 2.5f;
     private float coolDown = 0;
     private bool nextFramePlaced;
-    public EntityPlayer (World world, Vector3 pos) : base(world) {
+    public EntityPlayer (World world) : base(world) {
+        Vector3 pos = world.GetSpawnPoint();
         SetPosition(pos.x, pos.y, pos.z);
         cam = world.camObj;
         camTransform = world.cam;
     }
     private protected override void Update () {
+        Vector3 pos = world.GetSpawnPoint();
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SetPosition(pos.x, pos.y, pos.z);
+            SetVelocity(0.0D, 0.0D, 0.0D);
+        }
         ApplyFieldOfView();
         ApplyRotation();
         Vector3 iii = PlayerVel() * Time.deltaTime;
@@ -63,7 +70,7 @@ public class EntityPlayer : EntityLiving {
         }
         world.blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
         world.miningEffect.transform.position = SelectingPos + Vector3.one * 0.5f;
-        world.miningEffect.SetActive(isMining);
+        //world.miningEffect.SetActive(isMining);
         world.miningProgresBarObj.SetActive(isMining);
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
         world.hpBar.value = health / maxHealth;
