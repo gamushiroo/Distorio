@@ -4,34 +4,38 @@ using UnityEngine;
 
 public abstract class Entity {
 
+    private protected readonly GameObject obj;
+    private protected readonly Transform objTransform;
+    private protected readonly World world;
     private readonly MeshFilter meshFilter;
-    private AABB boundingBox;
 
+    public AABB BoundingBox { get; private set; }
+
+    private protected bool hasGravity = true;
+    private protected bool isGrounded;
     private bool alreadyGrounded;
     private bool isDead;
 
-    private protected readonly GameObject obj;
-    private protected readonly Transform playerTransform;
-    private protected readonly World world;
 
     private protected float rotationPitch;
     private protected float rotationYaw;
-    private protected bool hasGravity = true;
-    private protected bool isGrounded;
-    private protected float width;
-    private protected float height;
-    private protected double motionX, motionY, motionZ;
-    private protected double posX, posY, posZ;
+    private protected float width = 0.6F;
+    private protected float height = 1.8F;
+    private protected float eyeHeight = 1.8F;
+    private protected double motionX;
+    private protected double motionY;
+    private protected double motionZ;
+    private protected double posX;
+    private protected double posY;
+    private protected double posZ;
 
     public Entity (World world) {
 
         this.world = world;
         obj = new();
+        objTransform = obj.transform;
         obj.AddComponent<MeshRenderer>().material = world.material;
-        playerTransform = obj.transform;
         meshFilter = obj.AddComponent<MeshFilter>();
-        width = 0.6F;
-        height = 1.8F;
         GenerateMesh(10);
 
         SetVelocity(0.0D, 0.0D, 0.0D);
@@ -43,29 +47,41 @@ public abstract class Entity {
             Update();
         }
     }
-
-    protected List<int> CollidingIDs () {
-        return world.CollidingIDs(boundingBox);
-    }
-    protected void AddVelocity (double x, double y, double z) {
-        motionX += x;
-        motionY += y;
-        motionZ += z;
+    protected void SetPositionToSpawnPoint () {
+        SetPosition(0.0D, 0.0D, 0.0D);
+        while (world.GetCollidingBoundingBoxes(BoundingBox).Count != 0) {
+            AddPosition(0.0D, 1.0D, 0.0D);
+        }
     }
     protected void SetVelocity (double x, double y, double z) {
         motionX = x;
         motionY = y;
         motionZ = z;
     }
-    protected void TryMoveEntity (double x, double y, double z) {
+    protected void AddVelocity (double x, double y, double z) {
+        motionX += x;
+        motionY += y;
+        motionZ += z;
+    }
+    private protected void SetPosition (double x, double y, double z) {
+        posX = x;
+        posY = y;
+        posZ = z;
+        float f = width / 2.0F;
+        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
+    }
+    protected void AddPosition (double x, double y, double z) => SetPosition(posX + x, posY + y, posZ + z);
+    protected void MoveEntity (double x, double y, double z) {
 
-        List<AABB> boundingBoxes = world.GetCollidingBoundingBoxes(boundingBox.AddCoord(x, y, z));
+        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z));
         double _x = x;
         double _y = y;
         double _z = z;
 
-        CalculateYOffset();
-
+        foreach (AABB other in others) {
+            y = BoundingBox.CalculateYOffset(y, other);
+        }
+        AddPosition(0.0D, y, 0.0D);
         if (Math.Abs(x) > Math.Abs(z)) {
             CalculateXOffset();
             CalculateZOffset();
@@ -73,9 +89,19 @@ public abstract class Entity {
             CalculateZOffset();
             CalculateXOffset();
         }
-
+        void CalculateXOffset () {
+            foreach (AABB other in others) {
+                x = BoundingBox.CalculateXOffset(x, other);
+            }
+            AddPosition(x, 0.0D, 0.0D);
+        }
+        void CalculateZOffset () {
+            foreach (AABB other in others) {
+                z = BoundingBox.CalculateZOffset(z, other);
+            }
+            AddPosition(0.0D, 0.0D, z);
+        }
         isGrounded = y != _y && _y < 0.0D;
-
         if (!isGrounded) {
             alreadyGrounded = false;
         } else if (!alreadyGrounded) {
@@ -91,49 +117,19 @@ public abstract class Entity {
         if (z != _z) {
             motionZ = 0;
         }
-        void CalculateXOffset () {
-            foreach (AABB value in boundingBoxes) {
-                x = value.CalculateXOffset(boundingBox, x);
-            }
-            AddPosition(x, 0.0D, 0.0D);
-        }
-        void CalculateYOffset () {
-            foreach (AABB value in boundingBoxes) {
-                y = value.CalculateYOffset(boundingBox, y);
-            }
-            AddPosition(0.0D, y, 0.0D);
-        }
-        void CalculateZOffset () {
-            foreach (AABB value in boundingBoxes) {
-                z = value.CalculateZOffset(boundingBox, z);
-            }
-            AddPosition(0.0D, 0.0D, z);
-        }
-        void AddPosition (double x, double y, double z) {
-            SetPosition(posX + x, posY + y, posZ + z);
-        }
-    }
-    private protected bool IsCollide (Vector3Int selectedPos) {
-        return boundingBox.IntersectsWith(new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
     }
     private protected void Die () {
         isDead = true;
     }
-    private protected void SetPosition (double x, double y, double z) {
-
-        posX = x;
-        posY = y;
-        posZ = z;
-        float f = width / 2.0F;
-        boundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
-        playerTransform.position = new((float)posX, (float)posY, (float)posZ);
-
-    }
     private protected virtual void Update () {
+
+        eyeHeight += Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? 5.0F / 10.0F * height : 9.0F / 10.0F * height) - eyeHeight) * Time.deltaTime;
+
         if (hasGravity) {
             AddVelocity(0, -Data.gravityScale * Time.deltaTime, 0);
         }
-        TryMoveEntity(motionX * Time.deltaTime, motionY * Time.deltaTime, motionZ * Time.deltaTime);
+        MoveEntity(motionX * Time.deltaTime, motionY * Time.deltaTime, motionZ * Time.deltaTime);
+        objTransform.position = new((float)posX, (float)posY, (float)posZ);
     }
     private protected virtual void OnGrounded () {
     }

@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityPlayer : EntityLiving {
-    private Vector2Int chunkCoord;
-    private Vector2Int lastChunkCoord;
+    private Vec3i chunkCoord;
+    private Vec3i lastChunkCoord;
     private Vector3Int tryPlacingPos;
     private Vector3Int lastTryPlacingPos = Vector3Int.zero;
     private Vector3Int SelectingPos;
@@ -15,31 +15,44 @@ public class EntityPlayer : EntityLiving {
     private float coolDown = 0;
     private bool nextFramePlaced;
     public EntityPlayer (World world) : base(world) {
-        Vector3 pos = world.GetSpawnPoint();
-        SetPosition(pos.x, pos.y, pos.z);
+        SetPositionToSpawnPoint();
+        SetVelocity(0.0D, 0.0D, 0.0D);
         cam = world.camObj;
         camTransform = world.cam;
     }
+
     private protected override void Update () {
-        Vector3 pos = world.GetSpawnPoint();
+
         if (Input.GetKeyDown(KeyCode.R)) {
-            SetPosition(pos.x, pos.y, pos.z);
+            SetPositionToSpawnPoint();
             SetVelocity(0.0D, 0.0D, 0.0D);
         }
-        ApplyFieldOfView();
-        ApplyRotation();
-        Vector3 iii = PlayerVel() * Time.deltaTime;
-        AddVelocity(iii.x, iii.y, iii.z);
-        if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            AddVelocity(0, GetJumpPower(), 0);
+
+        if (Input.GetKey(KeyCode.C)) {
+            cam.fieldOfView = 20;
+        } else {
+            cam.fieldOfView = 70;
         }
+
+        if (Input.GetKey(KeyCode.Space) && isGrounded) {
+            AddVelocity(0, Data.jumpPower, 0);
+        }
+
+        rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
+        rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
+        rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
+
+        Vector3 f = PlayerVel() * Time.deltaTime;
+        AddVelocity(f.x, f.y, f.z);
+
         base.Update();
-        camTransform.SetPositionAndRotation(new((float)posX, (float)posY + GetEyeHeight(), (float)posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
-        chunkCoord = Data.Vector3ToChunkVoxel(new((float)posX, (float)posY, (float)posZ)).c;
-        if (chunkCoord != lastChunkCoord) {
+        camTransform.SetPositionAndRotation(Vec3.ToVector3(posX, posY + eyeHeight, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
+        chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
+        if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
             world.CheckViewDistance(chunkCoord);
         }
+
         if (IsTouching(15)) {
             AddHealth(3 * Time.deltaTime);
         }
@@ -52,7 +65,7 @@ public class EntityPlayer : EntityLiving {
             }
             miningProgress += Time.deltaTime * mineSpeed;
             if (miningProgress >= world.blockTypes[world.GetVoxelID(SelectingPos)].hardness) {
-                DestroyBlock(SelectingPos);
+                world.DestroyBlock(SelectingPos);
             }
             world.miningProgresBar.value = miningProgress / world.blockTypes[world.GetVoxelID(SelectingPos)].hardness;
         }
@@ -61,7 +74,7 @@ public class EntityPlayer : EntityLiving {
             nextFramePlaced = false;
         }
         coolDown += Time.deltaTime;
-        if (!IsCollide(tryPlacingPos) && (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1) || Input.GetMouseButton(1) && tryPlacingPos != lastTryPlacingPos)) {
+        if (!BoundingBox.IntersectsWith(tryPlacingPos) && (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1) || Input.GetMouseButton(1) && tryPlacingPos != lastTryPlacingPos)) {
             if (world.SetBlock(tryPlacingPos, SelectingPos)) {
                 coolDown = 0;
                 lastTryPlacingPos = tryPlacingPos;
@@ -74,29 +87,8 @@ public class EntityPlayer : EntityLiving {
         world.miningProgresBarObj.SetActive(isMining);
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
         world.hpBar.value = health / maxHealth;
-        void DestroyBlock (Vector3 position) {
-            ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
-            Queue<VoxelAndPos> queue = new();
-            queue.Enqueue(new(pos, 0));
-            world.AddMod(queue);
-        }
-        float GetJumpPower () {
-            return Mathf.Sqrt(2 * Data.gravityScale * (Data.jumpScale + 0.4F));
-        }
-        void ApplyRotation () {
-            rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
-            rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
-            rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
-        }
-        void ApplyFieldOfView () {
-            if (Input.GetKey(KeyCode.C)) {
-                cam.fieldOfView = 20;
-            } else {
-                cam.fieldOfView = 70;
-            }
-        }
         bool IsTouching (int check) {
-            List<int> ids = CollidingIDs();
+            List<int> ids = world.CollidingIDs(BoundingBox);
             foreach (int id in ids) {
                 if (id == check) {
                     return true;
@@ -104,15 +96,8 @@ public class EntityPlayer : EntityLiving {
             }
             return false;
         }
-        float GetEyeHeight () {
-            float value = 1.62F;
-            if (Input.GetKey(KeyCode.LeftShift)) {
-                value -= 0.08F;
-            }
-            return value;
-        }
         void CalculateSelectingPos () {
-            Vector3 _camPos = camTransform.position;
+            Vector3 _camPos = new Vector3((float)posX, (float)posY + eyeHeight, (float)posZ);
             for (int i = 0; i < 300; i++) {
                 if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
                     break;

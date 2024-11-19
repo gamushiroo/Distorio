@@ -58,6 +58,12 @@ public class World : MonoBehaviour {
 
     }
 
+    public void DestroyBlock (Vector3 position) {
+        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+        Queue<VoxelAndPos> queue = new();
+        queue.Enqueue(new(pos, 0));
+        AddMod(queue);
+    }
     /*
     public MovingObjectPosition rayTraceBlocks (Vec3 eyePos, Vec3 to, bool stopOnLiquid, bool returnLastUncollidableBlock) {
         int toX = MathHelper.FloorDouble(to.xCoord);
@@ -186,14 +192,6 @@ public class World : MonoBehaviour {
     }
     */
 
-    public Vector3 GetSpawnPoint () {
-        for (int y = 0; y < Data.ChunkHeight; y++) {
-            if (!blockTypes[GetVoxelID(new(0, y, 0))].hasCollision) {
-                return new Vector3(0.5F, y, 0.5F);
-            }
-        }
-        return new(0, Data.ChunkHeight, 0);
-    }
     private void LateUpdate () {
 
         //hpText.text  = ((int)(1f / Time.unscaledDeltaTime)).ToString();
@@ -206,11 +204,11 @@ public class World : MonoBehaviour {
             chunksToDraw.Dequeue().GenerateMesh();
         }
     }
-    public void CheckViewDistance (Vector2Int playerPos) {
+    public void CheckViewDistance (Vec3i playerPos) {
         List<Vector2Int> previouslyActiveChunks = chunks.Keys.ToList();
         for (int x = playerPos.x - Data.ChunkLoadRange; x < playerPos.x + Data.ChunkLoadRange; x++) {
-            for (int y = playerPos.y - Data.ChunkLoadRange; y < playerPos.y + Data.ChunkLoadRange; y++) {
-                Vector2Int pos = new(x, y);
+            for (int z = playerPos.z - Data.ChunkLoadRange; z < playerPos.z + Data.ChunkLoadRange; z++) {
+                Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this));
                     chunks[pos].GenerateTerrainData();

@@ -1,5 +1,7 @@
 using System;
-public class AABB {
+using UnityEngine;
+
+public struct AABB {
     public double minX, minY, minZ, maxX, maxY, maxZ;
     public AABB (double x1, double y1, double z1, double x2, double y2, double z2) {
         minX = Math.Min(x1, x2);
@@ -36,49 +38,52 @@ public class AABB {
     public bool IntersectsWith (AABB other) {
         return other.minX < maxX && minX < other.maxX && other.minY < maxY && minY < other.maxY && other.minZ < maxZ && minZ < other.maxZ;
     }
-    public double CalculateXOffset (AABB other, double offsetX) {
-        if (other.maxY > minY && other.minY < maxY && other.maxZ > minZ && other.minZ < maxZ) {
-            if (offsetX > 0.0D && other.maxX <= minX) {
-                double d1 = minX - other.maxX;
-                if (d1 < offsetX) {
-                    offsetX = d1;
+    public bool IntersectsWith (Vector3Int pos) {
+        return IntersectsWith(new AABB(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1));
+    }
+    public double CalculateXOffset (double offsetX, AABB other) {
+        if (minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ) {
+            if (offsetX > 0.0D && maxX <= other.minX) {
+                double diff = other.minX - maxX;
+                if (diff < offsetX) {
+                    offsetX = diff;
                 }
-            } else if (offsetX < 0.0D && other.minX >= maxX) {
-                double d0 = maxX - other.minX;
-                if (d0 > offsetX) {
-                    offsetX = d0;
+            } else if (offsetX < 0.0D && minX >= other.maxX) {
+                double diff = other.maxX - minX;
+                if (diff > offsetX) {
+                    offsetX = diff;
                 }
             }
         }
         return offsetX;
     }
-    public double CalculateYOffset (AABB other, double offsetY) {
-        if (other.maxX > minX && other.minX < maxX && other.maxZ > minZ && other.minZ < maxZ) {
-            if (offsetY > 0.0D && other.maxY <= minY) {
-                double d1 = minY - other.maxY;
-                if (d1 < offsetY) {
-                    offsetY = d1;
+    public double CalculateYOffset (double offsetY, AABB other) {
+        if (minX < other.maxX && maxX > other.minX && minZ < other.maxZ && maxZ > other.minZ) {
+            if (offsetY > 0.0D && maxY <= other.minY) {
+                double diff = other.minY - maxY;
+                if (diff < offsetY) {
+                    offsetY = diff;
                 }
-            } else if (offsetY < 0.0D && other.minY >= maxY) {
-                double d0 = maxY - other.minY;
-                if (d0 > offsetY) {
-                    offsetY = d0;
+            } else if (offsetY < 0.0D && minY >= other.maxY) {
+                double diff = other.maxY - minY;
+                if (diff > offsetY) {
+                    offsetY = diff;
                 }
             }
         }
         return offsetY;
     }
-    public double CalculateZOffset (AABB other, double offsetZ) {
-        if (other.maxX > minX && other.minX < maxX && other.maxY > minY && other.minY < maxY) {
-            if (offsetZ > 0.0D && other.maxZ <= minZ) {
-                double d1 = minZ - other.maxZ;
-                if (d1 < offsetZ) {
-                    offsetZ = d1;
+    public double CalculateZOffset (double offsetZ, AABB other) {
+        if (minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY) {
+            if (offsetZ > 0.0D && maxZ <= other.minZ) {
+                double diff = other.minZ - maxZ;
+                if (diff < offsetZ) {
+                    offsetZ = diff;
                 }
-            } else if (offsetZ < 0.0D && other.minZ >= maxZ) {
-                double d0 = maxZ - other.minZ;
-                if (d0 > offsetZ) {
-                    offsetZ = d0;
+            } else if (offsetZ < 0.0D && minZ >= other.maxZ) {
+                double diff = other.maxZ - minZ;
+                if (diff > offsetZ) {
+                    offsetZ = diff;
                 }
             }
         }

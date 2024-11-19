@@ -10,6 +10,7 @@ public static class Data {
 
     public static readonly float gravityScale = 25.0F;
     public static readonly float jumpScale = 1;
+    public static readonly float jumpPower = Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
     public static readonly float playerSpeed = 13.0F / 3.0F;
     public static readonly float resistance = 14.0F;
 
@@ -108,6 +109,10 @@ public static class Data {
         return new(new(p.x >> 4, p.z >> 4), new(p.x & 15, p.y & 127, p.z & 15));
     }
 
+    public static ChunkVoxel Vector3ToChunkCoord (Vector3 pos) {
+        Vector3Int p = Vector3Int.FloorToInt(pos);
+        return new(new(p.x >> 4, p.z >> 4), new(p.x & 15, p.y & 127, p.z & 15));
+    }
 }
 public struct VoxelAndPos {
     public ChunkVoxel pos;
