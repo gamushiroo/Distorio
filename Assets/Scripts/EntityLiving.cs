@@ -23,7 +23,6 @@ public class EntityLiving : Entity {
 
 
         if (health > healthBefore) {
-            Debug.Log(Time.deltaTime);
             world.healing.SetActive(true);
         } else {
             world.healing.SetActive(false);

@@ -19,7 +19,6 @@ public class EntityProjectile : EntityLiving {
         base.Update();
 
         Vector3 aaa = rot * Vector3.forward * 20 * Time.deltaTime;
-
         TryMoveEntity(aaa.x, aaa.y, aaa.z);
         AddHealth(-Time.deltaTime);
     }

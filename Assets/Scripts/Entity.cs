@@ -45,7 +45,7 @@ public abstract class Entity {
     }
 
     protected List<int> CollidingIDs () {
-        return world.CollidingIDs(boundingBox);
+        return CollidingIDs(boundingBox);
     }
     protected void AddVelocity (double x, double y, double z) {
         motionX += x;
@@ -58,9 +58,20 @@ public abstract class Entity {
         motionZ = z;
     }
 
+    public List<int> CollidingIDs (AABB aabb) {
+        List<int> a = new();
+        for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
+            for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
+                for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
+                    a.Add(world.GetVoxelID(new(x, y, z)));
+                }
+            }
+        }
+        return a;
+    }
     protected void TryMoveEntity (double x, double y, double z) {
 
-        List<AABB> boundingBoxes = world.CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
+        List<AABB> boundingBoxes = CollidingBoundingBoxes(boundingBox.Extend(x, y, z));
         double _x = x;
         double _y = y;
         double _z = z;
@@ -92,6 +103,19 @@ public abstract class Entity {
         if (_z != z) {
             motionZ = 0;
         }
+        List<AABB> CollidingBoundingBoxes (AABB aabb) {
+            List<AABB> a = new();
+            for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
+                for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
+                    for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
+                        if (world.blockTypes[world.GetVoxelID(new(x, y, z))].hasCollision) {
+                            a.Add(new(x, y, z, x + 1, y + 1, z + 1));
+                        }
+                    }
+                }
+            }
+            return a;
+        }
         void CalculateXOffset () {
             foreach (AABB value in boundingBoxes) {
                 _x = value.CalculateXOffset(boundingBox, _x);
@@ -115,7 +139,7 @@ public abstract class Entity {
         }
     }
     private protected bool IsCollide (Vector3Int selectedPos) {
-        return Data.ABCheck(boundingBox, new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
+        return boundingBox.ABCheck(new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
     }
     private protected void Die () {
         isDead = true;

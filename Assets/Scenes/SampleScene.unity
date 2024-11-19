@@ -6799,7 +6799,6 @@ MonoBehaviour:
   hpBar: {fileID: 786760891}
   hpText: {fileID: 1828601337}
   gunSound: {fileID: 8300000, guid: e8cd194ac91943a4295f2924588e67f6, type: 3}
-  biome: {fileID: 11400000, guid: 12cce7ccb08750442b3ce218c3965c8f, type: 2}
   material: {fileID: 2100000, guid: e92221d114e6e854f8578be0f5db3b98, type: 2}
   blockTypes:
   - blockName: 

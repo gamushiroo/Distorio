@@ -25,8 +25,7 @@ public class Hand : MonoBehaviour {
         placeEase += Time.deltaTime;
         placeEase = Mathf.Clamp(placeEase, 0, 1);
 
-        handBlock.localPosition = new Vector3(0, EaseSqu(switchEase), 0);
-        handBlock.localRotation = Quaternion.Euler((1 - EaseSqu(placeEase)) * 45, 0, 0);
+        handBlock.SetLocalPositionAndRotation(new Vector3(0, EaseSqu(switchEase), 0), Quaternion.Euler((1 - EaseSqu(placeEase)) * 45, 0, 0));
     }
 
     public float EaseSqu (float pos) {

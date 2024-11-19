@@ -22,7 +22,8 @@ public static class Data {
 
     public static float terrainScale = 0.03F;
     public static float treeZoneScale = 0.02F;
-    public static float treeZoneThreshold = 0.1F;
+    //public static float treeZoneThreshold = 0.1F;
+    public static float treeZoneThreshold = -0.3F;
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;
 
@@ -96,14 +97,6 @@ public static class Data {
 
     };
 
-
-    public static bool ABCheck (AABB ccc, AABB ddd) {
-
-        return !(ddd.minX >= ccc.maxX || ccc.minX >= ddd.maxX || ddd.minY >= ccc.maxY || ccc.minY >= ddd.maxY || ddd.minZ >= ccc.maxZ || ccc.minZ >= ddd.maxZ);
-    }
-
-
-
     public static Vector2 TexturePos (int ID) {
 
         return new(ID % TextureSize, TextureSize - 1 - ID / TextureSize);
@@ -111,15 +104,8 @@ public static class Data {
     }
 
     public static ChunkVoxel Vector3ToChunkVoxel (Vector3 pos) {
-
-        Vector3Int a = Vector3Int.FloorToInt(pos);
-
-        int x = pos.x >= 0 ? a.x % ChunkWidth : (a.x + 1) % ChunkWidth - 1 + ChunkWidth;
-        int y = pos.y >= 0 ? a.y % ChunkHeight : (a.y + 1) % ChunkHeight - 1 + ChunkHeight;
-        int z = pos.z >= 0 ? a.z % ChunkWidth : (a.z + 1) % ChunkWidth - 1 + ChunkWidth;
-
-        return new(new(Mathf.FloorToInt(pos.x / ChunkWidth), Mathf.FloorToInt(pos.z / ChunkWidth)), new(x, y, z));
-
+        Vector3Int p = Vector3Int.FloorToInt(pos);
+        return new(new(p.x >> 4, p.z >> 4), new(p.x & 15, p.y & 127, p.z & 15));
     }
 
 }

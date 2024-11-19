@@ -1,25 +1,31 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+
 public class Chunk {
+    public bool IsEditable => IsTerrainMapGenerated && !threadLocked;
+    public bool IsTerrainMapGenerated { get; private set; }
+    private bool threadLocked;
+    private bool isActive = true;
     private readonly World world;
     private readonly MeshFilter meshFilter;
-    private bool isTerrainMapGenerated;
-    private bool threadLocked = true;
-    private bool isActive = true;
     private readonly GameObject chunkObject = new();
     private readonly Queue<VoxelAndPos> modifications = new();
     private readonly int[,,] voxelMap = new int[Data.ChunkWidth, Data.ChunkHeight, Data.ChunkWidth];
     private readonly List<Vector3> vertices = new();
     private readonly List<Vector2> uvs = new();
     private readonly List<int> triangles = new();
-    public bool IsEditable => isTerrainMapGenerated && !threadLocked;
+    private readonly Vector2Int pos;
     public Chunk (Vector2Int pos, World world) {
         this.world = world;
+        this.pos = pos;
         chunkObject.transform.parent = world.transform;
         chunkObject.transform.position = Data.ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
         chunkObject.AddComponent<MeshRenderer>().material = world.material;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
+    }
+    public void GenerateTerrainData () {
+        threadLocked = true;
         new Thread(new ThreadStart(GenerateTerrainData)).Start();
         void GenerateTerrainData () {
             for (int x = 0; x < Data.ChunkWidth; x++) {
@@ -29,7 +35,7 @@ public class Chunk {
                     }
                 }
             }
-            isTerrainMapGenerated = true;
+            IsTerrainMapGenerated = true;
             threadLocked = false;
         }
     }
@@ -45,6 +51,7 @@ public class Chunk {
             chunkObject.SetActive(value);
         }
     }
+
     public void UpdateChunk () {
         lock (modifications) {
             while (modifications.Count > 0) {
@@ -53,8 +60,8 @@ public class Chunk {
             }
         }
         threadLocked = true;
-        new Thread(new ThreadStart(AAA)).Start();
-        void AAA () {
+        new Thread(new ThreadStart(UpdateChunk)).Start();
+        void UpdateChunk () {
             int vertexIndex = 0;
             vertices.Clear();
             triangles.Clear();

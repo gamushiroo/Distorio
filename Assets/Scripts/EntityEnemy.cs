@@ -8,13 +8,12 @@ public class EntityEnemy : EntityLiving {
 
     readonly AudioSource a;
 
-    public EntityEnemy (World world) : base(world) {
+    public EntityEnemy (World world, Vector3 pos) : base(world) {
 
         width = 4F;
         height = 4F;
         GenerateMesh(19);
 
-        Vector3 pos = world.GetSpawnPoint() + Vector3.up * 12;
         SetPosition(pos.x, pos.y, pos.z);
         isZeroGravity = true;
 
