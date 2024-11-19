@@ -130,9 +130,11 @@ public class World : MonoBehaviour {
                         modifications.Enqueue(a);
                     }
                 }
+                /*
                 if (new System.Random().Next(0, (int)MathF.Pow(2, 12)) == 0) {
                     modifications.Enqueue(Structure.MakeCave(pos));
                 }
+                */
                 if (Noise.Get2DPerlin(new(pos.x, pos.z), Data.treeZoneScale) > Data.treeZoneThreshold) {
                     if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), Data.treePlacementScale) > Data.treePlacementThreshold) {
                         modifications.Enqueue(Structure.MakeTree(pos));

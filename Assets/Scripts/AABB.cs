@@ -33,8 +33,8 @@ public class AABB {
         }
         return new(d0, d1, d2, d3, d4, d5);
     }
-    public bool ABCheck (AABB bbin) {
-        return bbin.minX < maxX && minX < bbin.maxX && bbin.minY < maxY && minY < bbin.maxY && bbin.minZ < maxZ && minZ < bbin.maxZ;
+    public bool IntersectsWith (AABB other) {
+        return other.minX < maxX && minX < other.maxX && other.minY < maxY && minY < other.maxY && other.minZ < maxZ && minZ < other.maxZ;
     }
     public double CalculateXOffset (AABB other, double offsetX) {
         if (other.maxY > minY && other.minY < maxY && other.maxZ > minZ && other.minZ < maxZ) {

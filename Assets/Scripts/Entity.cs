@@ -139,7 +139,7 @@ public abstract class Entity {
         }
     }
     private protected bool IsCollide (Vector3Int selectedPos) {
-        return boundingBox.ABCheck(new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
+        return boundingBox.IntersectsWith(new(selectedPos.x, selectedPos.y, selectedPos.z, selectedPos.x + 1, selectedPos.y + 1, selectedPos.z + 1));
     }
     private protected void Die () {
         isDead = true;
