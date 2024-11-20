@@ -1,8 +1,12 @@
 using System;
 using UnityEngine;
-
 public struct AABB {
-    public double minX, minY, minZ, maxX, maxY, maxZ;
+    public double minX;
+    public double minY;
+    public double minZ;
+    public double maxX;
+    public double maxY;
+    public double maxZ;
     public AABB (double x1, double y1, double z1, double x2, double y2, double z2) {
         minX = Math.Min(x1, x2);
         minY = Math.Min(y1, y2);
