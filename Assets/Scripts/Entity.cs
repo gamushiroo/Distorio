@@ -13,7 +13,7 @@ public abstract class Entity {
 
     private protected bool hasGravity = true;
     private protected bool isGrounded;
-    private bool alreadyGrounded;
+    private bool waitUntilGrounded;
     private bool isDead;
 
 
@@ -75,53 +75,37 @@ public abstract class Entity {
         float f = width / 2.0F;
         BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
     }
-    protected void AddPosition (double x, double y, double z) => SetPosition(posX + x, posY + y, posZ + z);
+    protected void AddPosition (double x, double y, double z) {
+        SetPosition(posX + x, posY + y, posZ + z);
+    }
+
     protected void MoveEntity (double x, double y, double z) {
-
+        var i = x;
+        var j = y;
+        var k = z;
         List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z));
-        double _x = x;
-        double _y = y;
-        double _z = z;
-
-        foreach (AABB other in others) {
-            y = BoundingBox.CalculateYOffset(y, other);
+        void CalculateXOffset () { foreach (AABB other in others) { x = BoundingBox.CalculateXOffset(x, other); } AddPosition(x, 0.0D, 0.0D); }
+        void CalculateYOffset () { foreach (AABB other in others) { y = BoundingBox.CalculateYOffset(y, other); } AddPosition(0.0D, y, 0.0D); }
+        void CalculateZOffset () { foreach (AABB other in others) { z = BoundingBox.CalculateZOffset(z, other); } AddPosition(0.0D, 0.0D, z); }
+        List<KeyValuePair<double, Action>> queue = new() {
+            new(Math.Abs(x),CalculateXOffset),
+            new(Math.Abs(y), CalculateYOffset),
+            new(Math.Abs(z), CalculateZOffset)
+        };
+        queue.Sort((a, b) => b.Key.CompareTo(a.Key));
+        foreach (var v in queue) {
+            v.Value();
         }
-        AddPosition(0.0D, y, 0.0D);
-        if (Math.Abs(x) > Math.Abs(z)) {
-            CalculateXOffset();
-            CalculateZOffset();
-        } else {
-            CalculateZOffset();
-            CalculateXOffset();
-        }
-        void CalculateXOffset () {
-            foreach (AABB other in others) {
-                x = BoundingBox.CalculateXOffset(x, other);
-            }
-            AddPosition(x, 0.0D, 0.0D);
-        }
-        void CalculateZOffset () {
-            foreach (AABB other in others) {
-                z = BoundingBox.CalculateZOffset(z, other);
-            }
-            AddPosition(0.0D, 0.0D, z);
-        }
-        isGrounded = y != _y && _y < 0.0D;
+        isGrounded = j != y && j < 0.0D;
         if (!isGrounded) {
-            alreadyGrounded = false;
-        } else if (!alreadyGrounded) {
+            waitUntilGrounded = true;
+        } else if (waitUntilGrounded) {
             OnGrounded();
-            alreadyGrounded = true;
+            waitUntilGrounded = false;
         }
-        if (x != _x) {
-            motionX = 0;
-        }
-        if (y != _y) {
-            motionY = 0;
-        }
-        if (z != _z) {
-            motionZ = 0;
-        }
+        if (i != x) { motionX = 0; }
+        if (j != y) { motionY = 0; }
+        if (k != z) { motionZ = 0; }
     }
     private protected void Die () {
         isDead = true;
