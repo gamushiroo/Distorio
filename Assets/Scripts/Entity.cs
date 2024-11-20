@@ -20,8 +20,9 @@ public abstract class Entity {
     private protected float rotationPitch;
     private protected float rotationYaw;
     private protected float width = 0.6F;
-    private protected float height = 1.8F;
-    private protected float eyeHeight = 1.8F;
+    private protected float defaultHeight = 1.8F;
+    private protected double height = 1.8F;
+    private protected double eyeHeight = 1.8F;
     private protected double motionX;
     private protected double motionY;
     private protected double motionZ;
@@ -67,6 +68,10 @@ public abstract class Entity {
         posX = x;
         posY = y;
         posZ = z;
+        float f = width / 2.0F;
+        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
+    }
+    private protected void SetSize (float width, float height) {
         float f = width / 2.0F;
         BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
     }
@@ -123,12 +128,27 @@ public abstract class Entity {
     }
     private protected virtual void Update () {
 
-        eyeHeight += Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? 5.0F / 10.0F * height : 9.0F / 10.0F * height) - eyeHeight) * Time.deltaTime;
 
         if (hasGravity) {
             AddVelocity(0, -Data.gravityScale * Time.deltaTime, 0);
         }
         MoveEntity(motionX * Time.deltaTime, motionY * Time.deltaTime, motionZ * Time.deltaTime);
+
+
+        double t = Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
+        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0));
+        foreach (AABB other in others) {
+            t = BoundingBox.CalculateYOffset(t, other);
+        }
+        height += t;
+        eyeHeight = height * 9.0F / 10.0F;
+        float f = width / 2.0F;
+        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
+
+
+
+
+
         objTransform.position = new((float)posX, (float)posY, (float)posZ);
     }
     private protected virtual void OnGrounded () {
@@ -142,7 +162,7 @@ public abstract class Entity {
             for (int i = 0; i < 4; i++) {
                 Vector3 a = Data.voxelVerts[Data.blockMesh[p, i]];
                 a.x *= width;
-                a.y *= height;
+                a.y *= (float)height;
                 a.z *= width;
                 a -= new Vector3(width, 0, width) / 2;
                 vertices.Add(a);

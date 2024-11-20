@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -74,7 +75,7 @@ public class EntityPlayer : EntityLiving {
             nextFramePlaced = false;
         }
         coolDown += Time.deltaTime;
-        if (!BoundingBox.IntersectsWith(tryPlacingPos) && (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1) || Input.GetMouseButton(1) && tryPlacingPos != lastTryPlacingPos)) {
+        if (!BoundingBox.IntersectsWith(tryPlacingPos) && (Input.GetMouseButton(1) && (coolDown >= 0.3f || tryPlacingPos != lastTryPlacingPos) || Input.GetMouseButtonDown(1))) {
             if (world.SetBlock(tryPlacingPos, SelectingPos)) {
                 coolDown = 0;
                 lastTryPlacingPos = tryPlacingPos;
@@ -97,7 +98,7 @@ public class EntityPlayer : EntityLiving {
             return false;
         }
         void CalculateSelectingPos () {
-            Vector3 _camPos = new Vector3((float)posX, (float)posY + eyeHeight, (float)posZ);
+            Vector3 _camPos = new Vector3((float)posX, (float)posY + (float)eyeHeight, (float)posZ) ;
             for (int i = 0; i < 300; i++) {
                 if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
                     break;
@@ -126,7 +127,6 @@ public class EntityPlayer : EntityLiving {
                 int x = 0;
                 int z = 0;
                 float dash = 0;
-                float shift = 1;
                 if (Input.GetKey(KeyCode.D))
                     x++;
                 if (Input.GetKey(KeyCode.A))
@@ -137,9 +137,7 @@ public class EntityPlayer : EntityLiving {
                     z--;
                 if (z == 1 && Input.GetKey(KeyCode.LeftControl))
                     dash = 1.0F / 3.0F;
-                if (Input.GetKey(KeyCode.LeftShift))
-                    shift = 0.4F;
-                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * shift;
+                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / defaultHeight, 1.5F);
             }
         }
     }
