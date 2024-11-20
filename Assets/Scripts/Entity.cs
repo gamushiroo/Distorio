@@ -14,6 +14,7 @@ public abstract class Entity {
     public AABB BoundingBox { get; private set; }
 
     private bool waitUntilGrounded;
+
     private bool isDead;
 
     private protected bool hasGravity = true;
