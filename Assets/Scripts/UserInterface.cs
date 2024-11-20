@@ -21,7 +21,7 @@ public class UserInterface : MonoBehaviour {
     [SerializeField] public Text blockName;
     [SerializeField] public Hand hand;
 
-    private void Start () {
+    void Start () {
 
         hand = GameObject.Find("Hand").GetComponent<Hand>();
 
@@ -74,10 +74,8 @@ public class UserInterface : MonoBehaviour {
             else if (slotIndex < 0)
                 slotIndex = Data.InventoryWidth - 1;
 
-            if (inventory.GetItemStack(GetSelected()) != null) {
-                selectedBlockIndex = inventory.GetItemStack(GetSelected()).id;
-                hand.GenerateMesh(0);
-            }
+            selectedBlockIndex = 1;
+            hand.GenerateMesh(1);
             highlight.position = toolbarImages[slotIndex].transform.position;
             selectedBlockIndex = GetSelected();
         }
@@ -137,7 +135,7 @@ public class UserInterface : MonoBehaviour {
 
             if (inventory.GetItemStack(i) != null) {
 
-                a = world.itemTypes[inventory.GetItemStack(i).id - 256].sprite;
+                a = world.itemTypes[Mathf.Max(inventory.GetItemStack(i).id - 256, 0)].sprite;
 
                 if (i < 8) {
                     toolbarImages[i].sprite = a;
