@@ -43,7 +43,7 @@ public class UserInterface : MonoBehaviour {
         selectedBlockIndex = GetSelected();
     }
     private int GetSelected () {
-        return inventory.GetItemStack(slotIndex).id;
+        return 1;
     }
     private void Update () {
 
@@ -74,8 +74,6 @@ public class UserInterface : MonoBehaviour {
             else if (slotIndex < 0)
                 slotIndex = Data.InventoryWidth - 1;
 
-            selectedBlockIndex = 1;
-            hand.GenerateMesh(1);
             highlight.position = toolbarImages[slotIndex].transform.position;
             selectedBlockIndex = GetSelected();
         }

@@ -15,7 +15,7 @@ public struct AABB {
         maxY = Math.Max(y1, y2);
         maxZ = Math.Max(z1, z2);
     }
-    public AABB AddCoord (double x, double y, double z) {
+    public readonly AABB AddCoord (double x, double y, double z) {
         double x1 = minX;
         double y1 = minY;
         double z1 = minZ;
@@ -39,13 +39,13 @@ public struct AABB {
         }
         return new(x1, y1, z1, x2, y2, z2);
     }
-    public bool IntersectsWith (AABB other) {
+    public readonly bool IntersectsWith (AABB other) {
         return other.minX < maxX && minX < other.maxX && other.minY < maxY && minY < other.maxY && other.minZ < maxZ && minZ < other.maxZ;
     }
-    public bool IntersectsWith (Vector3Int pos) {
+    public readonly bool IntersectsWith (Vector3Int pos) {
         return IntersectsWith(new AABB(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1));
     }
-    public double CalculateXOffset (double offsetX, AABB other) {
+    public readonly double CalculateXOffset (double offsetX, AABB other) {
         if (minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ) {
             if (offsetX > 0.0D && maxX <= other.minX) {
                 double diff = other.minX - maxX;
@@ -61,7 +61,7 @@ public struct AABB {
         }
         return offsetX;
     }
-    public double CalculateYOffset (double offsetY, AABB other) {
+    public readonly double CalculateYOffset (double offsetY, AABB other) {
         if (minX < other.maxX && maxX > other.minX && minZ < other.maxZ && maxZ > other.minZ) {
             if (offsetY > 0.0D && maxY <= other.minY) {
                 double diff = other.minY - maxY;
@@ -77,7 +77,7 @@ public struct AABB {
         }
         return offsetY;
     }
-    public double CalculateZOffset (double offsetZ, AABB other) {
+    public readonly double CalculateZOffset (double offsetZ, AABB other) {
         if (minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY) {
             if (offsetZ > 0.0D && maxZ <= other.minZ) {
                 double diff = other.minZ - maxZ;

@@ -6,7 +6,6 @@ public class EntityEnemy : EntityLiving {
 
     float rotationY;
 
-    readonly AudioSource a;
 
     public EntityEnemy (World world, Vector3 pos) : base(world) {
 
@@ -17,8 +16,6 @@ public class EntityEnemy : EntityLiving {
         SetPosition(pos.x, pos.y, pos.z);
         hasGravity = false;
 
-        a = obj.AddComponent<AudioSource>();
-        a.volume = 0.1f;
     }
 
     private protected override void Update () {
@@ -31,13 +28,13 @@ public class EntityEnemy : EntityLiving {
         }
         base.Update();
         if (Input.GetKeyDown(KeyCode.I)) {
-            a.PlayOneShot(world.gunSound);
+            audioSource.PlayOneShot(world.gunSound);
             world.entities.Add(new EntityProjectile(world, new Vector3((float)posX, (float)posY, (float)posZ), Quaternion.Euler(0, rotationY, 0)));
 
 
         }
 
-        obj.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+        transform.rotation = Quaternion.Euler(0, rotationY, 0);
     }
 
 }

@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityPlayer : EntityLiving {
+    private protected float rotationPitch;
+    private protected float rotationYaw;
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
     private Vector3Int tryPlacingPos;
     private Vector3Int lastTryPlacingPos = Vector3Int.zero;
     private Vector3Int SelectingPos;
     private Vector3Int miningPos;
-    private readonly Transform camTransform;
-    private readonly Camera cam;
+    private readonly Camera camera;
+    private readonly Transform cameraTransform;
     private float miningProgress;
     private readonly float mineSpeed = 2.5f;
     private float coolDown = 0;
     private bool nextFramePlaced;
     public EntityPlayer (World world) : base(world) {
         SetPositionToSpawnPoint();
-        SetVelocity(0.0D, 0.0D, 0.0D);
-        cam = world.camObj;
-        camTransform = world.cam;
+        camera = world.camObj;
+        cameraTransform = world.cam;
     }
 
     private protected override void Update () {
@@ -30,9 +31,9 @@ public class EntityPlayer : EntityLiving {
         }
 
         if (Input.GetKey(KeyCode.C)) {
-            cam.fieldOfView = 20;
+            camera.fieldOfView = 20;
         } else {
-            cam.fieldOfView = 70;
+            camera.fieldOfView = 70;
         }
 
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
@@ -47,7 +48,7 @@ public class EntityPlayer : EntityLiving {
         AddVelocity(f.x, f.y, f.z);
 
         base.Update();
-        camTransform.SetPositionAndRotation(Vec3.ToVector3(posX, posY + eyeHeight, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
+        cameraTransform.SetPositionAndRotation(Vec3.ToVector3(posX, posY + motionEyeHeight, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
@@ -98,12 +99,12 @@ public class EntityPlayer : EntityLiving {
             return false;
         }
         void CalculateSelectingPos () {
-            Vector3 _camPos = new Vector3((float)posX, (float)posY + (float)eyeHeight, (float)posZ) ;
+            Vector3 _camPos = new Vector3((float)posX, (float)posY + (float)motionEyeHeight, (float)posZ) ;
             for (int i = 0; i < 300; i++) {
                 if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
                     break;
                 }
-                _camPos += camTransform.forward * 0.02f;
+                _camPos += cameraTransform.forward * 0.02f;
             }
             SelectingPos = Vector3Int.FloorToInt(_camPos);
             tryPlacingPos = Vector3Int.FloorToInt(CalculateNormal(_camPos) + _camPos);
@@ -137,7 +138,7 @@ public class EntityPlayer : EntityLiving {
                     z--;
                 if (z == 1 && Input.GetKey(KeyCode.LeftControl))
                     dash = 1.0F / 3.0F;
-                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / defaultHeight, 1.5F);
+                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(motionHeight / height, 1.5F);
             }
         }
     }
