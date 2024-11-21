@@ -18,7 +18,7 @@ public class EntityLiving : Entity {
         health += value;
         health = Math.Clamp(health, 0, maxHealth);
     }
-    private protected override void Update () {
+    public override void Update () {
         base.Update();
 
 

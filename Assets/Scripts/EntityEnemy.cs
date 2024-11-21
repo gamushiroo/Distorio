@@ -9,16 +9,16 @@ public class EntityEnemy : EntityLiving {
 
     public EntityEnemy (World world, Vector3 pos) : base(world) {
 
-        width = 4F;
-        height = 4F;
+        _width = 4F;
+        _height = 4F;
         GenerateMesh(19);
 
         SetPosition(pos.x, pos.y, pos.z);
-        hasGravity = false;
+        gravityMultiplier = 0;
 
     }
 
-    private protected override void Update () {
+    public override void Update () {
 
         if (Input.GetKey(KeyCode.J)) {
             rotationY += 120 * Time.deltaTime;

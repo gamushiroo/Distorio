@@ -196,7 +196,7 @@ public class World : MonoBehaviour {
 
         //hpText.text  = ((int)(1f / Time.unscaledDeltaTime)).ToString();
         foreach (Entity entity in entities) {
-            entity.UpdateIfNotDead();
+            entity.Update();
         }
         ModifyChunks();
         UpdateChunks();

@@ -1,38 +1,28 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 public abstract class Entity {
-
     private readonly MeshFilter meshFilter;
-
     private protected readonly World world;
     private protected readonly GameObject gameObject;
     private protected readonly Transform transform;
     private protected readonly AudioSource audioSource;
-
-    public AABB BoundingBox { get; private set; }
-
-    private bool waitUntilGrounded;
-
+    private protected AABB BoundingBox;
     private bool isDead;
-
-    private protected bool hasGravity = true;
+    private bool waitUntilGrounded;
     private protected bool isGrounded;
-
-    private protected float width = 0.6F;
-    private protected float height = 1.8F;
-    private protected float eyeHeight = 0.9F;
-    private protected double motionHeight;
-    private protected double motionEyeHeight;
-
-    private protected double motionX;
-    private protected double motionY;
-    private protected double motionZ;
+    private protected float gravityMultiplier = 1;
+    private protected float _width = 0.6F;
+    private protected float _height = 1.8F;
+    private protected float _eyeHeight = 0.9F;
+    private protected double height;
+    private protected double eyeHeight;
+    private protected double velocityX;
+    private protected double velocityY;
+    private protected double velocityZ;
     private protected double posX;
     private protected double posY;
     private protected double posZ;
-
     public Entity (World worldIn) {
         world = worldIn;
         gameObject = new();
@@ -41,20 +31,24 @@ public abstract class Entity {
         audioSource = gameObject.AddComponent<AudioSource>();
         gameObject.AddComponent<MeshRenderer>().material = world.material;
         GenerateMesh(19);
-        motionHeight = height;
-        motionEyeHeight = eyeHeight;
-        SetPosition(0.0D, 0.0D, 0.0D);
+        height = _height;
+        eyeHeight = _eyeHeight;
         SetVelocity(0.0D, 0.0D, 0.0D);
     }
+    private protected void AddForce (double x, double y, double z) {
+        velocityX += x * Time.deltaTime;
+        velocityY += y * Time.deltaTime;
+        velocityZ += z * Time.deltaTime;
+    }
     private protected void SetVelocity (double x, double y, double z) {
-        motionX = x;
-        motionY = y;
-        motionZ = z;
+        velocityX = x;
+        velocityY = y;
+        velocityZ = z;
     }
     private protected void AddVelocity (double x, double y, double z) {
-        motionX += x;
-        motionY += y;
-        motionZ += z;
+        velocityX += x;
+        velocityY += y;
+        velocityZ += z;
     }
     private protected void SetPosition (double x, double y, double z) {
         posX = x;
@@ -69,8 +63,8 @@ public abstract class Entity {
         ModifyBoundingBox();
     }
     private void ModifyBoundingBox () {
-        float f = width / 2.0F;
-        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + motionHeight, posZ + f);
+        float f = _width / 2.0F;
+        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
     }
     private void MoveEntity (double x, double y, double z) {
         double i = x;
@@ -96,9 +90,9 @@ public abstract class Entity {
             OnGrounded();
             waitUntilGrounded = false;
         }
-        if (i != x) { motionX = 0; }
-        if (j != y) { motionY = 0; }
-        if (k != z) { motionZ = 0; }
+        if (i != x) { velocityX = 0; }
+        if (j != y) { velocityY = 0; }
+        if (k != z) { velocityZ = 0; }
     }
 
 
@@ -107,29 +101,22 @@ public abstract class Entity {
     private protected void Die () {
         isDead = true;
     }
-    private protected virtual void Update () {
+    public virtual void Update () {
 
-        if (hasGravity) {
-            AddVelocity(0, -Data.gravityScale * Time.deltaTime, 0);
-        }
-        MoveEntity(motionX * Time.deltaTime, motionY * Time.deltaTime, motionZ * Time.deltaTime);
+        AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
+        MoveEntity(velocityX * Time.deltaTime, velocityY * Time.deltaTime, velocityZ * Time.deltaTime);
 
-        double t = Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? height / 2 : height) - motionHeight) * Time.deltaTime;
+        double t = Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? _height / 2 : _height) - height) * Time.deltaTime;
         List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0));
         foreach (AABB other in others) {
             t = BoundingBox.CalculateYOffset(t, other);
         }
-        motionHeight += t;
-        motionEyeHeight = motionHeight * eyeHeight;
-        float f = width / 2.0F;
-        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + motionHeight, posZ + f);
+        height += t;
+        eyeHeight = height * _eyeHeight;
+        float f = _width / 2.0F;
+        BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
 
         transform.position = new((float)posX, (float)posY, (float)posZ);
-    }
-    public void UpdateIfNotDead () {
-        if (!isDead) {
-            Update();
-        }
     }
     private protected void SetPositionToSpawnPoint () {
         SetPosition(0.0D, 0.0D, 0.0D);
@@ -145,10 +132,10 @@ public abstract class Entity {
         for (int p = 0; p < 6; p++) {
             for (int i = 0; i < 4; i++) {
                 Vector3 a = Data.voxelVerts[Data.blockMesh[p, i]];
-                a.x *= width;
-                a.y *= height;
-                a.z *= width;
-                a -= new Vector3(width, 0, width) / 2;
+                a.x *= _width;
+                a.y *= _height;
+                a.z *= _width;
+                a -= new Vector3(_width, 0, _width) / 2;
                 vertices.Add(a);
                 uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[skin].GetTextureID(p))) / Data.TextureSize);
             }

@@ -23,7 +23,7 @@ public class EntityPlayer : EntityLiving {
         cameraTransform = world.cam;
     }
 
-    private protected override void Update () {
+    public override void Update () {
 
         if (Input.GetKeyDown(KeyCode.R)) {
             SetPositionToSpawnPoint();
@@ -44,11 +44,11 @@ public class EntityPlayer : EntityLiving {
         rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
         rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
 
-        Vector3 f = PlayerVel() * Time.deltaTime;
-        AddVelocity(f.x, f.y, f.z);
+        Vector3 f = PlayerVel();
+        AddForce(f.x, f.y, f.z);
 
         base.Update();
-        cameraTransform.SetPositionAndRotation(Vec3.ToVector3(posX, posY + motionEyeHeight, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
+        cameraTransform.SetPositionAndRotation(Vec3.ToVector3(posX, posY + eyeHeight, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
@@ -99,7 +99,7 @@ public class EntityPlayer : EntityLiving {
             return false;
         }
         void CalculateSelectingPos () {
-            Vector3 _camPos = new Vector3((float)posX, (float)posY + (float)motionEyeHeight, (float)posZ) ;
+            Vector3 _camPos = new Vector3((float)posX, (float)posY + (float)eyeHeight, (float)posZ) ;
             for (int i = 0; i < 300; i++) {
                 if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
                     break;
@@ -123,7 +123,7 @@ public class EntityPlayer : EntityLiving {
             }
         }
         Vector3 PlayerVel () {
-            return (isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationYaw, 0) * PlayerInput() * Data.playerSpeed - new Vector3((float)motionX, 0, (float)motionZ));
+            return (isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationYaw, 0) * PlayerInput()  - new Vector3((float)velocityX, 0, (float)velocityZ));
             Vector3 PlayerInput () {
                 int x = 0;
                 int z = 0;
@@ -138,11 +138,11 @@ public class EntityPlayer : EntityLiving {
                     z--;
                 if (z == 1 && Input.GetKey(KeyCode.LeftControl))
                     dash = 1.0F / 3.0F;
-                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(motionHeight / height, 1.5F);
+                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / _height, 1.5F) * Data.playerSpeed;
             }
         }
     }
     private protected override void OnGrounded () {
-        AddHealth(Mathf.Min(0, 13 + (float)motionY));
+        AddHealth(Mathf.Min(0, 13 + (float)velocityY));
     }
 }
