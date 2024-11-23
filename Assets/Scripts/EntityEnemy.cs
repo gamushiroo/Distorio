@@ -10,7 +10,7 @@ public class EntityEnemy : EntityLiving {
     public EntityEnemy (World world, Vector3 pos) : base(world) {
 
         defaultWidth = 4F;
-        defaultheight = 4F;
+        defaultHeight = 4F;
         GenerateMesh(19);
 
         SetPosition(pos.x, pos.y, pos.z);
@@ -18,7 +18,7 @@ public class EntityEnemy : EntityLiving {
 
     }
 
-    public override void UpdateEntity () {
+    public override void Update () {
 
         if (Input.GetKey(KeyCode.J)) {
             rotationY += 120 * Time.deltaTime;
@@ -26,9 +26,8 @@ public class EntityEnemy : EntityLiving {
         if (Input.GetKey(KeyCode.L)) {
             rotationY -= 120 * Time.deltaTime;
         }
-        base.UpdateEntity();
+        base.Update();
         if (Input.GetKeyDown(KeyCode.I)) {
-            audioSource.PlayOneShot(world.gunSound);
             //world.entities.Add(new EntityProjectile(world, new Vector3((float)posX, (float)posY, (float)posZ), Quaternion.Euler(0, rotationY, 0)));
 
 

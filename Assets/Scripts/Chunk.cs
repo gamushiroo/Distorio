@@ -25,7 +25,7 @@ public class Chunk {
         chunkObject.AddComponent<MeshRenderer>().materials = world.materials;
 
         meshFilter = chunkObject.AddComponent<MeshFilter>();
-        
+
     }
     public void GenerateTerrainData () {
         threadLocked = true;
@@ -119,7 +119,7 @@ public class Chunk {
                             }
                             vertexIndex += 4;
                         }
-                    }  
+                    }
                 }
             }
             void HalfMesh (int x, int y, int z) {

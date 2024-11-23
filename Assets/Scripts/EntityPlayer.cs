@@ -18,6 +18,8 @@ public class EntityPlayer : EntityLiving {
     private float coolDown = 0;
     private bool nextFramePlaced;
 
+    private float gunCoolDown = 0;
+
     float projectiles = 50;
     float spread = 10;
     float initialVelocity = 100;
@@ -30,9 +32,13 @@ public class EntityPlayer : EntityLiving {
         base.Initialize();
         ToWorldSpawn();
         GenerateMesh(19);
+        projectiles = 35;
+        spread = 8;
+        initialVelocity = 170;
     }
-    public override void UpdateEntity () {
+    public override void Update () {
 
+        gunCoolDown += Time.deltaTime;
         rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
         rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
         rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
@@ -41,18 +47,18 @@ public class EntityPlayer : EntityLiving {
             Initialize();
         }
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            AddVelocity(0, Data.jumpPower, 0);
+            AddImpulseForce(0, Data.jumpPower, 0);
         }
-        if (Input.GetKeyDown(KeyCode.F)) {
+        if (Input.GetMouseButton(0)) {
             ShootGun();
         }
         AddForce(Vec3.ToVec3(PlayerVel()));
 
-        camera.fieldOfView = Input.GetKey(KeyCode.C) ? 20 : 70;
+        camera.fieldOfView = Input.GetMouseButton(1) ? 50 : 70;
 
-        base.UpdateEntity();
-        double t = Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultheight / 2 : defaultheight) - height) * Time.deltaTime;
-        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0), entityID);
+        base.Update();
+        double t = Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
+        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0), ID);
         foreach (AABB other in others) {
             t = BoundingBox.CalculateYOffset(t, other);
         }
@@ -104,18 +110,22 @@ public class EntityPlayer : EntityLiving {
     }
     protected void ShootGun () {
 
-        string proj = "Projectiles: " + projectiles.ToString() + "\n";
-        string spre = "Spread: " + spread.ToString() + " degrees\n";
-        string inve = "Initial Velocity: " + initialVelocity.ToString() + "\n";
+        if (gunCoolDown >= 0.5F) {
+            string proj = "Projectiles: " + projectiles.ToString() + "\n";
+            string spre = "Spread: " + spread.ToString() + " degrees\n";
+            string inve = "Initial Velocity: " + initialVelocity.ToString() + "\n";
 
-        world.hpText.text = proj + spre + inve;
+            world.hpText.text = proj + spre + inve;
 
-        for (int i = 0; i < projectiles; i++) {
-            float rand1 = UnityEngine.Random.Range(-180, 180) * Mathf.Deg2Rad;
-            float rand2 = UnityEngine.Random.Range(-spread, spread) / 2 * Mathf.Deg2Rad;
-            Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
-            Vector3 aaa = Quaternion.Euler(rotationPitch, rotationYaw, 0) * ttt;
-            world.entityQueue.Enqueue(new EntityProjectile(posX, eyeHeight + posY, posZ, aaa, world));
+            for (int i = 0; i < projectiles; i++) {
+                float rand1 = UnityEngine.Random.Range(-180, 180) * Mathf.Deg2Rad;
+                float rand2 = UnityEngine.Random.Range(-spread, spread) / 2 * Mathf.Deg2Rad;
+                Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
+                Vector3 aaa = Quaternion.Euler(rotationPitch, rotationYaw, 0) * ttt;
+                world.entityQueue.Enqueue(new EntityProjectile(posX, eyeHeight + posY, posZ, aaa, world));
+            }
+            audioSource.PlayOneShot(world.dd, 0.5F);
+            gunCoolDown = 0;
         }
     }
 
@@ -159,7 +169,7 @@ public class EntityPlayer : EntityLiving {
                 z--;
             if (z == 1 && Input.GetKey(KeyCode.LeftControl))
                 dash = 1.0F / 3.0F;
-            return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / defaultheight, 1.5F) * Data.playerSpeed;
+            return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / defaultHeight, 1.5F) * Data.playerSpeed;
         }
     }
     private protected override void OnGrounded () {

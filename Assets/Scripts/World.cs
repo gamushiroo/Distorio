@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class World : MonoBehaviour {
     public GameObject particle;
     public PathRenderer pathrend;
     public Slider hpBar;
     public Text hpText;
-    public AudioClip gunSound;
+    public AudioClip eeeeeee;
+    public AudioClip dd;
+    public AudioSource audioSource;
     public Material[] materials = new Material[2];
     public List<BlockType> blockTypes = new();
     public List<ItemType> itemTypes = new();
@@ -25,6 +26,7 @@ public class World : MonoBehaviour {
     public GameObject miningEffect; public Slider miningProgresBar;
     private Vector2 offset;
     public GameObject healing;
+
 
     public Queue<Entity> entityQueue = new();
 
@@ -54,9 +56,9 @@ public class World : MonoBehaviour {
         }
     }
     private void Start () {
-
         userInter.inventory = new();
         entities.Add(new EntityPlayer(this));
+        //entities.Add(new EntityTester(this));
 
     }
 
@@ -197,14 +199,12 @@ public class World : MonoBehaviour {
     private void LateUpdate () {
 
         //hpText.text  = ((int)(1f / Time.unscaledDeltaTime)).ToString();
-
-
         while (entityQueue.Count > 0) {
             entities.Add(entityQueue.Dequeue());
         }
         for (int i = entities.Count - 1; i >= 0; i--) {
-            if (!entities[i].IsDead) {
-                entities[i].UpdateEntity();
+            if (entities[i].IsAlive) {
+                entities[i].Update();
             } else {
                 entities.RemoveAt(i);
             }
@@ -267,7 +267,7 @@ public class World : MonoBehaviour {
             }
         }
         foreach (Entity entity in entities) {
-            if (self == null || self != null && entity.entityID != self && aabb.IntersectsWith(entity.BoundingBox)) {
+            if (self == null || self != null && entity.ID != self && aabb.IntersectsWith(entity.BoundingBox)) {
                 a.Add(entity.BoundingBox);
             }
         }

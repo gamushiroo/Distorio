@@ -25,14 +25,14 @@ public class UserInterface : MonoBehaviour {
 
         hand = GameObject.Find("Hand").GetComponent<Hand>();
 
-        inventory.AddItemStackToInventory(new (256, 1));
-        inventory.AddItemStackToInventory(new (257, 1));
-        inventory.AddItemStackToInventory(new (258, 1));
-        inventory.AddItemStackToInventory(new (259, 1));
-        inventory.AddItemStackToInventory(new (0, 4));
-        inventory.AddItemStackToInventory(new (1, 4));
-        inventory.AddItemStackToInventory(new (2, 4));
-        inventory.AddItemStackToInventory(new (3, 4));
+        inventory.AddItemStackToInventory(new(256, 1));
+        inventory.AddItemStackToInventory(new(257, 1));
+        inventory.AddItemStackToInventory(new(258, 1));
+        inventory.AddItemStackToInventory(new(259, 1));
+        inventory.AddItemStackToInventory(new(0, 4));
+        inventory.AddItemStackToInventory(new(1, 4));
+        inventory.AddItemStackToInventory(new(2, 4));
+        inventory.AddItemStackToInventory(new(3, 4));
 
         Cursor.lockState = CursorLockMode.Locked;
         SetSprites();

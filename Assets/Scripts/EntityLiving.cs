@@ -14,12 +14,12 @@ public class EntityLiving : Entity {
         health += value;
         health = Math.Min(health, maxHealth);
     }
-    public override void UpdateEntity () {
-        base.UpdateEntity();
+    public override void Update () {
+        base.Update();
         isHealed = health > healthBefore;
         healthBefore = health;
         if (health <= 0) {
-            Die();
+            Kill();
         }
     }
 }

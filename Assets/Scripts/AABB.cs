@@ -27,7 +27,7 @@ public struct AABB {
         if (z < 0.0D) { z1 += z; } else { z2 += z; }
         return new(x1, y1, z1, x2, y2, z2);
     }
-    public readonly bool Equals(AABB other) {
+    public readonly bool Equals (AABB other) {
         return minX == other.minX && minY == other.minY && minZ == other.minZ && maxX == other.maxX && maxY == other.maxY && maxZ == other.maxZ;
     }
     public readonly bool IntersectsWith (AABB other) {

@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BBRenderer">
+    <Position X="14.25" Y="16" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\BBRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EntityTester">
+    <Position X="2.5" Y="17.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAEAIAAAAAAQAAAAAAAAAAAAAAABAAAADACAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\EntityTester.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EntityLiving">
+    <Position X="6.5" Y="13.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAACAIIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAQg=</HashCode>
+      <FileName>Assets\Scripts\EntityLiving.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entity">
+    <Position X="6" Y="3.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>kBEAEAAEAJgQQQRgxAQCEAAAACAEEgAIIgwAwAIAQgE=</HashCode>
+      <FileName>Assets\Scripts\Entity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Object">
+    <Position X="19.75" Y="0.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EntityEnemy">
+    <Position X="8" Y="17.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\EntityEnemy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EntityPlayer">
+    <Position X="5" Y="17.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAAEAIIAgAAQYAEAIAQAAAAACCAABUgCADACAEEgAA=</HashCode>
+      <FileName>Assets\Scripts\EntityPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EntityProjectile">
+    <Position X="10.5" Y="17.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\EntityProjectile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Block">
+    <Position X="13" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Block.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Blocks">
+    <Position X="15.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAgBAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Blocks.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chunk">
+    <Position X="17.5" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAEAEAAAAgBAAAAIIgQAIZACAIAUIAAAAAAABAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\Chunk.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Inventory">
+    <Position X="21" Y="3.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABgAAAAEAAQABEAAAAAAAAADAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\Inventory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Item">
+    <Position X="28.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAIAAAAAAAAAAAAAAAQAEAEAAAAAAQAAABCA=</HashCode>
+      <FileName>Assets\Scripts\Item.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ItemStack">
+    <Position X="32.25" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAEAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\ItemStack.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MathHelper">
+    <Position X="35" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MathHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlockType">
+    <Position X="37.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAEACAAAQAAAAAQIQAAAAYCABAAAAAAgAIAAAAAEAA=</HashCode>
+      <FileName>Assets\Scripts\World.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityEngine.MonoBehaviour">
+    <Position X="20" Y="11.5" Width="3.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Hand">
+    <Position X="16.5" Y="16" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAUAEAAAACAAAAAAAAQAAAAAACACAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Hand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PathRenderer">
+    <Position X="19.25" Y="16" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAEAABAAAAAAAAAAQAAQAAAAAQAAAAAABAAAAAQgA=</HashCode>
+      <FileName>Assets\Scripts\PathRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Structure">
+    <Position X="24.25" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACABAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Structure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UserInterface">
+    <Position X="22" Y="16" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AkQAUAAgASACAIApAAAACQAgEAAAAgACAABiABAAAAA=</HashCode>
+      <FileName>Assets\Scripts\UserInterface.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World">
+    <Position X="25.5" Y="16" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AiCABSAAAmNAAAAgQC0AIBEAIAAEEwAAgACCBENCAEA=</HashCode>
+      <FileName>Assets\Scripts\World.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ItemBlock">
+    <Position X="27.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAA=</HashCode>
+      <FileName>Assets\Scripts\ItemBlock.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ItemTool">
+    <Position X="30" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ItemTool.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ItemSpade">
+    <Position X="30" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ItemSpade.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="AABB" Collapsed="true">
+    <Position X="40.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AHgAAAAAAAAAAAAAgAAAAAACAAAQAAAAAAAAAHAAAAI=</HashCode>
+      <FileName>Assets\Scripts\AABB.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Yu Gothic UI" Size="9" />
+</ClassDiagram>

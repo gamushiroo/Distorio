@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Structure : MonoBehaviour {
+public class Structure {
 
     public static Queue<VoxelAndPos> MakeCactus (Vector3Int position) {
 
@@ -45,7 +45,7 @@ public class Structure : MonoBehaviour {
                     for (int z = -range; z < range; z++) {
 
                         Vector3 aee = aaa[i] + new Vector3Int(x, y, z);
-                        if(Mathf.Abs((aee - aaa[i]).magnitude) < range) {
+                        if (Mathf.Abs((aee - aaa[i]).magnitude) < range) {
                             queue.Enqueue(new(Data.Vector3ToChunkVoxel(aee), 0));
                         }
                     }
