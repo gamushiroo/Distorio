@@ -19,7 +19,7 @@ public class EntityPlayer : EntityLiving {
     private bool nextFramePlaced;
 
     float projectiles = 50;
-    float spread = 30;
+    float spread = 10;
     float initialVelocity = 100;
 
     public EntityPlayer (World world) : base(world) {
