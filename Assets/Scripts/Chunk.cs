@@ -15,14 +15,17 @@ public class Chunk {
     private readonly List<Vector3> vertices = new();
     private readonly List<Vector2> uvs = new();
     private readonly List<int> triangles = new();
+    private readonly List<int> waterTriangles = new();
     private readonly Vector2Int pos;
     public Chunk (Vector2Int pos, World world) {
         this.world = world;
         this.pos = pos;
         chunkObject.transform.parent = world.transform;
         chunkObject.transform.position = Data.ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
-        chunkObject.AddComponent<MeshRenderer>().material = world.material;
+        chunkObject.AddComponent<MeshRenderer>().materials = world.materials;
+
         meshFilter = chunkObject.AddComponent<MeshFilter>();
+        
     }
     public void GenerateTerrainData () {
         threadLocked = true;
@@ -65,6 +68,7 @@ public class Chunk {
             int vertexIndex = 0;
             vertices.Clear();
             triangles.Clear();
+            waterTriangles.Clear();
             uvs.Clear();
             for (int x = 0; x < Data.ChunkWidth; x++) {
                 for (int y = 0; y < Data.ChunkHeight; y++) {
@@ -91,16 +95,31 @@ public class Chunk {
             threadLocked = false;
             void NormalMesh (int x, int y, int z) {
                 for (int p = 0; p < 6; p++) {
-                    if (!world.blockTypes[GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
-                        for (int i = 0; i < 4; i++) {
-                            vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
-                            uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                    if (voxelMap[x, y, z] == 7) {
+
+                        if (GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) != 7) {
+                            for (int i = 0; i < 4; i++) {
+                                vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
+                                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                            }
+                            for (int i = 0; i < 6; i++) {
+                                waterTriangles.Add(Data.order[i] + vertexIndex);
+                            }
+                            vertexIndex += 4;
                         }
-                        for (int i = 0; i < 6; i++) {
-                            triangles.Add(Data.order[i] + vertexIndex);
+
+                    } else {
+                        if (!world.blockTypes[GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
+                            for (int i = 0; i < 4; i++) {
+                                vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
+                                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                            }
+                            for (int i = 0; i < 6; i++) {
+                                triangles.Add(Data.order[i] + vertexIndex);
+                            }
+                            vertexIndex += 4;
                         }
-                        vertexIndex += 4;
-                    }
+                    }  
                 }
             }
             void HalfMesh (int x, int y, int z) {
@@ -133,12 +152,13 @@ public class Chunk {
     }
     public void GenerateMesh () {
         Mesh mesh = new() {
-            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
-            vertices = vertices.ToArray(),
-            triangles = triangles.ToArray(),
-            uv = uvs.ToArray()
+            subMeshCount = 2,
+            vertices = vertices.ToArray()
         };
+        mesh.SetTriangles(triangles.ToArray(), 0);
+        mesh.SetTriangles(waterTriangles.ToArray(), 1);
+        mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
-        meshFilter.sharedMesh = mesh;
+        meshFilter.mesh = mesh;
     }
 }

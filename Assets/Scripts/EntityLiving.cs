@@ -1,35 +1,24 @@
 using System;
-using UnityEngine;
-
 public class EntityLiving : Entity {
-
-    private protected readonly float maxHealth = 20;
+    private protected int maxHealth = 20;
     private protected float health;
+    private protected bool isHealed;
     private float healthBefore;
-
     public EntityLiving (World world) : base(world) {
-
+    }
+    private protected override void Initialize () {
+        base.Initialize();
         health = maxHealth;
-
     }
-
     private protected void AddHealth (float value) {
-
         health += value;
-        health = Math.Clamp(health, 0, maxHealth);
+        health = Math.Min(health, maxHealth);
     }
-    public override void Update () {
-        base.Update();
-
-
-        if (health > healthBefore) {
-            world.healing.SetActive(true);
-        } else {
-            world.healing.SetActive(false);
-        }
+    public override void UpdateEntity () {
+        base.UpdateEntity();
+        isHealed = health > healthBefore;
         healthBefore = health;
-        world.healing.transform.position = new((float)posX, (float)posY, (float)posZ);
-        if (health == 0) {
+        if (health <= 0) {
             Die();
         }
     }

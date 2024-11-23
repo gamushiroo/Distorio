@@ -22,22 +22,13 @@ public struct AABB {
         double x2 = maxX;
         double y2 = maxY;
         double z2 = maxZ;
-        if (x < 0.0D) {
-            x1 += x;
-        } else {
-            x2 += x;
-        }
-        if (y < 0.0D) {
-            y1 += y;
-        } else {
-            y2 += y;
-        }
-        if (z < 0.0D) {
-            z1 += z;
-        } else {
-            z2 += z;
-        }
+        if (x < 0.0D) { x1 += x; } else { x2 += x; }
+        if (y < 0.0D) { y1 += y; } else { y2 += y; }
+        if (z < 0.0D) { z1 += z; } else { z2 += z; }
         return new(x1, y1, z1, x2, y2, z2);
+    }
+    public readonly bool Equals(AABB other) {
+        return minX == other.minX && minY == other.minY && minZ == other.minZ && maxX == other.maxX && maxY == other.maxY && maxZ == other.maxZ;
     }
     public readonly bool IntersectsWith (AABB other) {
         return other.minX < maxX && minX < other.maxX && other.minY < maxY && minY < other.maxY && other.minZ < maxZ && minZ < other.maxZ;

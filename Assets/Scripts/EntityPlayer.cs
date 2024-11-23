@@ -17,45 +17,55 @@ public class EntityPlayer : EntityLiving {
     private readonly float mineSpeed = 2.5f;
     private float coolDown = 0;
     private bool nextFramePlaced;
+
+    float projectiles = 50;
+    float spread = 30;
+    float initialVelocity = 100;
+
     public EntityPlayer (World world) : base(world) {
-        SetPositionToSpawnPoint();
         camera = world.camObj;
         cameraTransform = world.cam;
     }
-
-    public override void Update () {
-
-        if (Input.GetKeyDown(KeyCode.R)) {
-            SetPositionToSpawnPoint();
-            SetVelocity(0.0D, 0.0D, 0.0D);
-        }
-
-        if (Input.GetKey(KeyCode.C)) {
-            camera.fieldOfView = 20;
-        } else {
-            camera.fieldOfView = 70;
-        }
-
-        if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            AddVelocity(0, Data.jumpPower, 0);
-        }
+    private protected override void Initialize () {
+        base.Initialize();
+        ToWorldSpawn();
+        GenerateMesh(19);
+    }
+    public override void UpdateEntity () {
 
         rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
         rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
         rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
 
-        Vector3 f = PlayerVel();
-        AddForce(f.x, f.y, f.z);
+        if (Input.GetKeyDown(KeyCode.R)) {
+            Initialize();
+        }
+        if (Input.GetKey(KeyCode.Space) && isGrounded) {
+            AddVelocity(0, Data.jumpPower, 0);
+        }
+        if (Input.GetKeyDown(KeyCode.F)) {
+            ShootGun();
+        }
+        AddForce(Vec3.ToVec3(PlayerVel()));
 
-        base.Update();
-        cameraTransform.SetPositionAndRotation(Vec3.ToVector3(posX, posY + eyeHeight, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
+        camera.fieldOfView = Input.GetKey(KeyCode.C) ? 20 : 70;
+
+        base.UpdateEntity();
+        double t = Data.resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultheight / 2 : defaultheight) - height) * Time.deltaTime;
+        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0), entityID);
+        foreach (AABB other in others) {
+            t = BoundingBox.CalculateYOffset(t, other);
+        }
+        height += t;
+        eyeHeight = height * defaulteyeHeight;
+        ModifyBoundingBox();
+
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
             world.CheckViewDistance(chunkCoord);
         }
-
-        if (IsTouching(15)) {
+        if (world.CollidingIDs(BoundingBox).Contains(15)) {
             AddHealth(3 * Time.deltaTime);
         }
         CalculateSelectingPos();
@@ -85,61 +95,71 @@ public class EntityPlayer : EntityLiving {
         }
         world.blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
         world.miningEffect.transform.position = SelectingPos + Vector3.one * 0.5f;
-        //world.miningEffect.SetActive(isMining);
         world.miningProgresBarObj.SetActive(isMining);
         world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
         world.hpBar.value = health / maxHealth;
-        bool IsTouching (int check) {
-            List<int> ids = world.CollidingIDs(BoundingBox);
-            foreach (int id in ids) {
-                if (id == check) {
-                    return true;
-                }
-            }
-            return false;
+        cameraTransform.SetPositionAndRotation(Vec3.ToVector3(posX, eyeHeight + posY, posZ), Quaternion.Euler(rotationPitch, rotationYaw, 0));
+        world.healing.SetActive(isHealed);
+        world.healing.transform.position = transform.position;
+    }
+    protected void ShootGun () {
+
+        string proj = "Projectiles: " + projectiles.ToString() + "\n";
+        string spre = "Spread: " + spread.ToString() + " degrees\n";
+        string inve = "Initial Velocity: " + initialVelocity.ToString() + "\n";
+
+        world.hpText.text = proj + spre + inve;
+
+        for (int i = 0; i < projectiles; i++) {
+            float rand1 = UnityEngine.Random.Range(-180, 180) * Mathf.Deg2Rad;
+            float rand2 = UnityEngine.Random.Range(-spread, spread) / 2 * Mathf.Deg2Rad;
+            Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
+            Vector3 aaa = Quaternion.Euler(rotationPitch, rotationYaw, 0) * ttt;
+            world.entityQueue.Enqueue(new EntityProjectile(posX, eyeHeight + posY, posZ, aaa, world));
         }
-        void CalculateSelectingPos () {
-            Vector3 _camPos = new Vector3((float)posX, (float)posY + (float)eyeHeight, (float)posZ) ;
-            for (int i = 0; i < 300; i++) {
-                if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
-                    break;
-                }
-                _camPos += cameraTransform.forward * 0.02f;
+    }
+
+    void CalculateSelectingPos () {
+        Vector3 _camPos = Vec3.ToVector3(posX, posY + eyeHeight, posZ);
+        for (int i = 0; i < 300; i++) {
+            if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
+                break;
             }
-            SelectingPos = Vector3Int.FloorToInt(_camPos);
-            tryPlacingPos = Vector3Int.FloorToInt(CalculateNormal(_camPos) + _camPos);
-            Vector3Int CalculateNormal (Vector3 pp) {
-                Vector3Int normal = Vector3Int.zero;
-                Vector3 p = new Vector3(pp.x < 0 ? 1 : 0, pp.y < 0 ? 1 : 0, pp.z < 0 ? 1 : 0) + new Vector3(pp.x % 1, pp.y % 1, pp.z % 1) - Vector3.one * 0.5f;
-                Vector3 v = new(Mathf.Abs(p.x), Mathf.Abs(p.y), Mathf.Abs(p.z));
-                if (v.x < v.z && v.y < v.z) {
-                    normal += Vector3Int.forward * Mathf.RoundToInt(Mathf.Sign(p.z));
-                } else if (v.x < v.y) {
-                    normal += Vector3Int.up * Mathf.RoundToInt(Mathf.Sign(p.y));
-                } else if (v.x > v.y) {
-                    normal += Vector3Int.right * Mathf.RoundToInt(Mathf.Sign(p.x));
-                }
-                return normal;
-            }
+            _camPos += Quaternion.Euler(rotationPitch, rotationYaw, 0) * Vector3.forward * 0.02f;
         }
-        Vector3 PlayerVel () {
-            return (isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationYaw, 0) * PlayerInput()  - new Vector3((float)velocityX, 0, (float)velocityZ));
-            Vector3 PlayerInput () {
-                int x = 0;
-                int z = 0;
-                float dash = 0;
-                if (Input.GetKey(KeyCode.D))
-                    x++;
-                if (Input.GetKey(KeyCode.A))
-                    x--;
-                if (Input.GetKey(KeyCode.W))
-                    z++;
-                if (Input.GetKey(KeyCode.S))
-                    z--;
-                if (z == 1 && Input.GetKey(KeyCode.LeftControl))
-                    dash = 1.0F / 3.0F;
-                return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / _height, 1.5F) * Data.playerSpeed;
+        SelectingPos = Vector3Int.FloorToInt(_camPos);
+        tryPlacingPos = Vector3Int.FloorToInt(CalculateNormal(_camPos) + _camPos);
+        Vector3Int CalculateNormal (Vector3 pp) {
+            Vector3Int normal = Vector3Int.zero;
+            Vector3 p = new Vector3(pp.x < 0 ? 1 : 0, pp.y < 0 ? 1 : 0, pp.z < 0 ? 1 : 0) + new Vector3(pp.x % 1, pp.y % 1, pp.z % 1) - Vector3.one * 0.5f;
+            Vector3 v = new(Mathf.Abs(p.x), Mathf.Abs(p.y), Mathf.Abs(p.z));
+            if (v.x < v.z && v.y < v.z) {
+                normal += Vector3Int.forward * Mathf.RoundToInt(Mathf.Sign(p.z));
+            } else if (v.x < v.y) {
+                normal += Vector3Int.up * Mathf.RoundToInt(Mathf.Sign(p.y));
+            } else if (v.x > v.y) {
+                normal += Vector3Int.right * Mathf.RoundToInt(Mathf.Sign(p.x));
             }
+            return normal;
+        }
+    }
+    Vector3 PlayerVel () {
+        return (isGrounded ? Data.resistance : Data.resistance * 0.2F) * (Quaternion.Euler(0, rotationYaw, 0) * PlayerInput() - new Vector3((float)velocityX, 0, (float)velocityZ));
+        Vector3 PlayerInput () {
+            int x = 0;
+            int z = 0;
+            float dash = 0;
+            if (Input.GetKey(KeyCode.D))
+                x++;
+            if (Input.GetKey(KeyCode.A))
+                x--;
+            if (Input.GetKey(KeyCode.W))
+                z++;
+            if (Input.GetKey(KeyCode.S))
+                z--;
+            if (z == 1 && Input.GetKey(KeyCode.LeftControl))
+                dash = 1.0F / 3.0F;
+            return (new Vector3(x, 0, z).normalized + dash * Vector3.forward) * (float)Math.Pow(height / defaultheight, 1.5F) * Data.playerSpeed;
         }
     }
     private protected override void OnGrounded () {

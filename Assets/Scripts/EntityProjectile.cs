@@ -2,24 +2,26 @@ using UnityEngine;
 
 public class EntityProjectile : EntityLiving {
 
-
-    Quaternion rot;
-    public EntityProjectile (World world, Vector3 pos, Quaternion rot) : base(world) {
-
-        _width = 0.8F;
-        _height = 0.8F;
-        GenerateMesh(20);
-        Object.Instantiate(world.particle).transform.SetParent(transform);
-        SetPosition(pos.x, pos.y, pos.z);
-        gravityMultiplier = 0;
-        this.rot = rot;
+    public EntityProjectile (double posX, double posY, double posZ, Vector3 vel, World world) : base(world) {
+        UseCollision = false;
+        SetPosition(posX, posY, posZ);
+        AddVelocity(vel.x, vel.y, vel.z);
     }
-
-    public override void Update () {
-        base.Update();
-
-        Vector3 aaa = rot * Vector3.forward * 20 * Time.deltaTime;
-        //MoveEntity(aaa.x, aaa.y, aaa.z);
-        AddHealth(-Time.deltaTime);
+    private protected override void Initialize () {
+        defaultWidth = 0.1F;
+        defaultheight = 0.1F;
+        gravityMultiplier = 0;
+        maxHealth = 1;
+        base.Initialize();
+        GenerateMesh(20);
+    }
+    private protected override void OnCollision () {
+        Die();
+    }
+    public override void UpdateEntity () {
+        Vector3 n = -Vec3.ToVector3(velocityX, velocityY, velocityZ) * 0.05F;
+        AddVelocity(n.x, n.y, n.z);
+        base.UpdateEntity();
+        AddHealth(-Time.deltaTime * 2);
     }
 }

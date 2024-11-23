@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class World : MonoBehaviour {
     public GameObject particle;
@@ -10,7 +11,7 @@ public class World : MonoBehaviour {
     public Slider hpBar;
     public Text hpText;
     public AudioClip gunSound;
-    public Material material;
+    public Material[] materials = new Material[2];
     public List<BlockType> blockTypes = new();
     public List<ItemType> itemTypes = new();
     public List<Entity> entities = new();
@@ -25,7 +26,7 @@ public class World : MonoBehaviour {
     private Vector2 offset;
     public GameObject healing;
 
-
+    public Queue<Entity> entityQueue = new();
 
     private readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
@@ -53,6 +54,7 @@ public class World : MonoBehaviour {
         }
     }
     private void Start () {
+
         userInter.inventory = new();
         entities.Add(new EntityPlayer(this));
 
@@ -195,8 +197,19 @@ public class World : MonoBehaviour {
     private void LateUpdate () {
 
         //hpText.text  = ((int)(1f / Time.unscaledDeltaTime)).ToString();
+
+
+        while (entityQueue.Count > 0) {
+            entities.Add(entityQueue.Dequeue());
+        }
+        for (int i = entities.Count - 1; i >= 0; i--) {
+            if (!entities[i].IsDead) {
+                entities[i].UpdateEntity();
+            } else {
+                entities.RemoveAt(i);
+            }
+        }
         foreach (Entity entity in entities) {
-            entity.Update();
         }
         ModifyChunks();
         UpdateChunks();
@@ -242,7 +255,7 @@ public class World : MonoBehaviour {
         }
         return a;
     }
-    public List<AABB> GetCollidingBoundingBoxes (AABB aabb) {
+    public List<AABB> GetCollidingBoundingBoxes (AABB aabb, int? self) {
         List<AABB> a = new();
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
             for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
@@ -253,10 +266,19 @@ public class World : MonoBehaviour {
                 }
             }
         }
+        foreach (Entity entity in entities) {
+            if (self == null || self != null && entity.entityID != self && aabb.IntersectsWith(entity.BoundingBox)) {
+                a.Add(entity.BoundingBox);
+            }
+        }
         return a;
     }
     public byte GetVoxel (Vector3Int pos) {
         byte VoxelValue = 0;
+
+        if (pos.y < 40) {
+            VoxelValue = 7;
+        }
         int terrainHeight = Mathf.FloorToInt(GetHeight(new(pos.x, pos.z)));
         switch (pos.y - terrainHeight) {
             case < -4:
@@ -271,13 +293,13 @@ public class World : MonoBehaviour {
             default:
                 break;
         }
-        if (pos.y == terrainHeight) {
+        if (VoxelValue == 1) {
             lock (modifications) {
                 if (Noise.Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
                     float www = Mathf.Max(0, Noise.Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f) * 32 + 2;
                     if (new System.Random().Next(0, Mathf.FloorToInt(www)) == 0) {
                         Queue<VoxelAndPos> a = new();
-                        a.Enqueue(new(Data.Vector3ToChunkVoxel(pos), 15));
+                        a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3Int.up), 15));
                         modifications.Enqueue(a);
                     }
                 }
@@ -288,7 +310,7 @@ public class World : MonoBehaviour {
                 */
                 if (Noise.Get2DPerlin(new(pos.x, pos.z), Data.treeZoneScale) > Data.treeZoneThreshold) {
                     if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), Data.treePlacementScale) > Data.treePlacementThreshold) {
-                        modifications.Enqueue(Structure.MakeTree(pos));
+                        modifications.Enqueue(Structure.MakeTree(pos + Vector3Int.up));
                     }
                 }
             }

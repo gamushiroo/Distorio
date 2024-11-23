@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class Data {
@@ -112,6 +113,17 @@ public static class Data {
     public static ChunkVoxel Vector3ToChunkCoord (Vector3 pos) {
         Vector3Int p = Vector3Int.FloorToInt(pos);
         return new(new(p.x >> 4, p.z >> 4), new(p.x & 15, p.y & 127, p.z & 15));
+    }
+
+    public static Mesh MakeMesh (List<Vector3> vertices, List<int> triangles, List<Vector2> uvs) {
+        Mesh mesh = new() {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
+            vertices = vertices.ToArray(),
+            triangles = triangles.ToArray(),
+            uv = uvs.ToArray()
+        };
+        mesh.RecalculateNormals();
+        return mesh;
     }
 }
 public struct VoxelAndPos {
