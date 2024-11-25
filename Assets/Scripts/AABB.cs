@@ -16,16 +16,7 @@ public struct AABB {
         maxZ = Math.Max(z1, z2);
     }
     public readonly AABB AddCoord (double x, double y, double z) {
-        double x1 = minX;
-        double y1 = minY;
-        double z1 = minZ;
-        double x2 = maxX;
-        double y2 = maxY;
-        double z2 = maxZ;
-        if (x < 0.0D) { x1 += x; } else { x2 += x; }
-        if (y < 0.0D) { y1 += y; } else { y2 += y; }
-        if (z < 0.0D) { z1 += z; } else { z2 += z; }
-        return new(x1, y1, z1, x2, y2, z2);
+        return new(minX + Math.Min(0, x), minY + Math.Min(0, y), minZ + Math.Min(0, z), maxX + Math.Max(0, x), maxY + Math.Max(0, y), maxZ + Math.Max(0, z));
     }
     public readonly bool Equals (AABB other) {
         return minX == other.minX && minY == other.minY && minZ == other.minZ && maxX == other.maxX && maxY == other.maxY && maxZ == other.maxZ;
