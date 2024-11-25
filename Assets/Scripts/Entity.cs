@@ -28,7 +28,7 @@ public abstract class Entity {
     private static int currentID = 0;
     private protected bool UseCollision = true;
     protected int meshType = 0;
-    public static readonly float resistance = 14.0F;
+    protected readonly float resistance = 14.0F;
     public Entity (World worldIn) {
         ID = currentID++;
         world = worldIn;
@@ -44,28 +44,25 @@ public abstract class Entity {
         height = defaultHeight;
         eyeHeight = defaulteyeHeight;
         GenerateMesh();
-        void GenerateMesh () {
-            int vertexIndex = 0;
-            List<Vector3> vertices = new();
-            List<int> triangles = new();
-            List<Vector2> uvs = new();
-            for (int p = 0; p < 6; p++) {
-                for (int i = 0; i < 4; i++) {
-                    Vector3 a = Data.voxelVerts[Data.blockMesh[p, i]];
-                    a.x *= defaultWidth;
-                    a.y *= defaultHeight;
-                    a.z *= defaultWidth;
-                    a -= new Vector3(defaultWidth, 0, defaultWidth) / 2;
-                    vertices.Add(a);
-                    uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[meshType].GetTextureID(p))) / Data.TextureSize);
-                }
-                for (int i = 0; i < 6; i++) {
-                    triangles.Add(Data.order[i] + vertexIndex);
-                }
-                vertexIndex += 4;
+    }
+    void GenerateMesh () {
+        int vertexIndex = 0;
+        List<Vector3> vertices = new();
+        List<int> triangles = new();
+        List<Vector2> uvs = new();
+        float tt = defaultWidth / 2;
+        for (int p = 0; p < 6; p++) {
+            for (int i = 0; i < 4; i++) {
+                Vector3 b = Data.voxelVerts[Data.blockMesh[p, i]];
+                vertices.Add(new(b.x * defaultWidth - tt, b.y * defaultHeight, b.z * defaultWidth - tt));
+                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[meshType].GetTextureID(p))) / Data.TextureSize);
             }
-            meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
+            for (int i = 0; i < 6; i++) {
+                triangles.Add(Data.order[i] + vertexIndex);
+            }
+            vertexIndex += 4;
         }
+        meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
     }
     public virtual void Update () {
         AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
