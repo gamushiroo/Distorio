@@ -39,15 +39,9 @@ public struct AABB {
     public readonly double CalculateXOffset (double offsetX, AABB other) {
         if (minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ) {
             if (offsetX > 0.0D && maxX <= other.minX) {
-                double diff = other.minX - maxX;
-                if (diff < offsetX) {
-                    offsetX = diff;
-                }
+                offsetX = Math.Min(other.minX - maxX, offsetX);
             } else if (offsetX < 0.0D && minX >= other.maxX) {
-                double diff = other.maxX - minX;
-                if (diff > offsetX) {
-                    offsetX = diff;
-                }
+                offsetX = Math.Max(other.maxX - minX, offsetX);
             }
         }
         return offsetX;
@@ -55,15 +49,9 @@ public struct AABB {
     public readonly double CalculateYOffset (double offsetY, AABB other) {
         if (minX < other.maxX && maxX > other.minX && minZ < other.maxZ && maxZ > other.minZ) {
             if (offsetY > 0.0D && maxY <= other.minY) {
-                double diff = other.minY - maxY;
-                if (diff < offsetY) {
-                    offsetY = diff;
-                }
+                offsetY = Math.Min(other.minY - maxY, offsetY);
             } else if (offsetY < 0.0D && minY >= other.maxY) {
-                double diff = other.maxY - minY;
-                if (diff > offsetY) {
-                    offsetY = diff;
-                }
+                offsetY = Math.Max(other.maxY - minY, offsetY);
             }
         }
         return offsetY;
@@ -71,15 +59,9 @@ public struct AABB {
     public readonly double CalculateZOffset (double offsetZ, AABB other) {
         if (minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY) {
             if (offsetZ > 0.0D && maxZ <= other.minZ) {
-                double diff = other.minZ - maxZ;
-                if (diff < offsetZ) {
-                    offsetZ = diff;
-                }
+                offsetZ = Math.Min(other.minZ - maxZ, offsetZ);
             } else if (offsetZ < 0.0D && minZ >= other.maxZ) {
-                double diff = other.maxZ - minZ;
-                if (diff > offsetZ) {
-                    offsetZ = diff;
-                }
+                offsetZ = Math.Max(other.maxZ - minZ, offsetZ);
             }
         }
         return offsetZ;

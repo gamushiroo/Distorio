@@ -71,43 +71,43 @@ public abstract class Entity {
         AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
         Move();
         transform.position = Vec3.ToVector3(posX, posY, posZ);
-        void Move () {
-            double x = velocityX * Time.deltaTime;
-            double y = velocityY * Time.deltaTime;
-            double z = velocityZ * Time.deltaTime;
-            if (UseCollision) {
-                double i = x;
-                double j = y;
-                double k = z;
-                List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z), ID);
-                List<KeyValuePair<double, Action>> l = new() {
+    }
+    void Move () {
+        double x = velocityX * Time.deltaTime;
+        double y = velocityY * Time.deltaTime;
+        double z = velocityZ * Time.deltaTime;
+        if (UseCollision) {
+            double i = x;
+            double j = y;
+            double k = z;
+            List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z), ID);
+            List<KeyValuePair<double, Action>> l = new() {
             new(Math.Abs(x), CalculateXOffset),
             new(Math.Abs(y), CalculateYOffset),
             new(Math.Abs(z), CalculateZOffset)
             };
-                l.Sort((a, b) => b.Key.CompareTo(a.Key));
-                foreach (KeyValuePair<double, Action> v in l) {
-                    v.Value();
-                }
-                isGrounded = j != y && j < 0.0D;
-                if (!isGrounded) {
-                    waitUntilGrounded = true;
-                } else if (waitUntilGrounded) {
-                    OnGrounded();
-                    waitUntilGrounded = false;
-                }
-                if (i != x) { velocityX = 0; }
-                if (j != y) { velocityY = 0; }
-                if (k != z) { velocityZ = 0; }
-                if (i != x || j != y || k != z) {
-                    OnCollision();
-                }
-                void CalculateXOffset () { foreach (AABB q in p) { x = BoundingBox.CalculateXOffset(x, q); } AddCoordinate(x, 0.0D, 0.0D); }
-                void CalculateYOffset () { foreach (AABB q in p) { y = BoundingBox.CalculateYOffset(y, q); } AddCoordinate(0.0D, y, 0.0D); }
-                void CalculateZOffset () { foreach (AABB q in p) { z = BoundingBox.CalculateZOffset(z, q); } AddCoordinate(0.0D, 0.0D, z); }
-            } else {
-                AddCoordinate(x, y, z);
+            l.Sort((a, b) => b.Key.CompareTo(a.Key));
+            foreach (KeyValuePair<double, Action> v in l) {
+                v.Value();
             }
+            isGrounded = j != y && j < 0.0D;
+            if (!isGrounded) {
+                waitUntilGrounded = true;
+            } else if (waitUntilGrounded) {
+                OnGrounded();
+                waitUntilGrounded = false;
+            }
+            if (i != x) { velocityX = 0; }
+            if (j != y) { velocityY = 0; }
+            if (k != z) { velocityZ = 0; }
+            if (i != x || j != y || k != z) {
+                OnCollision();
+            }
+            void CalculateXOffset () { foreach (AABB q in p) { x = BoundingBox.CalculateXOffset(x, q); } AddCoordinate(x, 0.0D, 0.0D); }
+            void CalculateYOffset () { foreach (AABB q in p) { y = BoundingBox.CalculateYOffset(y, q); } AddCoordinate(0.0D, y, 0.0D); }
+            void CalculateZOffset () { foreach (AABB q in p) { z = BoundingBox.CalculateZOffset(z, q); } AddCoordinate(0.0D, 0.0D, z); }
+        } else {
+            AddCoordinate(x, y, z);
         }
     }
     private protected void AddForce (double x, double y, double z) {
