@@ -28,30 +28,4 @@ public class Structure {
         }
         return queue;
     }
-    public static Queue<VoxelAndPos> MakeCave (Vector3Int position) {
-        Queue<VoxelAndPos> queue = new();
-        int range = 4;
-        Quaternion currentRot = Quaternion.identity;
-        List<Vector3> aaa = new();
-        for (int i = 0; i < 64; i++) {
-            currentRot *= Quaternion.Euler(new(new System.Random().Next(-15, 15), 0, new System.Random().Next(-15, 15)));
-
-            aaa.Add(position + currentRot * new Vector3(0, -i * 3, 0));
-        }
-        for (int i = 0; i < aaa.Count; i++) {
-
-            for (int x = -range; x < range; x++) {
-                for (int y = -range; y < range; y++) {
-                    for (int z = -range; z < range; z++) {
-
-                        Vector3 aee = aaa[i] + new Vector3Int(x, y, z);
-                        if (Mathf.Abs((aee - aaa[i]).magnitude) < range) {
-                            queue.Enqueue(new(Data.Vector3ToChunkVoxel(aee), 0));
-                        }
-                    }
-                }
-            }
-        }
-        return queue;
-    }
 }

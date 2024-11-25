@@ -5,8 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class World : MonoBehaviour {
+
     public GameObject particle;
-    public PathRenderer pathrend;
     public Slider hpBar;
     public Text hpText;
     public AudioClip eeeeeee;
@@ -68,137 +68,8 @@ public class World : MonoBehaviour {
         queue.Enqueue(new(pos, 0));
         AddMod(queue);
     }
-    /*
-    public MovingObjectPosition rayTraceBlocks (Vec3 eyePos, Vec3 to, bool stopOnLiquid, bool returnLastUncollidableBlock) {
-        int toX = MathHelper.FloorDouble(to.xCoord);
-        int toY = MathHelper.FloorDouble(to.yCoord);
-        int toZ = MathHelper.FloorDouble(to.zCoord);
-        int eyeX = MathHelper.FloorDouble(eyePos.xCoord);
-        int eyeY = MathHelper.FloorDouble(eyePos.yCoord);
-        int eyeZ = MathHelper.FloorDouble(eyePos.zCoord);
-        BlockPos blockpos = new BlockPos(eyeX, eyeY, eyeZ);
-        IBlockState iblockstate = this.getBlockState(blockpos);
-        Block block = iblockstate.getBlock();
-
-        if (( block.getCollisionBoundingBox(this, blockpos, iblockstate) != null) && block.canCollideCheck(iblockstate, stopOnLiquid)) {
-            MovingObjectPosition movingobjectposition = block.collisionRayTrace(this, blockpos, eyePos, to);
-
-            if (movingobjectposition != null) {
-                return movingobjectposition;
-            }
-        }
-
-        MovingObjectPosition movingobjectposition2 = null;
-        int k1 = 200;
-
-        while (k1-- >= 0) {
-
-            if (eyeX == toX && eyeY == toY && eyeZ == toZ) {
-                return returnLastUncollidableBlock ? movingobjectposition2 : null;
-            }
-
-            bool flag2 = true;
-            bool flag = true;
-            bool flag1 = true;
-            double d0 = 999.0D;
-            double d1 = 999.0D;
-            double d2 = 999.0D;
-
-            if (toX > eyeX) {
-                d0 = eyeX + 1.0D;
-            } else if (toX < eyeX) {
-                d0 = eyeX + 0.0D;
-            } else {
-                flag2 = false;
-            }
-
-            if (toY > eyeY) {
-                d1 = eyeY + 1.0D;
-            } else if (toY < eyeY) {
-                d1 = eyeY + 0.0D;
-            } else {
-                flag = false;
-            }
-
-            if (toZ > eyeZ) {
-                d2 = eyeZ + 1.0D;
-            } else if (toZ < eyeZ) {
-                d2 = eyeZ + 0.0D;
-            } else {
-                flag1 = false;
-            }
-
-            double d3 = 999.0D;
-            double d4 = 999.0D;
-            double d5 = 999.0D;
-            double diffX = to.xCoord - eyePos.xCoord;
-            double diffY = to.yCoord - eyePos.yCoord;
-            double diffZ = to.zCoord - eyePos.zCoord;
-
-            if (flag2) {
-                d3 = (d0 - eyePos.xCoord) / diffX;
-            }
-
-            if (flag) {
-                d4 = (d1 - eyePos.yCoord) / diffY;
-            }
-
-            if (flag1) {
-                d5 = (d2 - eyePos.zCoord) / diffZ;
-            }
-
-            if (d3 == -0.0D) {
-                d3 = -1.0E-4D;
-            }
-
-            if (d4 == -0.0D) {
-                d4 = -1.0E-4D;
-            }
-
-            if (d5 == -0.0D) {
-                d5 = -1.0E-4D;
-            }
-
-            EnumFacing enumfacing;
-
-            if (d3 < d4 && d3 < d5) {
-                enumfacing = toX > eyeX ? EnumFacing.WEST : EnumFacing.EAST;
-                eyePos = new Vec3(d0, eyePos.yCoord + diffY * d3, eyePos.zCoord + diffZ * d3);
-            } else if (d4 < d5) {
-                enumfacing = toY > eyeY ? EnumFacing.DOWN : EnumFacing.UP;
-                eyePos = new Vec3(eyePos.xCoord + diffX * d4, d1, eyePos.zCoord + diffZ * d4);
-            } else {
-                enumfacing = toZ > eyeZ ? EnumFacing.NORTH : EnumFacing.SOUTH;
-                eyePos = new Vec3(eyePos.xCoord + diffX * d5, eyePos.yCoord + diffY * d5, d2);
-            }
-
-            eyeX = MathHelper.FloorDouble(eyePos.xCoord) - (enumfacing == EnumFacing.EAST ? 1 : 0);
-            eyeY = MathHelper.FloorDouble(eyePos.yCoord) - (enumfacing == EnumFacing.UP ? 1 : 0);
-            eyeZ = MathHelper.FloorDouble(eyePos.zCoord) - (enumfacing == EnumFacing.SOUTH ? 1 : 0);
-
-            blockpos = new BlockPos(eyeX, eyeY, eyeZ);
-            IBlockState iblockstate1 = this.getBlockState(blockpos);
-            Block block1 = iblockstate1.getBlock();
-
-            if ( block1.getCollisionBoundingBox(this, blockpos, iblockstate1) != null) {
-                if (block1.canCollideCheck(iblockstate1, stopOnLiquid)) {
-                    MovingObjectPosition movingobjectposition1 = block1.collisionRayTrace(this, blockpos, eyePos, to);
-
-                    if (movingobjectposition1 != null) {
-                        return movingobjectposition1;
-                    }
-                } else {
-                    movingobjectposition2 = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, eyePos, enumfacing, blockpos);
-                }
-            }
-        }
-        return returnLastUncollidableBlock ? movingobjectposition2 : null;
-    }
-    */
-
     private void LateUpdate () {
 
-        //hpText.text  = ((int)(1f / Time.unscaledDeltaTime)).ToString();
         while (entityQueue.Count > 0) {
             entities.Add(entityQueue.Dequeue());
         }
@@ -208,8 +79,6 @@ public class World : MonoBehaviour {
             } else {
                 entities.RemoveAt(i);
             }
-        }
-        foreach (Entity entity in entities) {
         }
         ModifyChunks();
         UpdateChunks();
@@ -274,13 +143,14 @@ public class World : MonoBehaviour {
         return a;
     }
     public byte GetVoxel (Vector3Int pos) {
+
         byte VoxelValue = 0;
+        Vector2 ddd = new(pos.x, pos.z);
 
         if (pos.y < 40) {
             VoxelValue = 7;
         }
-        int terrainHeight = Mathf.FloorToInt(GetHeight(new(pos.x, pos.z)));
-        switch (pos.y - terrainHeight) {
+        switch (pos.y - Mathf.FloorToInt(GetHeight(ddd))) {
             case < -4:
                 VoxelValue = 3;
                 break;
@@ -293,37 +163,36 @@ public class World : MonoBehaviour {
             default:
                 break;
         }
+
         if (VoxelValue == 1) {
             lock (modifications) {
-                if (Noise.Get2DPerlin(new(pos.x, pos.z), 0.0158f) > 0) {
-                    float www = Mathf.Max(0, Noise.Get2DPerlin(new(pos.x, pos.z), 0.052f) + 0.5f) * 32 + 2;
-                    if (new System.Random().Next(0, Mathf.FloorToInt(www)) == 0) {
-                        Queue<VoxelAndPos> a = new();
-                        a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3Int.up), 15));
-                        modifications.Enqueue(a);
-                    }
-                }
-                /*
-                if (new System.Random().Next(0, (int)MathF.Pow(2, 12)) == 0) {
-                    modifications.Enqueue(Structure.MakeCave(pos));
-                }
-                */
-                if (Noise.Get2DPerlin(new(pos.x, pos.z), Data.treeZoneScale) > Data.treeZoneThreshold) {
-                    if (Noise.Get2DPerlin(new(pos.x + 50, pos.z + 50), Data.treePlacementScale) > Data.treePlacementThreshold) {
-                        modifications.Enqueue(Structure.MakeTree(pos + Vector3Int.up));
-                    }
-                }
+                EETT(ddd, pos);
             }
         }
         return VoxelValue;
+    }
 
-        static float GetHeight (Vector2Int pos) {
-            float terrainHeight = 0;
-            for (int i = 0; i < 4; i++) {
-                terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
+    void EETT (Vector2 ddd, Vector3Int pos) {
+
+        if (Noise.Get2DPerlin(ddd, 0.0158f) > 0) {
+            if (new System.Random().Next(0, Mathf.FloorToInt(Mathf.Max(0, Noise.Get2DPerlin(ddd, 0.052f) + 0.5f) * 32 + 2)) == 0) {
+                Queue<VoxelAndPos> a = new();
+                a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3Int.up), 15));
+                modifications.Enqueue(a);
             }
-            return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
         }
+        if (Noise.Get2DPerlin(ddd, Data.treeZoneScale) > Data.treeZoneThreshold) {
+            if (Noise.Get2DPerlin(ddd, Data.treePlacementScale) > Data.treePlacementThreshold) {
+                modifications.Enqueue(Structure.MakeTree(pos + Vector3Int.up));
+            }
+        }
+    }
+    static float GetHeight (Vector2 pos) {
+        float terrainHeight = 0;
+        for (int i = 0; i < 4; i++) {
+            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
+        }
+        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
     }
     public bool SetBlock (Vector3 position, Vector3 selectingPos) {
         if (userInter.selectedBlockIndex != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
@@ -365,13 +234,11 @@ public class World : MonoBehaviour {
         }
     }
     private void UpdateChunks () {
-        if (chunksToUpdate.Count > 0) {
-            for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
-                if (chunksToUpdate[i].IsEditable) {
-                    chunksToUpdate[i].UpdateChunk();
-                    chunksToDraw.Enqueue(chunksToUpdate[i]);
-                    chunksToUpdate.RemoveAt(i);
-                }
+        for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
+            if (chunksToUpdate[i].IsEditable) {
+                chunksToUpdate[i].UpdateChunk();
+                chunksToDraw.Enqueue(chunksToUpdate[i]);
+                chunksToUpdate.RemoveAt(i);
             }
         }
     }

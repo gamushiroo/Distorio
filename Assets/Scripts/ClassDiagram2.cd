@@ -1,44 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BBRenderer" Collapsed="true">
-    <Position X="41.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\BBRenderer.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Block">
-    <Position X="18.5" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\Block.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Blocks">
-    <Position X="23" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAgBAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\Blocks.cs</FileName>
-    </TypeIdentifier>
-  </Class>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
   <Class Name="Chunk">
     <Position X="36.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEAEAAAAgBAAAAIIgQAIZACAIAUIAAAAAAABAAAAgA=</HashCode>
+      <HashCode>AAEAEAAQAgBAAAAIIiQAIZACAIAUIAAAAAAABAAAAgA=</HashCode>
       <FileName>Assets\Scripts\Chunk.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Data">
     <Position X="14" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgwIBQJxgDAgiIAAACAAAAgAgACAAIBAUABAACAAECA=</HashCode>
+      <HashCode>AgwIBQJhgDAgiIAAAAAAAAgAgACAAIBAUABAACAAECA=</HashCode>
       <FileName>Assets\Scripts\Data.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entity">
     <Position X="8.5" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>ARUAEAAEAFgQwQRAxAQCAQAAACAEEgAIIgwAwAIIAgE=</HashCode>
+      <HashCode>ARUAEAAEAFgQwQRA4AACAAAEACAEEgAIIgwAwAIIAgE=</HashCode>
       <FileName>Assets\Scripts\Entity.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -59,7 +38,7 @@
   <Class Name="EntityPlayer">
     <Position X="5" Y="17.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAEAIIAgAAQYAEAIAQAAAAACCAABUgCADACAEEgAA=</HashCode>
+      <HashCode>AAQAEAIIAgAAQYAEgIAQAAAAACCAABUgCADACAEEgAA=</HashCode>
       <FileName>Assets\Scripts\EntityPlayer.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -96,13 +75,6 @@
     <TypeIdentifier>
       <HashCode>AABAAAAAAIAAAAAAAAAAAAAAAQAEAEAAAAAAQAAABCA=</HashCode>
       <FileName>Assets\Scripts\Item.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ItemBlock">
-    <Position X="0.5" Y="7.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAA=</HashCode>
-      <FileName>Assets\Scripts\ItemBlock.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ItemRegistry">
@@ -164,7 +136,7 @@
   <Class Name="Structure">
     <Position X="38.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAACABAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAACABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Structure.cs</FileName>
     </TypeIdentifier>
   </Class>

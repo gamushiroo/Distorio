@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class UserInterface : MonoBehaviour {
 
+    public static readonly int InventoryWidth = 8;
+    public static readonly int InventoryHeight = 4;
+
     public Inventory inventory;
     public int selectedBlockIndex = 0;
     public Sprite slot;
@@ -13,8 +16,8 @@ public class UserInterface : MonoBehaviour {
     public GameObject inventoryObj;
     public World world;
     public RectTransform highlight;
-    public readonly Image[] images = new Image[Data.InventoryWidth * Data.InventoryHeight];
-    public readonly Image[] toolbarImages = new Image[Data.InventoryWidth];
+    public readonly Image[] images = new Image[InventoryWidth * InventoryHeight];
+    public readonly Image[] toolbarImages = new Image[InventoryWidth];
     public int slotIndex = 0;
     public bool inUI;
 
@@ -69,10 +72,10 @@ public class UserInterface : MonoBehaviour {
             else
                 slotIndex++;
 
-            if (slotIndex >= Data.InventoryWidth)
+            if (slotIndex >= InventoryWidth)
                 slotIndex = 0;
             else if (slotIndex < 0)
-                slotIndex = Data.InventoryWidth - 1;
+                slotIndex = InventoryWidth - 1;
 
             highlight.position = toolbarImages[slotIndex].transform.position;
             selectedBlockIndex = GetSelected();
@@ -82,8 +85,8 @@ public class UserInterface : MonoBehaviour {
 
         int f = 0;
 
-        for (int x = 0; x < Data.InventoryWidth; x++) {
-            for (int y = 0; y < Data.InventoryHeight; y++) {
+        for (int x = 0; x < InventoryWidth; x++) {
+            for (int y = 0; y < InventoryHeight; y++) {
 
 
                 Vector2 pos = new Vector2(100 * x - 450, -100 * y + 10) + new Vector2(1060, 540);
@@ -105,7 +108,7 @@ public class UserInterface : MonoBehaviour {
                 f++;
             }
         }
-        for (int i = 0; i < Data.InventoryWidth; i++) {
+        for (int i = 0; i < InventoryWidth; i++) {
 
 
             Vector2 pos = new Vector2(100 * i - 450, -500 + 10) + new Vector2(1060, 540);
@@ -127,7 +130,7 @@ public class UserInterface : MonoBehaviour {
     }
     private void RenderSprites () {
 
-        for (int i = 0; i < Data.InventoryWidth * Data.InventoryHeight; i++) {
+        for (int i = 0; i < InventoryWidth * InventoryHeight; i++) {
 
             Sprite a = nothing;
 

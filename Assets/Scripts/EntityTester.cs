@@ -29,9 +29,8 @@ public class EntityTester : EntityLiving {
     }
 
     private protected override void Initialize () {
+        meshType = 19;
         base.Initialize();
-        ToWorldSpawn();
-        GenerateMesh(19);
     }
     protected void ShootGun () {
 

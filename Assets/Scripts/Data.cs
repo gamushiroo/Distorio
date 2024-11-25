@@ -3,17 +3,11 @@ using UnityEngine;
 
 public static class Data {
 
-    public static readonly int ChunkWidth = 16;
-    public static readonly int ChunkHeight = 128;
-
-    public static readonly int InventoryWidth = 8;
-    public static readonly int InventoryHeight = 4;
 
     public static readonly float gravityScale = 25.0F;
     public static readonly float jumpScale = 1;
     public static readonly float jumpPower = Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
     public static readonly float playerSpeed = 13.0F / 3.0F;
-    public static readonly float resistance = 14.0F;
 
     public static readonly int ChunkLoadRange = 6;
     public static readonly int TextureSize = 16;
@@ -21,10 +15,8 @@ public static class Data {
 
     public static readonly int solidGroundHeight = 48;
     public static readonly int terrainHeight = 12;
-
     public static float terrainScale = 0.03F;
     public static float treeZoneScale = 0.02F;
-    //public static float treeZoneThreshold = 0.1F;
     public static float treeZoneThreshold = -0.3F;
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;

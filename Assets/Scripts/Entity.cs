@@ -25,8 +25,10 @@ public abstract class Entity {
     private protected double posY;
     private protected double posZ;
     public int ID;
-    public static int currentID = 0;
-    public bool UseCollision = true;
+    private static int currentID = 0;
+    private protected bool UseCollision = true;
+    protected int meshType = 0;
+    public static readonly float resistance = 14.0F;
     public Entity (World worldIn) {
         ID = currentID++;
         world = worldIn;
@@ -41,17 +43,72 @@ public abstract class Entity {
         width = defaultWidth;
         height = defaultHeight;
         eyeHeight = defaulteyeHeight;
-    }
-    public void ToWorldSpawn () {
-        SetPosition(0.0D, 0.0D, 0.0D);
-        while (world.GetCollidingBoundingBoxes(BoundingBox, ID).Count != 0) {
-            AddCoordinate(0.0D, 1.0D, 0.0D);
+        GenerateMesh();
+        void GenerateMesh () {
+            int vertexIndex = 0;
+            List<Vector3> vertices = new();
+            List<int> triangles = new();
+            List<Vector2> uvs = new();
+            for (int p = 0; p < 6; p++) {
+                for (int i = 0; i < 4; i++) {
+                    Vector3 a = Data.voxelVerts[Data.blockMesh[p, i]];
+                    a.x *= defaultWidth;
+                    a.y *= defaultHeight;
+                    a.z *= defaultWidth;
+                    a -= new Vector3(defaultWidth, 0, defaultWidth) / 2;
+                    vertices.Add(a);
+                    uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[meshType].GetTextureID(p))) / Data.TextureSize);
+                }
+                for (int i = 0; i < 6; i++) {
+                    triangles.Add(Data.order[i] + vertexIndex);
+                }
+                vertexIndex += 4;
+            }
+            meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
         }
     }
     public virtual void Update () {
         AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
-        MoveEntity();
+        Move();
         transform.position = Vec3.ToVector3(posX, posY, posZ);
+        void Move () {
+            double x = velocityX * Time.deltaTime;
+            double y = velocityY * Time.deltaTime;
+            double z = velocityZ * Time.deltaTime;
+            if (UseCollision) {
+                double i = x;
+                double j = y;
+                double k = z;
+                List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z), ID);
+                List<KeyValuePair<double, Action>> l = new() {
+            new(Math.Abs(x), CalculateXOffset),
+            new(Math.Abs(y), CalculateYOffset),
+            new(Math.Abs(z), CalculateZOffset)
+            };
+                l.Sort((a, b) => b.Key.CompareTo(a.Key));
+                foreach (KeyValuePair<double, Action> v in l) {
+                    v.Value();
+                }
+                isGrounded = j != y && j < 0.0D;
+                if (!isGrounded) {
+                    waitUntilGrounded = true;
+                } else if (waitUntilGrounded) {
+                    OnGrounded();
+                    waitUntilGrounded = false;
+                }
+                if (i != x) { velocityX = 0; }
+                if (j != y) { velocityY = 0; }
+                if (k != z) { velocityZ = 0; }
+                if (i != x || j != y || k != z) {
+                    OnCollision();
+                }
+                void CalculateXOffset () { foreach (AABB q in p) { x = BoundingBox.CalculateXOffset(x, q); } AddCoordinate(x, 0.0D, 0.0D); }
+                void CalculateYOffset () { foreach (AABB q in p) { y = BoundingBox.CalculateYOffset(y, q); } AddCoordinate(0.0D, y, 0.0D); }
+                void CalculateZOffset () { foreach (AABB q in p) { z = BoundingBox.CalculateZOffset(z, q); } AddCoordinate(0.0D, 0.0D, z); }
+            } else {
+                AddCoordinate(x, y, z);
+            }
+        }
     }
     private protected void AddForce (double x, double y, double z) {
         velocityX += x * Time.deltaTime;
@@ -68,7 +125,7 @@ public abstract class Entity {
         velocityY = y;
         velocityZ = z;
     }
-    private protected void AddImpulseForce (double x, double y, double z) {
+    private protected void AddForce_Impulse (double x, double y, double z) {
         velocityX += x;
         velocityY += y;
         velocityZ += z;
@@ -84,44 +141,6 @@ public abstract class Entity {
         posY += y;
         posZ += z;
         ModifyBoundingBox();
-    }
-    private void MoveEntity () {
-        double x = velocityX * Time.deltaTime;
-        double y = velocityY * Time.deltaTime;
-        double z = velocityZ * Time.deltaTime;
-        if (UseCollision) {
-            double i = x;
-            double j = y;
-            double k = z;
-            List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z), ID);
-            List<KeyValuePair<double, Action>> l = new() {
-            new(Math.Abs(x), CalculateXOffset),
-            new(Math.Abs(y), CalculateYOffset),
-            new(Math.Abs(z), CalculateZOffset)
-            };
-            l.Sort((a, b) => b.Key.CompareTo(a.Key));
-            foreach (KeyValuePair<double, Action> v in l) {
-                v.Value();
-            }
-            isGrounded = j != y && j < 0.0D;
-            if (!isGrounded) {
-                waitUntilGrounded = true;
-            } else if (waitUntilGrounded) {
-                OnGrounded();
-                waitUntilGrounded = false;
-            }
-            if (i != x) { velocityX = 0; }
-            if (j != y) { velocityY = 0; }
-            if (k != z) { velocityZ = 0; }
-            if (i != x || j != y || k != z) {
-                OnCollision();
-            }
-            void CalculateXOffset () { foreach (AABB q in p) { x = BoundingBox.CalculateXOffset(x, q); } AddCoordinate(x, 0.0D, 0.0D); }
-            void CalculateYOffset () { foreach (AABB q in p) { y = BoundingBox.CalculateYOffset(y, q); } AddCoordinate(0.0D, y, 0.0D); }
-            void CalculateZOffset () { foreach (AABB q in p) { z = BoundingBox.CalculateZOffset(z, q); } AddCoordinate(0.0D, 0.0D, z); }
-        } else {
-            AddCoordinate(x, y, z);
-        }
     }
     private protected void Kill () {
         UnityEngine.Object.Destroy(gameObject);
@@ -141,28 +160,6 @@ public abstract class Entity {
     private protected void ModifyBoundingBox () {
         double f = width / 2.0F;
         BoundingBox = new(posX - f, posY, posZ - f, posX + f, posY + height, posZ + f);
-    }
-    private protected void GenerateMesh (int skin) {
-        int vertexIndex = 0;
-        List<Vector3> vertices = new();
-        List<int> triangles = new();
-        List<Vector2> uvs = new();
-        for (int p = 0; p < 6; p++) {
-            for (int i = 0; i < 4; i++) {
-                Vector3 a = Data.voxelVerts[Data.blockMesh[p, i]];
-                a.x *= defaultWidth;
-                a.y *= defaultHeight;
-                a.z *= defaultWidth;
-                a -= new Vector3(defaultWidth, 0, defaultWidth) / 2;
-                vertices.Add(a);
-                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[skin].GetTextureID(p))) / Data.TextureSize);
-            }
-            for (int i = 0; i < 6; i++) {
-                triangles.Add(Data.order[i] + vertexIndex);
-            }
-            vertexIndex += 4;
-        }
-        meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
     }
     private protected virtual void OnGrounded () {
     }

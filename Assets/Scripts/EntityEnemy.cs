@@ -11,7 +11,7 @@ public class EntityEnemy : EntityLiving {
 
         defaultWidth = 4F;
         defaultHeight = 4F;
-        GenerateMesh(19);
+        meshType = 19;
 
         SetPosition(pos.x, pos.y, pos.z);
         gravityMultiplier = 0;
