@@ -18,43 +18,44 @@ public struct AABB {
     public readonly AABB AddCoord (double x, double y, double z) {
         return new(minX + Math.Min(0, x), minY + Math.Min(0, y), minZ + Math.Min(0, z), maxX + Math.Max(0, x), maxY + Math.Max(0, y), maxZ + Math.Max(0, z));
     }
+
     public readonly bool Equals (AABB other) {
         return minX == other.minX && minY == other.minY && minZ == other.minZ && maxX == other.maxX && maxY == other.maxY && maxZ == other.maxZ;
     }
     public readonly bool IntersectsWith (AABB other) {
-        return other.minX < maxX && minX < other.maxX && other.minY < maxY && minY < other.maxY && other.minZ < maxZ && minZ < other.maxZ;
+        return minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ;
     }
     public readonly bool IntersectsWith (Vector3Int pos) {
         return IntersectsWith(new AABB(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1));
     }
-    public readonly double CalculateXOffset (double offsetX, AABB other) {
+    public readonly double CalculateXOffset (double offset, AABB other) {
         if (minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ) {
-            if (offsetX > 0.0D && maxX <= other.minX) {
-                offsetX = Math.Min(other.minX - maxX, offsetX);
-            } else if (offsetX < 0.0D && minX >= other.maxX) {
-                offsetX = Math.Max(other.maxX - minX, offsetX);
+            if (offset > 0.0D && maxX <= other.minX) {
+                offset = Math.Min(other.minX - maxX, offset);
+            } else if (offset < 0.0D && minX >= other.maxX) {
+                offset = Math.Max(other.maxX - minX, offset);
             }
         }
-        return offsetX;
+        return offset;
     }
-    public readonly double CalculateYOffset (double offsetY, AABB other) {
+    public readonly double CalculateYOffset (double offset, AABB other) {
         if (minX < other.maxX && maxX > other.minX && minZ < other.maxZ && maxZ > other.minZ) {
-            if (offsetY > 0.0D && maxY <= other.minY) {
-                offsetY = Math.Min(other.minY - maxY, offsetY);
-            } else if (offsetY < 0.0D && minY >= other.maxY) {
-                offsetY = Math.Max(other.maxY - minY, offsetY);
+            if (offset > 0.0D && maxY <= other.minY) {
+                offset = Math.Min(other.minY - maxY, offset);
+            } else if (offset < 0.0D && minY >= other.maxY) {
+                offset = Math.Max(other.maxY - minY, offset);
             }
         }
-        return offsetY;
+        return offset;
     }
-    public readonly double CalculateZOffset (double offsetZ, AABB other) {
+    public readonly double CalculateZOffset (double offset, AABB other) {
         if (minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY) {
-            if (offsetZ > 0.0D && maxZ <= other.minZ) {
-                offsetZ = Math.Min(other.minZ - maxZ, offsetZ);
-            } else if (offsetZ < 0.0D && minZ >= other.maxZ) {
-                offsetZ = Math.Max(other.maxZ - minZ, offsetZ);
+            if (offset > 0.0D && maxZ <= other.minZ) {
+                offset = Math.Min(other.minZ - maxZ, offset);
+            } else if (offset < 0.0D && minZ >= other.maxZ) {
+                offset = Math.Max(other.maxZ - minZ, offset);
             }
         }
-        return offsetZ;
+        return offset;
     }
 }
