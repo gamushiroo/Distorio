@@ -21,7 +21,7 @@ public class World : MonoBehaviour {
     public Camera camObj;
     public Hand hand;
     public GameObject miningProgresBarObj;
-    public UserInterface userInter;
+    public int itemIDInHand = 1;
     public GameObject blockHighlight;
     public GameObject miningEffect; public Slider miningProgresBar;
     private Vector2 offset;
@@ -38,6 +38,9 @@ public class World : MonoBehaviour {
 
 
     private void Awake () {
+
+        Cursor.lockState = CursorLockMode.Locked;
+
         Item.RegisterItems();
         InitNoise();
         GenerateWorld();
@@ -56,9 +59,7 @@ public class World : MonoBehaviour {
         }
     }
     private void Start () {
-        userInter.inventory = new();
         entities.Add(new EntityPlayer(this));
-        //entities.Add(new EntityTester(this));
 
     }
 
@@ -87,30 +88,21 @@ public class World : MonoBehaviour {
         }
     }
     public void CheckViewDistance (Vec3i playerPos) {
-        List<Vector2Int> previouslyActiveChunks = chunks.Keys.ToList();
+        foreach (Chunk c in chunks.Values) {
+            c.SetActiveState(false);
+        }
         for (int x = playerPos.x - Data.ChunkLoadRange; x < playerPos.x + Data.ChunkLoadRange; x++) {
             for (int z = playerPos.z - Data.ChunkLoadRange; z < playerPos.z + Data.ChunkLoadRange; z++) {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this));
+                } 
+                if (!chunks[pos].IsTerrainMapGenerated) {
                     chunks[pos].GenerateTerrainData();
                     chunksToUpdate.Add(chunks[pos]);
-                } else {
-                    if (!chunks[pos].IsTerrainMapGenerated) {
-                        chunks[pos].GenerateTerrainData();
-                        chunksToUpdate.Add(chunks[pos]);
-                    }
-                    chunks[pos].SetActiveState(true);
                 }
-                for (int i = 0; i < previouslyActiveChunks.Count; i++) {
-                    if (previouslyActiveChunks[i] == pos) {
-                        previouslyActiveChunks.RemoveAt(i);
-                    }
-                }
+                chunks[pos].SetActiveState(true);
             }
-        }
-        foreach (Vector2Int c in previouslyActiveChunks) {
-            chunks[c].SetActiveState(false);
         }
     }
     public List<int> CollidingIDs (AABB aabb) {
@@ -142,15 +134,15 @@ public class World : MonoBehaviour {
         }
         return a;
     }
-    public byte GetVoxel (Vector3Int pos) {
+    public byte GetVoxel (int x, int y, int z) {
 
         byte VoxelValue = 0;
-        Vector2 ddd = new(pos.x, pos.z);
+        Vector2 ddd = new(x, z);
 
-        if (pos.y < 40) {
+        if (y < 40) {
             VoxelValue = 7;
         }
-        switch (pos.y - Mathf.FloorToInt(GetHeight(ddd))) {
+        switch (y - Mathf.FloorToInt(GetHeight(ddd))) {
             case < -4:
                 VoxelValue = 3;
                 break;
@@ -166,7 +158,7 @@ public class World : MonoBehaviour {
 
         if (VoxelValue == 1) {
             lock (modifications) {
-                EETT(ddd, pos);
+                EETT(ddd, new(x, y, z));
             }
         }
         return VoxelValue;
@@ -195,9 +187,9 @@ public class World : MonoBehaviour {
         return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
     }
     public bool SetBlock (Vector3 position, Vector3 selectingPos) {
-        if (userInter.selectedBlockIndex != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
+        if (itemIDInHand != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
             Queue<VoxelAndPos> queue = new();
-            queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), userInter.selectedBlockIndex));
+            queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), itemIDInHand));
             AddMod(queue);
             hand.placeEase = 0;
             return true;

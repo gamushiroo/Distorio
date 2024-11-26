@@ -30,4 +30,7 @@ public class Item {
     private static void RegisterItem (int id, Item itemIn) {
         ItemRegistry.Register(id, itemIn);
     }
+    public ItemStack OnItemRightClick (ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
+        return itemStackIn;
+    }
 }

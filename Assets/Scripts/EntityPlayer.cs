@@ -8,7 +8,6 @@ public class EntityPlayer : EntityLiving {
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
     private Vector3Int tryPlacingPos;
-    private Vector3Int lastTryPlacingPos = Vector3Int.zero;
     private Vector3Int SelectingPos;
     private Vector3Int miningPos;
     private readonly Camera camera;
@@ -16,8 +15,7 @@ public class EntityPlayer : EntityLiving {
     private float miningProgress;
     private readonly float mineSpeed = 2.5f;
     private float coolDown = 0;
-    private bool nextFramePlaced;
-
+    bool isMining;
     private float gunCoolDown = 0;
 
     float projectiles = 50;
@@ -53,25 +51,14 @@ public class EntityPlayer : EntityLiving {
     }
     public override void Update () {
 
-        gunCoolDown += Time.deltaTime;
-        rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
-        rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
-        rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
-
-        if (Input.GetKeyDown(KeyCode.R)) {
-            Initialize();
-        }
-        if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            AddForce_Impulse(0, Data.jumpPower, 0);
-        }
-        if (Input.GetMouseButton(0)) {
-            ShootGun();
-        }
-        AddForce(Vec3.ToVec3(PlayerVel()));
-
         camera.fieldOfView = Input.GetMouseButton(1) ? 50 : 70;
+        gunCoolDown += Time.deltaTime;
+        coolDown += Time.deltaTime;
 
+        CalculateInput();
+        AddInputForce();
         base.Update();
+
         double t = resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
         List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0), ID);
         foreach (AABB other in others) {
@@ -90,39 +77,61 @@ public class EntityPlayer : EntityLiving {
             AddHealth(3 * Time.deltaTime);
         }
         CalculateSelectingPos();
-        bool isMining = Input.GetMouseButton(0) && world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision;
+        isMining = Input.GetMouseButton(0) && GetVoxelID().hasCollision;
         if (isMining) {
             if (miningPos != SelectingPos) {
                 miningPos = SelectingPos;
                 miningProgress = 0;
             }
             miningProgress += Time.deltaTime * mineSpeed;
-            if (miningProgress >= world.blockTypes[world.GetVoxelID(SelectingPos)].hardness) {
+            world.miningProgresBar.value = miningProgress / GetVoxelID().hardness;
+            if (miningProgress >= GetVoxelID().hardness) {
                 world.DestroyBlock(SelectingPos);
             }
-            world.miningProgresBar.value = miningProgress / world.blockTypes[world.GetVoxelID(SelectingPos)].hardness;
         }
-        if (nextFramePlaced) {
-            lastTryPlacingPos = tryPlacingPos;
-            nextFramePlaced = false;
-        }
-        coolDown += Time.deltaTime;
-        if (!BoundingBox.IntersectsWith(tryPlacingPos) && (Input.GetMouseButton(1) && (coolDown >= 0.3f || tryPlacingPos != lastTryPlacingPos) || Input.GetMouseButtonDown(1))) {
+        if (!BoundingBox.IntersectsWith(tryPlacingPos) && (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1))) {
             if (world.SetBlock(tryPlacingPos, SelectingPos)) {
                 coolDown = 0;
-                lastTryPlacingPos = tryPlacingPos;
-                nextFramePlaced = true;
             }
         }
+        SetGameObjectState();
+    }
+
+    void SetGameObjectState () {
+        cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
         world.blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
         world.miningEffect.transform.position = SelectingPos + Vector3.one * 0.5f;
-        world.miningProgresBarObj.SetActive(isMining);
-        world.blockHighlight.SetActive(world.blockTypes[world.GetVoxelID(SelectingPos)].hasCollision);
+        world.healing.transform.position = Vec3.ToVector3(posX, posY, posZ);
         world.hpBar.value = health / maxHealth;
-        cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
+        world.miningProgresBarObj.SetActive(isMining);
+        world.blockHighlight.SetActive(GetVoxelID().hasCollision);
         world.healing.SetActive(isHealed);
-        world.healing.transform.position = transform.position;
     }
+
+    void CalculateInput () {
+        rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
+        rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
+        rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
+        if (Input.GetKeyDown(KeyCode.R)) {
+            Initialize();
+        }
+        if (Input.GetMouseButton(0)) {
+            ShootGun();
+        }
+    }
+    void AddInputForce () {
+        if (Input.GetKey(KeyCode.Space) && isGrounded || Input.GetKeyDown(KeyCode.Space) && world.CollidingIDs(BoundingBox).Contains(7)) {
+            AddForce_Impulse(0, Data.jumpPower, 0);
+        }
+        if (world.CollidingIDs(BoundingBox).Contains(7)) {
+            AddForce(velocityX * -2, velocityY * -2 + 20, velocityZ * -2);
+        }
+        AddForce(Vec3.ToVec3(PlayerVel()));
+    }
+
+
+
+
     protected void ShootGun () {
 
         if (gunCoolDown >= 0.5F) {
@@ -137,6 +146,10 @@ public class EntityPlayer : EntityLiving {
             audioSource.PlayOneShot(world.dd, 0.5F);
             gunCoolDown = 0;
         }
+    }
+
+    private BlockType GetVoxelID () {
+        return world.blockTypes[world.GetVoxelID(SelectingPos)];
     }
 
 
@@ -154,7 +167,6 @@ public class EntityPlayer : EntityLiving {
         SelectingPos = Vector3Int.FloorToInt(_camPos);
         tryPlacingPos = Vector3Int.FloorToInt(_camPos2);
     }
-
     Vector3 GetCamPos () {
         return Vec3.ToVector3(posX, posY + eyeHeight, posZ);
     }

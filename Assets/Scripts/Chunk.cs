@@ -8,7 +8,7 @@ public class Chunk {
     public bool IsEditable => IsTerrainMapGenerated && !threadLocked;
     public bool IsTerrainMapGenerated { get; private set; }
     private bool threadLocked;
-    private bool isActive = true;
+    private bool ActiveState = true;
     private readonly World world;
     private readonly MeshFilter meshFilter;
     private readonly GameObject chunkObject = new();
@@ -19,15 +19,15 @@ public class Chunk {
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
     private readonly Vector2Int pos;
+    private readonly int posX;
+    private readonly int posY;
     public Chunk (Vector2Int pos, World world) {
         this.world = world;
         this.pos = pos;
         chunkObject.transform.parent = world.transform;
         chunkObject.transform.position = ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
         chunkObject.AddComponent<MeshRenderer>().materials = world.materials;
-
         meshFilter = chunkObject.AddComponent<MeshFilter>();
-
     }
     public void GenerateTerrainData () {
         threadLocked = true;
@@ -36,7 +36,7 @@ public class Chunk {
             for (int x = 0; x < ChunkWidth; x++) {
                 for (int y = 0; y < ChunkHeight; y++) {
                     for (int z = 0; z < ChunkWidth; z++) {
-                        voxelMap[x, y, z] = world.GetVoxel(new(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth));
+                        voxelMap[x, y, z] = world.GetVoxel(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth);
                     }
                 }
             }
@@ -51,8 +51,8 @@ public class Chunk {
         modifications.Enqueue(voxelMod);
     }
     public void SetActiveState (bool value) {
-        if (isActive != value) {
-            isActive = value;
+        if (ActiveState != value) {
+            ActiveState = value;
             chunkObject.SetActive(value);
         }
     }
@@ -84,9 +84,6 @@ public class Chunk {
                             case 1:
                                 GrassMesh(x, y, z);
                                 break;
-                            case 2:
-                                HalfMesh(x, y, z);
-                                break;
                             default:
                                 NormalMesh(x, y, z);
                                 break;
@@ -117,17 +114,6 @@ public class Chunk {
                         }
                         AddTriangles();
                     }
-                }
-            }
-        }
-        void HalfMesh (int x, int y, int z) {
-            for (int p = 0; p < 6; p++) {
-                if (p == 2 || !world.blockTypes[GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
-                    for (int i = 0; i < 4; i++) {
-                        vertices.Add(Data.halfVoxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
-                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
-                    }
-                    AddTriangles();
                 }
             }
         }
