@@ -18,9 +18,6 @@ public struct AABB {
     public readonly AABB AddCoord (double x, double y, double z) {
         return new(minX + Math.Min(0, x), minY + Math.Min(0, y), minZ + Math.Min(0, z), maxX + Math.Max(0, x), maxY + Math.Max(0, y), maxZ + Math.Max(0, z));
     }
-    public readonly bool Equals (AABB other) {
-        return minX == other.minX && minY == other.minY && minZ == other.minZ && maxX == other.maxX && maxY == other.maxY && maxZ == other.maxZ;
-    }
     public readonly bool IntersectsWith (AABB other) {
         return minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ;
     }
