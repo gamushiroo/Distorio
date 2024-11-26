@@ -1,8 +1,5 @@
 public class Item {
-
-    protected int maxStackSize = 512;
     protected string name;
-
     public Item SetName (string name) {
         this.name = name;
         return this;
@@ -10,18 +7,11 @@ public class Item {
     public string GetName () {
         return name;
     }
-    public Item SetMaxStackSize (int maxStackSize) {
-        this.maxStackSize = maxStackSize;
-        return this;
-    }
-    public int GetItemStackLimit () {
-        return maxStackSize;
-    }
     public static void RegisterItems () {
-        RegisterItem(0, new Item().SetName("Stone").SetMaxStackSize(64));
-        RegisterItem(1, new Item().SetName("Dirt").SetMaxStackSize(64));
-        RegisterItem(2, new Item().SetName("Gravel").SetMaxStackSize(64));
-        RegisterItem(3, new Item().SetName("Sand").SetMaxStackSize(64));
+        RegisterItem(0, new Item().SetName("Stone"));
+        RegisterItem(1, new Item().SetName("Dirt"));
+        RegisterItem(2, new Item().SetName("Gravel"));
+        RegisterItem(3, new Item().SetName("Sand"));
         RegisterItem(256, new ItemSpade().SetName("iron_shovel"));
         RegisterItem(257, new ItemSpade().SetName("iron_shovel"));
         RegisterItem(258, new ItemSpade().SetName("iron_shovel"));
@@ -30,7 +20,6 @@ public class Item {
     private static void RegisterItem (int id, Item itemIn) {
         ItemRegistry.Register(id, itemIn);
     }
-    public ItemStack OnItemRightClick (ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-        return itemStackIn;
+    public void OnItemRightClick (Item itemStackIn, World worldIn, EntityPlayer playerIn) {
     }
 }
