@@ -14,7 +14,7 @@ public struct AABB {
         maxY = Math.Max(y1, y2);
         maxZ = Math.Max(z1, z2);
     }
-    public readonly AABB AddCoord (double x, double y, double z) {
+    public readonly AABB BroadPhase (double x, double y, double z) {
         return new(minX + Math.Min(0, x), minY + Math.Min(0, y), minZ + Math.Min(0, z), maxX + Math.Max(0, x), maxY + Math.Max(0, y), maxZ + Math.Max(0, z));
     }
     public readonly bool IntersectsWith (AABB other) {

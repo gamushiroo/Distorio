@@ -60,7 +60,7 @@ public class EntityPlayer : EntityLiving {
         base.Update();
 
         double t = resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
-        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(0, Math.Max(t, 0), 0), ID);
+        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(0, Math.Max(t, 0), 0), ID);
         foreach (AABB other in others) {
             t = BoundingBox.CalculateYOffset(t, other);
         }

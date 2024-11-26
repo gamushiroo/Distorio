@@ -77,7 +77,7 @@ public abstract class Entity {
             double i = x;
             double j = y;
             double k = z;
-            List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.AddCoord(x, y, z), ID);
+            List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(x, y, z), ID);
             List<KeyValuePair<double, Action>> l = new() {
             new(Math.Abs(x), CalculateXOffset),
             new(Math.Abs(y), CalculateYOffset),
