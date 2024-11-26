@@ -17,9 +17,13 @@ public class Item {
         RegisterItem(258, new ItemSpade().SetName("iron_shovel"));
         RegisterItem(259, new ItemSpade().SetName("iron_shovel"));
     }
+    public virtual void Update () {
+    }
     private static void RegisterItem (int id, Item itemIn) {
         ItemRegistry.Register(id, itemIn);
     }
-    public void OnItemRightClick (Item itemStackIn, World worldIn, EntityPlayer playerIn) {
+    public virtual void OnItemLeftClick (World worldIn, EntityPlayer playerIn) {
+    }
+    public virtual void OnItemRightClick (World worldIn, EntityPlayer playerIn) {
     }
 }

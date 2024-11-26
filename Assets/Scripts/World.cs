@@ -14,7 +14,6 @@ public class World : MonoBehaviour {
     public AudioSource audioSource;
     public Material[] materials = new Material[2];
     public List<BlockType> blockTypes = new();
-    public List<ItemType> itemTypes = new();
     public List<Entity> entities = new();
     public Transform backGround;
     public Transform cam;

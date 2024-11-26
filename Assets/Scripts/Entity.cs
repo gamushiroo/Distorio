@@ -9,7 +9,7 @@ public abstract class Entity {
     private protected readonly World world;
     private protected readonly GameObject gameObject;
     private protected readonly Transform transform;
-    private protected readonly AudioSource audioSource;
+    public readonly AudioSource audioSource;
     private protected bool isGrounded;
     private protected float gravityMultiplier = 1;
     private protected float defaultWidth = 0.6F;

@@ -18,9 +18,11 @@ public class EntityPlayer : EntityLiving {
     bool isMining;
     private float gunCoolDown = 0;
 
-    float projectiles = 50;
-    float spread = 10;
-    float initialVelocity = 100;
+    public float fovDef = 70;
+    public float fovTarget;
+    public float currentFov;
+
+    Item item = new ItemWeapon();
 
     public EntityPlayer (World world) : base(world) {
         camera = world.camObj;
@@ -31,16 +33,8 @@ public class EntityPlayer : EntityLiving {
         meshType = 19;
         base.Initialize();
         ToWorldSpawn();
-        projectiles = 35;
-        spread = 8;
-        initialVelocity = 170;
 
 
-        string proj = "Projectiles: " + projectiles.ToString() + "\n";
-        string spre = "Spread: " + spread.ToString() + " degrees\n";
-        string inve = "Initial Velocity: " + initialVelocity.ToString() + "\n";
-
-        world.hpText.text = proj + spre + inve;
 
     }
     void ToWorldSpawn () {
@@ -51,7 +45,14 @@ public class EntityPlayer : EntityLiving {
     }
     public override void Update () {
 
-        camera.fieldOfView = Input.GetMouseButton(1) ? 50 : 70;
+        item.Update();
+
+        currentFov += (fovTarget - currentFov) * Time.deltaTime * resistance * 2;
+        camera.fieldOfView = currentFov;
+        fovTarget = fovDef;
+
+
+
         gunCoolDown += Time.deltaTime;
         coolDown += Time.deltaTime;
 
@@ -116,7 +117,10 @@ public class EntityPlayer : EntityLiving {
             Initialize();
         }
         if (Input.GetMouseButton(0)) {
-            ShootGun();
+            item.OnItemLeftClick(world, this);
+        }
+        if (Input.GetMouseButton(1)) {
+            item.OnItemRightClick(world, this);
         }
     }
     void AddInputForce () {
@@ -127,25 +131,6 @@ public class EntityPlayer : EntityLiving {
             AddForce(velocityX * -2, velocityY * -2 + 20, velocityZ * -2);
         }
         AddForce(Vec3.ToVec3(PlayerVel()));
-    }
-
-
-
-
-    protected void ShootGun () {
-
-        if (gunCoolDown >= 0.5F) {
-
-            for (int i = 0; i < projectiles; i++) {
-                float rand1 = UnityEngine.Random.Range(-180, 180) * Mathf.Deg2Rad;
-                float rand2 = UnityEngine.Random.Range(-spread, spread) / 2 * Mathf.Deg2Rad;
-                Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
-                Vector3 aaa = GetRotation() * ttt;
-                world.entityQueue.Enqueue(new EntityProjectile(posX, eyeHeight + posY, posZ, aaa, world));
-            }
-            audioSource.PlayOneShot(world.dd, 0.5F);
-            gunCoolDown = 0;
-        }
     }
 
     private BlockType GetVoxelID () {
@@ -167,10 +152,10 @@ public class EntityPlayer : EntityLiving {
         SelectingPos = Vector3Int.FloorToInt(_camPos);
         tryPlacingPos = Vector3Int.FloorToInt(_camPos2);
     }
-    Vector3 GetCamPos () {
+    public Vector3 GetCamPos () {
         return Vec3.ToVector3(posX, posY + eyeHeight, posZ);
     }
-    Quaternion GetRotation () {
+    public Quaternion GetRotation () {
         return Quaternion.Euler(rotationPitch, rotationYaw, 0);
     }
     Vector3 PlayerVel () {
