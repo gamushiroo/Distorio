@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 public struct AABB {
     public double minX;
     public double minY;
@@ -21,7 +20,7 @@ public struct AABB {
     public readonly bool IntersectsWith (AABB other) {
         return minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY && minZ < other.maxZ && maxZ > other.minZ;
     }
-    public readonly bool IntersectsWith (Vector3Int pos) {
+    public readonly bool IntersectsWith (Vec3i pos) {
         return IntersectsWith(new AABB(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1));
     }
     public readonly double CalculateXOffset (double offset, AABB other) {

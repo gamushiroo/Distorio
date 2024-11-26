@@ -89,7 +89,7 @@ public class EntityPlayer : EntityLiving {
                 world.DestroyBlock(SelectingPos);
             }
         }
-        if (!BoundingBox.IntersectsWith(tryPlacingPos) && (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1))) {
+        if (!BoundingBox.IntersectsWith(Vec3i.ToVec3i(tryPlacingPos)) && (Input.GetMouseButton(1) && coolDown >= 0.3f || Input.GetMouseButtonDown(1))) {
             if (world.SetBlock(tryPlacingPos, SelectingPos)) {
                 coolDown = 0;
             }
