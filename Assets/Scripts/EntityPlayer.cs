@@ -101,8 +101,8 @@ public class EntityPlayer : EntityLiving {
             currentItem += Input.GetAxis("Mouse ScrollWheel") > 0 ? -1 : 1;
             currentItem = Math.Clamp(currentItem, 0, items.Length - 1);
         }
-        foreach (Item item in items) {
-            item.Update();
+        for (int i = 0; i < items.Length; i++) {
+            items[i].Update();
         }
         if (Input.GetMouseButton(0)) {
             items[currentItem].LeftMouseButton(world, this);
