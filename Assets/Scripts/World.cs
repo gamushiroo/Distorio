@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +27,6 @@ public class World : MonoBehaviour {
 
 
     public Queue<Entity> entityQueue = new();
-
     private readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly List<Chunk> chunksToUpdate = new();
@@ -40,28 +38,14 @@ public class World : MonoBehaviour {
 
         Cursor.lockState = CursorLockMode.Locked;
 
-        Item.RegisterItems();
         InitNoise();
-        GenerateWorld();
+        CheckViewDistance(new(0, 0, 0));
         ModifyChunks();
         UpdateChunks();
-
-        void GenerateWorld () {
-            for (int x = -Data.ChunkLoadRange; x < Data.ChunkLoadRange; x++) {
-                for (int y = -Data.ChunkLoadRange; y < Data.ChunkLoadRange; y++) {
-                    Vector2Int pos = new(x, y);
-                    chunks.Add(pos, new(pos, this));
-                    chunks[pos].GenerateTerrainData();
-                    chunksToUpdate.Add(chunks[pos]);
-                }
-            }
-        }
     }
     private void Start () {
         entities.Add(new EntityPlayer(this));
-
     }
-
     public void DestroyBlock (Vector3 position) {
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
         Queue<VoxelAndPos> queue = new();
@@ -95,7 +79,7 @@ public class World : MonoBehaviour {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this));
-                } 
+                }
                 if (!chunks[pos].IsTerrainMapGenerated) {
                     chunks[pos].GenerateTerrainData();
                     chunksToUpdate.Add(chunks[pos]);

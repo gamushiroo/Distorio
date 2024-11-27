@@ -1,4 +1,3 @@
-using System.Numerics;
 using UnityEngine;
 
 public struct Vec3i {

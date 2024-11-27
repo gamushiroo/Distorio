@@ -6992,19 +6992,6 @@ MonoBehaviour:
     bottomFaceTexture: 131
     leftFaceTexture: 131
     rightFaceTexture: 131
-  itemTypes:
-  - itemName: Wooden Shovel
-    sprite: {fileID: 222371796, guid: 6cb051d0378eeca4781282f4799ce4ab, type: 3}
-    mineSpeed: 1
-  - itemName: Stone Shovel
-    sprite: {fileID: 363629255, guid: 6cb051d0378eeca4781282f4799ce4ab, type: 3}
-    mineSpeed: 0
-  - itemName: Iron Shovel
-    sprite: {fileID: -2101637305, guid: 6cb051d0378eeca4781282f4799ce4ab, type: 3}
-    mineSpeed: 0
-  - itemName: Titanium Shovel
-    sprite: {fileID: -2101637305, guid: 6cb051d0378eeca4781282f4799ce4ab, type: 3}
-    mineSpeed: 0
   backGround: {fileID: 1933486333}
   cam: {fileID: 963194228}
   camObj: {fileID: 963194227}

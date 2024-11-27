@@ -19,8 +19,7 @@ public class Chunk {
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
     private readonly Vector2Int pos;
-    private readonly int posX;
-    private readonly int posY;
+    int vertexIndex = 0;
     public Chunk (Vector2Int pos, World world) {
         this.world = world;
         this.pos = pos;
@@ -67,8 +66,13 @@ public class Chunk {
         threadLocked = true;
         new Thread(new ThreadStart(UU)).Start();
     }
+
+    public void RendererChunk () {
+        threadLocked = true;
+        new Thread(new ThreadStart(UU)).Start();
+    }
     void UU () {
-        int vertexIndex = 0;
+        vertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
         waterTriangles.Clear();
@@ -82,7 +86,7 @@ public class Chunk {
                                 NormalMesh(x, y, z);
                                 break;
                             case 1:
-                                GrassMesh(x, y, z);
+                                GrassMesh(x, y, z, Data.grassMesh);
                                 break;
                             default:
                                 NormalMesh(x, y, z);
@@ -93,45 +97,51 @@ public class Chunk {
             }
         }
         threadLocked = false;
-        void NormalMesh (int x, int y, int z) {
-            for (int p = 0; p < 6; p++) {
-                if (voxelMap[x, y, z] == 7) {
-                    if (GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) != 7) {
-                        for (int i = 0; i < 4; i++) {
-                            vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
-                            uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
-                        }
-                        for (int i = 0; i < 6; i++) {
-                            waterTriangles.Add(Data.order[i] + vertexIndex);
-                        }
-                        vertexIndex += 4;
+    }
+    bool IsOutOfChunk (Vector3Int pos) {
+        return pos.x < 0 || pos.x >= ChunkWidth || pos.y < 0 || pos.y >= ChunkHeight || pos.z < 0 || pos.z >= ChunkWidth;
+    }
+    void NormalMesh (int x, int y, int z) {
+        for (int p = 0; p < 6; p++) {
+
+            int faceCheck = IsOutOfChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) ? world.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + Data.faceChecks[p]) : GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z));
+
+            if (voxelMap[x, y, z] == 7) {
+                if (faceCheck != 7) {
+                    for (int i = 0; i < 4; i++) {
+                        vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
+                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
                     }
-                } else {
-                    if (!world.blockTypes[GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z))].isSolid) {
-                        for (int i = 0; i < 4; i++) {
-                            vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
-                            uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
-                        }
-                        AddTriangles();
+                    for (int i = 0; i < 6; i++) {
+                        waterTriangles.Add(Data.order[i] + vertexIndex);
                     }
+                    vertexIndex += 4;
+                }
+            } else {
+                if (!world.blockTypes[faceCheck].isSolid) {
+                    for (int i = 0; i < 4; i++) {
+                        vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
+                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                    }
+                    AddTriangles();
                 }
             }
         }
-        void GrassMesh (int x, int y, int z) {
-            for (int p = 0; p < 4; p++) {
-                for (int i = 0; i < 4; i++) {
-                    vertices.Add(Data.voxelVerts[Data.grassMesh[p, i]] + new Vector3(x, y, z));
-                    uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
-                }
-                AddTriangles();
+    }
+    void GrassMesh (int x, int y, int z, int[,] mesh) {
+        for (int p = 0; p < mesh.Length >> 2; p++) {
+            for (int i = 0; i < 4; i++) {
+                vertices.Add(Data.voxelVerts[mesh[p, i]] + new Vector3(x, y, z));
+                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
             }
+            AddTriangles();
         }
-        void AddTriangles () {
-            for (int i = 0; i < 6; i++) {
-                triangles.Add(Data.order[i] + vertexIndex);
-            }
-            vertexIndex += 4;
+    }
+    void AddTriangles () {
+        for (int i = 0; i < 6; i++) {
+            triangles.Add(Data.order[i] + vertexIndex);
         }
+        vertexIndex += 4;
     }
     public void GenerateMesh () {
         Mesh mesh = new() {

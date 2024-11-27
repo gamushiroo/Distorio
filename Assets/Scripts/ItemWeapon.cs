@@ -13,30 +13,27 @@ public class ItemWeapon : Item {
 
     }
 
-    public override void OnItemLeftClick (World world, EntityPlayer playerIn) {
+    public override void LeftMouseButton (World world, EntityPlayer playerIn) {
 
-        float spread = defSpread * Mathf.Pow(playerIn.currentFov / playerIn.fovDef, 5);
-
+        float spread = defSpread * Mathf.Pow(playerIn.currentFov / playerIn.fovDef, 5) / 2 * Mathf.Deg2Rad;
+        Vector3 playerCamPos = playerIn.GetCamPos();
+        Quaternion playerRot = playerIn.GetRotation();
 
         if (gunCoolDown >= 0.5F) {
             for (int i = 0; i < projectiles; i++) {
-                float rand1 = UnityEngine.Random.Range(-180, 180) * Mathf.Deg2Rad;
-                float rand2 = UnityEngine.Random.Range(-spread, spread) / 2 * Mathf.Deg2Rad;
+                float rand1 = Random.Range(-180, 180) * Mathf.Deg2Rad;
+                float rand2 = Random.Range(-spread, spread) ;
                 Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
-                Vector3 aaa = playerIn.GetRotation() * ttt;
-
-                Vector3 fff = playerIn.GetCamPos();
-                world.entityQueue.Enqueue(new EntityProjectile(fff.x, fff.y, fff.z, aaa, world));
+                world.entityQueue.Enqueue(new EntityProjectile(playerCamPos.x, playerCamPos.y, playerCamPos.z, playerRot * ttt, world));
             }
             playerIn.audioSource.PlayOneShot(world.dd, 0.5F);
             gunCoolDown = 0;
         }
     }
-    public override void OnItemRightClick (World worldIn, EntityPlayer playerIn) {
+    public override void RightMouseButton (World worldIn, EntityPlayer playerIn) {
         playerIn.fovTarget = 60;
     }
     public override void Update () {
-        base.Update();
         gunCoolDown += Time.deltaTime;
     }
 }

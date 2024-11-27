@@ -25,6 +25,7 @@ public abstract class Entity {
     private protected double posY;
     private protected double posZ;
     public int ID;
+    protected bool inTheWater;
     private static int currentID = 0;
     private protected bool UseCollision = true;
     protected int meshType = 0;
@@ -65,7 +66,12 @@ public abstract class Entity {
         meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
     }
     public virtual void Update () {
-        AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
+        inTheWater = world.CollidingIDs(BoundingBox).Contains(7);
+        if (inTheWater) {
+            AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
+        } else {
+            AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
+        }
         Move();
         transform.position = Vec3.ToVector3(posX, posY, posZ);
     }
