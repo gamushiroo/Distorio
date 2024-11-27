@@ -7,20 +7,15 @@ public class EntityPlayer : EntityLiving {
     private protected float rotationYaw;
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
-    private Vector3Int SelectingPos;
-    private Vector3Int miningPos;
     private readonly Camera camera;
     private readonly Transform cameraTransform;
-    private float miningProgress;
-    private readonly float mineSpeed = 2.5f;
-    bool isMining;
-
+     public bool isMining;
     public float fovDef = 70;
     public float fovTarget;
     public float currentFov;
 
     public int currentItem = 0;
-    Item[] items = new Item[2] { new ItemWeapon(), new ItemBlock() };
+    private readonly Item[] items = new Item[2] { new ItemWeapon(), new ItemBlock() };
 
     public EntityPlayer (World world) : base(world) {
         camera = world.camObj;
@@ -42,12 +37,12 @@ public class EntityPlayer : EntityLiving {
     }
     public override void Update () {
 
-        currentFov += (fovTarget - currentFov) * Time.deltaTime * resistance * 2;
-        camera.fieldOfView = currentFov;
+        isMining = false;
         fovTarget = fovDef;
 
 
         CalculateInput();
+
         base.Update();
 
         double t = resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
@@ -68,30 +63,16 @@ public class EntityPlayer : EntityLiving {
             AddHealth(3 * Time.deltaTime);
         }
         CalculateItems();
-        CalculateSelectingPos();
-        isMining = Input.GetMouseButton(0) && GetVoxelID().hasCollision;
-        if (isMining) {
-            if (miningPos != SelectingPos) {
-                miningPos = SelectingPos;
-                miningProgress = 0;
-            }
-            miningProgress += Time.deltaTime * mineSpeed;
-            world.miningProgresBar.value = miningProgress / GetVoxelID().hardness;
-            if (miningProgress >= GetVoxelID().hardness) {
-                world.DestroyBlock(SelectingPos);
-            }
-        }
         SetGameObjectState();
     }
 
     void SetGameObjectState () {
+        currentFov += (fovTarget - currentFov) * Time.deltaTime * resistance * 2;
+        camera.fieldOfView = currentFov;
         cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
-        world.blockHighlight.transform.position = SelectingPos + Vector3.one * 0.5f;
-        world.miningEffect.transform.position = SelectingPos + Vector3.one * 0.5f;
         world.healing.transform.position = Vec3.ToVector3(posX, posY, posZ);
         world.hpBar.value = health / maxHealth;
         world.miningProgresBarObj.SetActive(isMining);
-        world.blockHighlight.SetActive(GetVoxelID().hasCollision);
         world.healing.SetActive(isHealed);
     }
 
@@ -127,23 +108,6 @@ public class EntityPlayer : EntityLiving {
             AddForce_Impulse(0, Data.jumpPower, 0);
         }
         AddForce(Vec3.ToVec3(PlayerVel()));
-    }
-
-    private BlockType GetVoxelID () {
-        return world.blockTypes[world.GetVoxelID(SelectingPos)];
-    }
-
-
-
-    void CalculateSelectingPos () {
-        Vector3 _camPos = GetCamPos();
-        for (int i = 0; i < 300; i++) {
-            if (world.blockTypes[world.GetVoxelID(_camPos)].hasCollision) {
-                break;
-            }
-            _camPos += GetRotation() * Vector3.forward * 0.02f;
-        }
-        SelectingPos = Vector3Int.FloorToInt(_camPos);
     }
     public Vector3 GetCamPos () {
         return Vec3.ToVector3(posX, posY + eyeHeight, posZ);
