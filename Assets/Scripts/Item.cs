@@ -7,4 +7,6 @@ public abstract class Item {
     }
     public virtual void RightMouseButtonDown (World worldIn, EntityPlayer playerIn) {
     }
+    public virtual void LeftMouseButtonDown (World worldIn, EntityPlayer playerIn) {
+    }
 }

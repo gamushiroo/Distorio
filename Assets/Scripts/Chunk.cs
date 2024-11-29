@@ -63,40 +63,50 @@ public class Chunk {
                 voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
             }
         }
-        threadLocked = true;
-        new Thread(new ThreadStart(UU)).Start();
+        world.QueueDraw1(pos);
     }
 
-    public void RendererChunk () {
+    public void Draw1 () {
         threadLocked = true;
         new Thread(new ThreadStart(UU)).Start();
-    }
-    void UU () {
-        vertexIndex = 0;
-        vertices.Clear();
-        triangles.Clear();
-        waterTriangles.Clear();
-        uvs.Clear();
-        for (int x = 0; x < ChunkWidth; x++) {
-            for (int y = 0; y < ChunkHeight; y++) {
-                for (int z = 0; z < ChunkWidth; z++) {
-                    if (voxelMap[x, y, z] != 0) {
-                        switch (world.blockTypes[voxelMap[x, y, z]].meshTypes) {
-                            case 0:
-                                NormalMesh(x, y, z);
-                                break;
-                            case 1:
-                                GrassMesh(x, y, z, Data.grassMesh);
-                                break;
-                            default:
-                                NormalMesh(x, y, z);
-                                break;
+        void UU () {
+            vertexIndex = 0;
+            vertices.Clear();
+            triangles.Clear();
+            waterTriangles.Clear();
+            uvs.Clear();
+            for (int x = 0; x < ChunkWidth; x++) {
+                for (int y = 0; y < ChunkHeight; y++) {
+                    for (int z = 0; z < ChunkWidth; z++) {
+                        if (voxelMap[x, y, z] != 0) {
+                            switch (world.blockTypes[voxelMap[x, y, z]].meshTypes) {
+                                case 0:
+                                    NormalMesh(x, y, z);
+                                    break;
+                                case 1:
+                                    GrassMesh(x, y, z, Data.grassMesh);
+                                    break;
+                                default:
+                                    NormalMesh(x, y, z);
+                                    break;
+                            }
                         }
                     }
                 }
             }
+            threadLocked = false;
         }
-        threadLocked = false;
+    }
+    public void Draw2 () {
+        Mesh mesh = new() {
+            subMeshCount = 2,
+            vertices = vertices.ToArray(),
+            uv = uvs.ToArray()
+        };
+        mesh.SetTriangles(triangles.ToArray(), 0);
+        mesh.SetTriangles(waterTriangles.ToArray(), 1);
+        mesh.RecalculateNormals();
+        meshFilter.mesh = mesh;
     }
     bool IsOutOfChunk (Vector3Int pos) {
         return pos.x < 0 || pos.x >= ChunkWidth || pos.y < 0 || pos.y >= ChunkHeight || pos.z < 0 || pos.z >= ChunkWidth;
@@ -142,16 +152,5 @@ public class Chunk {
             triangles.Add(Data.order[i] + vertexIndex);
         }
         vertexIndex += 4;
-    }
-    public void GenerateMesh () {
-        Mesh mesh = new() {
-            subMeshCount = 2,
-            vertices = vertices.ToArray()
-        };
-        mesh.SetTriangles(triangles.ToArray(), 0);
-        mesh.SetTriangles(waterTriangles.ToArray(), 1);
-        mesh.uv = uvs.ToArray();
-        mesh.RecalculateNormals();
-        meshFilter.mesh = mesh;
     }
 }

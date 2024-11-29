@@ -9,7 +9,7 @@ public static class Data {
     public static readonly float jumpPower = Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
     public static readonly float playerSpeed = 13.0F / 3.0F;
 
-    public static readonly int ChunkLoadRange = 6;
+    public static readonly int CRange = 4;
     public static readonly int TextureSize = 16;
     public static readonly float mouseSens = 0.60F;
 
@@ -36,6 +36,12 @@ public static class Data {
         new(0.0F, 1.0F),
         new(1.0F, 0.0F),
         new(1.0F, 1.0F)
+    };
+    public static readonly Vector2Int[] chunkCheck = new Vector2Int[4] {
+        new(0,  -1),
+        new(0,  1),
+        new(-1,  0),
+        new(1,  0)
     };
     public static readonly int[] order = new int[6] { 0, 1, 2, 2, 1, 3 };
 

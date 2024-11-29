@@ -15,7 +15,7 @@ public class EntityPlayer : EntityLiving {
     public float currentFov;
 
     public int currentItem = 0;
-    private readonly Item[] items = new Item[2] { new ItemWeapon(), new ItemBlock() };
+    private readonly Item[] items = new Item[4] { new ItemWeapon(), new ItemBlock(1), new ItemBlock(2), new ItemBlock(5), };
 
     public EntityPlayer (World world) : base(world) {
         camera = world.camObj;
@@ -87,6 +87,9 @@ public class EntityPlayer : EntityLiving {
         }
         if (Input.GetMouseButton(0)) {
             items[currentItem].LeftMouseButton(world, this);
+        }
+        if (Input.GetMouseButtonDown(0)) {
+            items[currentItem].LeftMouseButtonDown(world, this);
         }
         if (Input.GetMouseButton(1)) {
             items[currentItem].RightMouseButton(world, this);

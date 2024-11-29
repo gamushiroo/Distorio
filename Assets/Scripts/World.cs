@@ -19,7 +19,6 @@ public class World : MonoBehaviour {
     public Camera camObj;
     public Hand hand;
     public GameObject miningProgresBarObj;
-    public int itemIDInHand = 1;
     public GameObject blockHighlight;
     public GameObject miningEffect; public Slider miningProgresBar;
     private Vector2 offset;
@@ -30,7 +29,8 @@ public class World : MonoBehaviour {
     private readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly List<Chunk> chunksToUpdate = new();
-    private readonly Queue<Chunk> chunksToDraw = new();
+    private readonly List<Chunk> Draw1 = new(Data.CRange * Data.CRange);
+    private readonly List<Chunk> Draw2 = new(Data.CRange * Data.CRange);
 
 
 
@@ -42,15 +42,9 @@ public class World : MonoBehaviour {
         CheckViewDistance(new(0, 0, 0));
         ModifyChunks();
         UpdateChunks();
-    }
-    private void Start () {
+        DrawChunks();
+
         entities.Add(new EntityPlayer(this));
-    }
-    public void DestroyBlock (Vector3 position) {
-        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
-        Queue<VoxelAndPos> queue = new();
-        queue.Enqueue(new(pos, 0));
-        AddMod(queue);
     }
     private void LateUpdate () {
 
@@ -66,16 +60,45 @@ public class World : MonoBehaviour {
         }
         ModifyChunks();
         UpdateChunks();
-        if (chunksToDraw.Count > 0 && chunksToDraw.Peek().IsEditable) {
-            chunksToDraw.Dequeue().GenerateMesh();
+        DrawChunks();
+    }
+
+
+    void DrawChunks () {
+        for (int i = Draw1.Count - 1; i >= 0; i--) {
+            if (Draw1[i].IsEditable) {
+                Draw1[i].Draw1();
+                Draw2.Add(Draw1[i]);
+                Draw1.RemoveAt(i);
+            }
+        }
+        for (int i = Draw2.Count - 1; i >= 0; i--) {
+            if (Draw2[i].IsEditable) {
+                Draw2[i].Draw2();
+                Draw2.RemoveAt(i);
+            }
         }
     }
-    public void CheckViewDistance (Vec3i playerPos) {
+    public void QueueDraw1 (Vector2Int pos) {
+        for (int i = 0; i < 4; i++) {
+            Vector2Int fffpos = pos + Data.chunkCheck[i];
+            if (chunks.ContainsKey(fffpos)) {
+                Draw1.Add(chunks[fffpos]);
+            }
+        }
+    }
+    public void DestroyBlock (Vector3 position) {
+        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+        Queue<VoxelAndPos> queue = new();
+        queue.Enqueue(new(pos, 0));
+        AddMod(queue);
+    }
+    public void CheckViewDistance (Vec3i CPos) {
         foreach (Chunk c in chunks.Values) {
             c.SetActiveState(false);
         }
-        for (int x = playerPos.x - Data.ChunkLoadRange; x < playerPos.x + Data.ChunkLoadRange; x++) {
-            for (int z = playerPos.z - Data.ChunkLoadRange; z < playerPos.z + Data.ChunkLoadRange; z++) {
+        for (int x = CPos.x - Data.CRange; x < CPos.x + Data.CRange; x++) {
+            for (int z = CPos.z - Data.CRange; z < CPos.z + Data.CRange; z++) {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this));
@@ -84,7 +107,14 @@ public class World : MonoBehaviour {
                     chunks[pos].GenerateTerrainData();
                     chunksToUpdate.Add(chunks[pos]);
                 }
-                chunks[pos].SetActiveState(true);
+            }
+        }
+        for (int x = CPos.x - Data.CRange - 12; x < CPos.x + Data.CRange + 12; x++) {
+            for (int z = CPos.z - Data.CRange - 12; z < CPos.z + Data.CRange + 12; z++) {
+                Vector2Int pos = new(x, z);
+                if (chunks.ContainsKey(pos)) {
+                    chunks[pos].SetActiveState(true);
+                }
             }
         }
     }
@@ -169,10 +199,10 @@ public class World : MonoBehaviour {
         }
         return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
     }
-    public bool SetBlock (Vector3 position, Vector3 selectingPos) {
-        if (itemIDInHand != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
+    public bool SetBlock (Vector3 position, Vector3 selectingPos, int itemID) {
+        if (itemID != 0 && !blockTypes[GetVoxelID(position)].hasCollision && blockTypes[GetVoxelID(selectingPos)].hasCollision) {
             Queue<VoxelAndPos> queue = new();
-            queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), itemIDInHand));
+            queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), itemID));
             AddMod(queue);
             hand.placeEase = 0;
             return true;
@@ -212,7 +242,7 @@ public class World : MonoBehaviour {
         for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
             if (chunksToUpdate[i].IsEditable) {
                 chunksToUpdate[i].UpdateChunk();
-                chunksToDraw.Enqueue(chunksToUpdate[i]);
+                Draw1.Add(chunksToUpdate[i]);
                 chunksToUpdate.RemoveAt(i);
             }
         }

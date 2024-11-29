@@ -9,13 +9,18 @@ public class ItemBlock : Item {
     private float miningProgress = 0;
     private float coolDown = 0;
 
-    public override void RightMouseButton (World world, EntityPlayer player) {
+    private int itemID = 0;
+    public ItemBlock (int itemID) {
+        this.itemID = itemID;
+    }
+
+    public override void LeftMouseButton (World world, EntityPlayer player) {
         CalculateSelectingPos(world, player);
         if (coolDown >= 0.3f && TryPlace(world, player)) {
             coolDown = 0;
         }
     }
-    public override void LeftMouseButton (World world, EntityPlayer player) {
+    public override void RightMouseButton (World world, EntityPlayer player) {
 
         CalculateSelectingPos(world, player);
         BlockType eee = world.blockTypes[world.GetVoxelID(SelectingPos)];
@@ -32,7 +37,7 @@ public class ItemBlock : Item {
             player.isMining = true;
         }
     }
-    public override void RightMouseButtonDown (World world, EntityPlayer player) {
+    public override void LeftMouseButtonDown (World world, EntityPlayer player) {
         if (coolDown != 0 && TryPlace(world, player)) {
             coolDown = 0;
         }
@@ -43,7 +48,7 @@ public class ItemBlock : Item {
 
     bool TryPlace (World world, EntityPlayer player) {
         CalculateSelectingPos(world, player);
-        return !player.BoundingBox.IntersectsWith(Vec3i.ToVec3i(tryPlacingPos)) && world.SetBlock(tryPlacingPos, SelectingPos);
+        return !player.BoundingBox.IntersectsWith(Vec3i.ToVec3i(tryPlacingPos)) && world.SetBlock(tryPlacingPos, SelectingPos, itemID);
     }
     void CalculateSelectingPos (World world, EntityPlayer player) {
         Vector3 _camPos = player.GetCamPos();
