@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityPlayer : EntityLiving {
-    private protected float rotationPitch;
-    private protected float rotationYaw;
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
     private readonly Camera camera;
     private readonly Transform cameraTransform;
-     public bool isMining;
+    public bool isMining;
     public float fovDef = 70;
     public float fovTarget;
     public float currentFov;
 
-    public int currentItem = 0;
-    private readonly Item[] items = new Item[4] { new ItemWeapon(), new ItemBlock(1), new ItemBlock(2), new ItemBlock(5), };
 
     public EntityPlayer (World world) : base(world) {
         camera = world.camObj;
@@ -28,12 +24,6 @@ public class EntityPlayer : EntityLiving {
         ToWorldSpawn();
 
 
-    }
-    void ToWorldSpawn () {
-        SetPosition(0.0D, 0.0D, 0.0D);
-        while (world.GetCollidingBoundingBoxes(BoundingBox, ID).Count != 0) {
-            AddCoordinate(0.0D, 1.0D, 0.0D);
-        }
     }
     public override void Update () {
 
@@ -80,11 +70,9 @@ public class EntityPlayer : EntityLiving {
 
         if (Input.GetAxis("Mouse ScrollWheel") != 0) {
             currentItem += Input.GetAxis("Mouse ScrollWheel") > 0 ? -1 : 1;
-            currentItem = Math.Clamp(currentItem, 0, items.Length - 1);
+            currentItem = Math.Clamp(currentItem, 0, items.Count - 1);
         }
-        for (int i = 0; i < items.Length; i++) {
-            items[i].Update();
-        }
+        /*
         if (Input.GetMouseButton(0)) {
             items[currentItem].LeftMouseButton(world, this);
         }
@@ -97,6 +85,7 @@ public class EntityPlayer : EntityLiving {
         if (Input.GetMouseButtonDown(1)) {
             items[currentItem].RightMouseButtonDown(world, this);
         }
+        */
 
     }
 
@@ -111,12 +100,6 @@ public class EntityPlayer : EntityLiving {
             AddForce_Impulse(0, Data.jumpPower, 0);
         }
         AddForce(Vec3.ToVec3(PlayerVel()));
-    }
-    public Vector3 GetCamPos () {
-        return Vec3.ToVector3(posX, posY + eyeHeight, posZ);
-    }
-    public Quaternion GetRotation () {
-        return Quaternion.Euler(rotationPitch, rotationYaw, 0);
     }
     Vector3 PlayerVel () {
         Vector3 a = Vector3.zero;

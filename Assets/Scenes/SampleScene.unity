@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465791, g: 0.49641317, b: 0.57481784, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5746,14 +5746,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.10938167, y: 0.8754261, z: -0.40821788, w: 0.23456976}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 150, z: 0}
 --- !u!1 &786760889
 GameObject:
   m_ObjectHideFlags: 0
@@ -6700,7 +6700,7 @@ MonoBehaviour:
   hpBar: {fileID: 786760891}
   hpText: {fileID: 1828601337}
   eeeeeee: {fileID: 8300000, guid: 4f00da3e35b27f54b916b1ccecc0b1ce, type: 3}
-  dd: {fileID: 8300000, guid: 4f00da3e35b27f54b916b1ccecc0b1ce, type: 3}
+  dd: {fileID: 8300000, guid: e8cd194ac91943a4295f2924588e67f6, type: 3}
   audioSource: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: e92221d114e6e854f8578be0f5db3b98, type: 2}
@@ -6997,7 +6997,6 @@ MonoBehaviour:
   camObj: {fileID: 963194227}
   hand: {fileID: 1439694691}
   miningProgresBarObj: {fileID: 790624905}
-  itemIDInHand: 1
   blockHighlight: {fileID: 2109980259}
   miningEffect: {fileID: 485163719}
   miningProgresBar: {fileID: 790624907}

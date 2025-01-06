@@ -22,4 +22,10 @@ public class EntityLiving : Entity {
             Kill();
         }
     }
+    protected void ToWorldSpawn () {
+        SetPosition(0.0D, 0.0D, 0.0D);
+        while (world.GetCollidingBoundingBoxes(BoundingBox, ID).Count != 0) {
+            AddPosition(0.0D, 1.0D, 0.0D);
+        }
+    }
 }

@@ -1,172 +1,168 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
   <Class Name="Chunk">
-    <Position X="28.25" Y="4" Width="2" />
+    <Position X="48" Y="14.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AIEAEAAQAgBAAAAIIiQAIYACAIAVIAAAAAAAxAAAAgA=</HashCode>
+      <HashCode>AIECEAAQAgBAABAIIiAAIYACIIAUIAAAgABgBAAAggA=</HashCode>
       <FileName>Assets\Scripts\Chunk.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Data">
-    <Position X="11.25" Y="4" Width="2" />
+  <Class Name="Data" Collapsed="true">
+    <Position X="45.75" Y="12.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgQIBQJBgDAggIAAAAAAAAgAgACAAIBAUABAACAAECA=</HashCode>
+      <HashCode>AAQIBQJBgDQggIAAAAAAAAgAgACAAIBAUAFAACAAECA=</HashCode>
       <FileName>Assets\Scripts\Data.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entity">
-    <Position X="6.25" Y="4" Width="2.25" />
+    <Position X="36.25" Y="19.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AR0AEAAEANgQwQRA4AQCAAAEACAEEgAIIgwAwAIIAgE=</HashCode>
+      <HashCode>AR0AEAAEANgQwQRA4AQCAAAEACAEEgAIogwAwAIIAgE=</HashCode>
       <FileName>Assets\Scripts\Entity.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="EntityLiving">
-    <Position X="6.75" Y="14" Width="1.5" />
+    <Position X="36.25" Y="29.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAACAIIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAQg=</HashCode>
       <FileName>Assets\Scripts\EntityLiving.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="EntityPlayer">
-    <Position X="4.25" Y="17.75" Width="1.75" />
+    <Position X="35" Y="33.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAUgIICgCAQQCEwIAQABACACCAABUgCADACAEEAAA=</HashCode>
+      <HashCode>AAxAQgAADgCAQQAAwIgAAEACAACAABEgAABACAAAAAA=</HashCode>
       <FileName>Assets\Scripts\EntityPlayer.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="EntityProjectile">
-    <Position X="6.75" Y="17.75" Width="1.5" />
+    <Position X="37.25" Y="33.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAQAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\EntityProjectile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Hand" Collapsed="true">
-    <Position X="33.5" Y="0.5" Width="1.5" />
+    <Position X="42.25" Y="13.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAUAEAAAACAAAAAAAAQAAAAAACACAAAAAAAEAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Hand.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Inventory">
-    <Position X="18.5" Y="4" Width="2" />
+  <Class Name="Inventory" Collapsed="true">
+    <Position X="44" Y="13.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABgAAAAEAAQABEAAAAAAAAADAAAAAAAACAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Inventory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Item">
-    <Position X="1.75" Y="4" Width="1.75" />
+    <Position X="37.5" Y="12.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAAAAAAIAAAAAAAAAAAAAAAQAEAEAAIAAAQAAABCA=</HashCode>
+      <HashCode>AAQAAABACAAAAAAAAAAAAAAAAAAAACAAAAAAAAAEAAA=</HashCode>
       <FileName>Assets\Scripts\Item.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ItemRegistry">
-    <Position X="21.25" Y="4" Width="1.5" />
+  <Class Name="ItemBlock">
+    <Position X="39.75" Y="14.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAABAAAAAQAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\ItemRegistry.cs</FileName>
+      <HashCode>AAQAAABIAACAAAAEAAAQAAAAAAAAACQACAAAAAEFAAA=</HashCode>
+      <FileName>Assets\Scripts\ItemBlock.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ItemSpade">
-    <Position X="2" Y="9.75" Width="1.5" />
+    <Position X="35.25" Y="16.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\ItemSpade.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ItemStack">
-    <Position X="26" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAIAEAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAgA=</HashCode>
-      <FileName>Assets\Scripts\ItemStack.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="ItemTool">
-    <Position X="2" Y="7.75" Width="1.5" />
+    <Position X="35.25" Y="14.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\ItemTool.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MathHelper">
-    <Position X="14" Y="4" Width="1.5" />
+  <Class Name="ItemWeapon">
+    <Position X="37.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAEABAAAAAAAAAAAAAAAAAACAAAAAAAABAAAAEAAA=</HashCode>
+      <FileName>Assets\Scripts\ItemWeapon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MathHelper" Collapsed="true">
+    <Position X="45.75" Y="13.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\MathHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Noise">
-    <Position X="16.25" Y="4" Width="1.5" />
+  <Class Name="Noise" Collapsed="true">
+    <Position X="42.25" Y="14.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAEAAAAAAAgAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Noise.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Structure">
-    <Position X="31" Y="4" Width="1.5" />
+  <Class Name="Structure" Collapsed="true">
+    <Position X="44" Y="14.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAACABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Structure.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World" Collapsed="true">
-    <Position X="35.25" Y="0.5" Width="1.5" />
+    <Position X="45.75" Y="14.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AiCQBSAAAmNCAAAgQAwAIBFAIAAEEwAAgACCBENCAEA=</HashCode>
+      <HashCode>AiCWBSAAAkNAABAgQAgAIBFAIAAEEwAAgACCBENCAEQ=</HashCode>
       <FileName>Assets\Scripts\World.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BlockType">
-    <Position X="23.5" Y="4" Width="1.75" />
+  <Class Name="BlockType" Collapsed="true">
+    <Position X="42.25" Y="12.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEACAAAQAAAAAQIQAAAAYCABAAAAAAgAIAAAAAEAA=</HashCode>
       <FileName>Assets\Scripts\World.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="System.Object">
-    <Position X="16.25" Y="0.5" Width="2" />
-    <TypeIdentifier />
-  </Class>
   <Struct Name="AABB" Collapsed="true">
-    <Position X="33.5" Y="1.75" Width="1.5" />
+    <Position X="42.25" Y="15.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IHgAAAAAAAAAAAAAAAAAAAACAAAQAAAAAAAAAHAAAAA=</HashCode>
       <FileName>Assets\Scripts\AABB.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="VoxelAndPos" Collapsed="true">
-    <Position X="37" Y="2.75" Width="1.5" />
+    <Position X="45.75" Y="16.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Assets\Scripts\Data.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="ItemType" Collapsed="true">
-    <Position X="37" Y="1.75" Width="1.5" />
+    <Position X="45.75" Y="15.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAAAAAAAAAAABAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Assets\Scripts\Data.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="ChunkVoxel" Collapsed="true">
-    <Position X="35.25" Y="1.75" Width="1.5" />
+    <Position X="44" Y="15.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAABAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Data.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Vec3" Collapsed="true">
-    <Position X="33.5" Y="2.75" Width="1.5" />
+    <Position X="42.25" Y="16.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAIAAQAAAAAAAEAEAAAACAAAIAAAA=</HashCode>
       <FileName>Assets\Scripts\Vec3.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Vec3i" Collapsed="true">
-    <Position X="35.25" Y="2.75" Width="1.5" />
+    <Position X="44" Y="16.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAgAAAAAAAAAAAAAAgAABgAQAAAAA=</HashCode>
       <FileName>Assets\Scripts\Vec3i.cs</FileName>

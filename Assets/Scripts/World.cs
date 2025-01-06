@@ -36,6 +36,7 @@ public class World : MonoBehaviour {
 
     private void Awake () {
 
+        Application.targetFrameRate = 30;
         Cursor.lockState = CursorLockMode.Locked;
 
         InitNoise();
@@ -45,6 +46,7 @@ public class World : MonoBehaviour {
         DrawChunks();
 
         entities.Add(new EntityPlayer(this));
+        entities.Add(new EntityHullbreaker(this));
     }
     private void LateUpdate () {
 

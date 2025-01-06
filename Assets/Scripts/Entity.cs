@@ -11,7 +11,7 @@ public abstract class Entity {
     private protected readonly Transform transform;
     public readonly AudioSource audioSource;
     private protected bool isGrounded;
-    private protected float gravityMultiplier = 1;
+    public float gravityMultiplier = 1;
     private protected float defaultWidth = 0.6F;
     private protected float defaultHeight = 1.8F;
     private protected float defaulteyeHeight = 0.9F;
@@ -28,8 +28,14 @@ public abstract class Entity {
     protected bool inTheWater;
     private static int currentID = 0;
     private protected bool UseCollision = true;
-    protected int meshType = 0;
+    protected int meshType = 18;
     protected readonly float resistance = 14.0F;
+    private protected float rotationPitch = 0;
+    private protected float rotationYaw = 0;
+    public List<Item> items = new();
+    public int currentItem = 0;
+    public Entity pearent;
+    public List<Entity> child = new();
     public Entity (World worldIn) {
         ID = currentID++;
         world = worldIn;
@@ -39,6 +45,19 @@ public abstract class Entity {
         audioSource = gameObject.AddComponent<AudioSource>();
         gameObject.AddComponent<MeshRenderer>().material = world.materials[0];
         Initialize();
+    }
+    public Vector3 GetCamPos () {
+        return Vec3.ToVector3(posX, posY + eyeHeight, posZ);
+    }
+    public Quaternion GetRotation () {
+        return Quaternion.Euler(rotationPitch, rotationYaw, 0);
+    }
+    public void SetSize (float width, float height) {
+        defaultWidth = width;
+        defaultHeight = height;
+        this.width = defaultWidth;
+        this.height = defaultHeight;
+        GenerateMesh();
     }
     private protected virtual void Initialize () {
         width = defaultWidth;
@@ -66,13 +85,18 @@ public abstract class Entity {
         meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
     }
     public virtual void Update () {
-        inTheWater = world.CollidingIDs(BoundingBox).Contains(7);
-        if (inTheWater) {
-            AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
-        } else {
-            AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
+        for (int i = 0; i < items.Count; i++) {
+            items[i].Update();
         }
-        Move();
+        if (pearent == null) {
+            inTheWater = world.CollidingIDs(BoundingBox).Contains(7);
+            if (inTheWater) {
+                AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
+            } else {
+                AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
+            }
+            Move();
+        }
         transform.position = Vec3.ToVector3(posX, posY, posZ);
     }
     void Move () {
@@ -106,11 +130,11 @@ public abstract class Entity {
             if (i != x || j != y || k != z) {
                 OnCollision();
             }
-            void CalculateXOffset () { foreach (AABB q in p) { x = BoundingBox.CalculateXOffset(x, q); } AddCoordinate(x, 0.0D, 0.0D); }
-            void CalculateYOffset () { foreach (AABB q in p) { y = BoundingBox.CalculateYOffset(y, q); } AddCoordinate(0.0D, y, 0.0D); }
-            void CalculateZOffset () { foreach (AABB q in p) { z = BoundingBox.CalculateZOffset(z, q); } AddCoordinate(0.0D, 0.0D, z); }
+            void CalculateXOffset () { foreach (AABB q in p) { x = BoundingBox.CalculateXOffset(x, q); } AddPosition(x, 0.0D, 0.0D); }
+            void CalculateYOffset () { foreach (AABB q in p) { y = BoundingBox.CalculateYOffset(y, q); } AddPosition(0.0D, y, 0.0D); }
+            void CalculateZOffset () { foreach (AABB q in p) { z = BoundingBox.CalculateZOffset(z, q); } AddPosition(0.0D, 0.0D, z); }
         } else {
-            AddCoordinate(x, y, z);
+            AddPosition(x, y, z);
         }
     }
     private protected void AddForce (double x, double y, double z) {
@@ -133,13 +157,13 @@ public abstract class Entity {
         velocityY += y;
         velocityZ += z;
     }
-    private protected void SetPosition (double x, double y, double z) {
+    public void SetPosition (double x, double y, double z) {
         posX = x;
         posY = y;
         posZ = z;
         ModifyBoundingBox();
     }
-    private protected void AddCoordinate (double x, double y, double z) {
+    private protected void AddPosition (double x, double y, double z) {
         posX += x;
         posY += y;
         posZ += z;
