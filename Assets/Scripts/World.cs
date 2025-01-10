@@ -36,17 +36,16 @@ public class World : MonoBehaviour {
 
     private void Awake () {
 
-        Application.targetFrameRate = 30;
         Cursor.lockState = CursorLockMode.Locked;
 
         InitNoise();
-        CheckViewDistance(new(0, 0, 0));
+        LoadChunksAround(new(0, 0, 0));
         ModifyChunks();
         UpdateChunks();
         DrawChunks();
 
         entities.Add(new EntityPlayer(this));
-        entities.Add(new EntityHullbreaker(this));
+
     }
     private void LateUpdate () {
 
@@ -95,12 +94,12 @@ public class World : MonoBehaviour {
         queue.Enqueue(new(pos, 0));
         AddMod(queue);
     }
-    public void CheckViewDistance (Vec3i CPos) {
+    public void LoadChunksAround (Vec3i posC) {
         foreach (Chunk c in chunks.Values) {
             c.SetActiveState(false);
         }
-        for (int x = CPos.x - Data.CRange; x < CPos.x + Data.CRange; x++) {
-            for (int z = CPos.z - Data.CRange; z < CPos.z + Data.CRange; z++) {
+        for (int x = posC.x - Data.CRange; x < posC.x + Data.CRange; x++) {
+            for (int z = posC.z - Data.CRange; z < posC.z + Data.CRange; z++) {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this));
@@ -111,8 +110,8 @@ public class World : MonoBehaviour {
                 }
             }
         }
-        for (int x = CPos.x - Data.CRange - 12; x < CPos.x + Data.CRange + 12; x++) {
-            for (int z = CPos.z - Data.CRange - 12; z < CPos.z + Data.CRange + 12; z++) {
+        for (int x = posC.x - Data.CRange - 12; x < posC.x + Data.CRange + 12; x++) {
+            for (int z = posC.z - Data.CRange - 12; z < posC.z + Data.CRange + 12; z++) {
                 Vector2Int pos = new(x, z);
                 if (chunks.ContainsKey(pos)) {
                     chunks[pos].SetActiveState(true);

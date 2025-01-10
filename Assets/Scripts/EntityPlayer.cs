@@ -22,7 +22,7 @@ public class EntityPlayer : EntityLiving {
         meshType = 19;
         base.Initialize();
         ToWorldSpawn();
-
+        items.Add(new ItemWeapon());
 
     }
     public override void Update () {
@@ -47,7 +47,7 @@ public class EntityPlayer : EntityLiving {
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
-            world.CheckViewDistance(chunkCoord);
+            world.LoadChunksAround(chunkCoord);
         }
         if (world.CollidingIDs(BoundingBox).Contains(15)) {
             AddHealth(3 * Time.deltaTime);
@@ -72,7 +72,6 @@ public class EntityPlayer : EntityLiving {
             currentItem += Input.GetAxis("Mouse ScrollWheel") > 0 ? -1 : 1;
             currentItem = Math.Clamp(currentItem, 0, items.Count - 1);
         }
-        /*
         if (Input.GetMouseButton(0)) {
             items[currentItem].LeftMouseButton(world, this);
         }
@@ -85,8 +84,6 @@ public class EntityPlayer : EntityLiving {
         if (Input.GetMouseButtonDown(1)) {
             items[currentItem].RightMouseButtonDown(world, this);
         }
-        */
-
     }
 
     void CalculateInput () {
