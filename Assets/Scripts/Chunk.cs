@@ -20,7 +20,7 @@ public class Chunk {
     private readonly List<Vector2> uvs = new();
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
-    private readonly Vector2Int pos;
+    public readonly Vector2Int pos;
     private int vertexIndex = 0;
     public Chunk (Vector2Int pos, ChunkManager chunkManager, Material[] materials) {
         this.chunkManager = chunkManager;
@@ -95,16 +95,11 @@ public class Chunk {
                 voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
             }
         }
-        chunkManager.QueueDraw1(pos);
     }
 
-    public async void Draw1 () {
-
+    public async void GenerateMesh () {
         threadLocked = true;
-
-        await Task.Run(() => UU());
-
-        void UU () {
+        await Task.Run(() => {
             vertexIndex = 0;
             vertices.Clear();
             triangles.Clear();
@@ -129,7 +124,7 @@ public class Chunk {
                     }
                 }
             }
-        }
+        });
         Mesh mesh = new() {
             subMeshCount = 2,
             vertices = vertices.ToArray(),
@@ -158,8 +153,8 @@ public class Chunk {
 
             int faceCheck = IsOutOfChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) ? chunkManager.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + Data.faceChecks[p]) : GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z));
 
-            if (voxelMap[x, y, z] == 7) {
-                if (faceCheck != 7) {
+            if (voxelMap[x, y, z] == 4) {
+                if (faceCheck != 4) {
                     for (int i = 0; i < 4; i++) {
                         vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
                         uvs.Add((Data.voxelUVs[i] + Data.TexturePos(Data.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);

@@ -16,6 +16,8 @@ public class EntityPlayer : EntityLiving {
     public float currentFov;
 
     public EntityPlayer (World world) : base(world) {
+
+
         camera = world.camObj;
         cameraTransform = world.cam;
     }
@@ -26,6 +28,7 @@ public class EntityPlayer : EntityLiving {
         ToWorldSpawn();
         items.Add(new ItemWeapon());
         items.Add(new ItemBlock(1));
+
 
     }
     public override void Update () {
@@ -52,7 +55,7 @@ public class EntityPlayer : EntityLiving {
             lastChunkCoord = chunkCoord;
             world.chunkManager.LoadChunksAround(chunkCoord);
         }
-        if (world.chunkManager.CollidingIDs(BoundingBox).Contains(15)) {
+        if (world.chunkManager.CollidingIDs(BoundingBox).Contains(3)) {
             AddHealth(3 * Time.deltaTime);
         }
         CalculateItems();

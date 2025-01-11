@@ -109,6 +109,7 @@ public class ChunkManager {
     }
     public int GetVoxelID (Vector3 position) {
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+
         return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxelIDChunk(pos.v) : 0;
     }
     public bool SetBlock (Vector3 position, Vector3 selectingPos, int itemID) {
@@ -123,7 +124,7 @@ public class ChunkManager {
     void DrawChunks () {
         for (int i = Draw1.Count - 1; i >= 0; i--) {
             if (Draw1[i].IsEditable) {
-                Draw1[i].Draw1();
+                Draw1[i].GenerateMesh();
                 Draw1.RemoveAt(i);
             }
         }
@@ -133,11 +134,22 @@ public class ChunkManager {
             if (chunksToUpdate[i].IsEditable) {
                 chunksToUpdate[i].UpdateChunk();
                 Draw1.Add(chunksToUpdate[i]);
+
+
+                for (int ee = 0; ee < 4; ee++) {
+                    Vector2Int fffpos = chunksToUpdate[i].pos + Data.chunkCheck[ee];
+                    if (chunks.ContainsKey(fffpos)) {
+                        Draw1.Add(chunks[fffpos]);
+                    }
+
+                    Debug.Log(Time.deltaTime);
+                }
+
+
                 chunksToUpdate.RemoveAt(i);
             }
         }
     }
-
     private void ModifyChunks () {
         lock (modifications) {
             while (modifications.Count > 0) {
@@ -177,14 +189,6 @@ public class ChunkManager {
                 if (chunks.ContainsKey(pos)) {
                     chunks[pos].SetActiveState(true);
                 }
-            }
-        }
-    }
-    public void QueueDraw1 (Vector2Int pos) {
-        for (int i = 0; i < 4; i++) {
-            Vector2Int fffpos = pos + Data.chunkCheck[i];
-            if (chunks.ContainsKey(fffpos)) {
-                Draw1.Add(chunks[fffpos]);
             }
         }
     }
