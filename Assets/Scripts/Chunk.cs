@@ -102,7 +102,6 @@ public class Chunk {
 
         threadLocked = true;
 
-
         await Task.Run(() => UU());
 
         void UU () {
@@ -131,25 +130,15 @@ public class Chunk {
                 }
             }
         }
-
-        lock (vertices) {
-            lock (triangles) {
-                lock (uvs) {
-                    lock (waterTriangles) {
-                        Mesh mesh = new() {
-                            subMeshCount = 2,
-                            vertices = vertices.ToArray(),
-                            uv = uvs.ToArray()
-                        };
-                        mesh.SetTriangles(triangles.ToArray(), 0);
-                        mesh.SetTriangles(waterTriangles.ToArray(), 1);
-                        mesh.RecalculateNormals();
-                        meshFilter.mesh = mesh;
-                    }
-                }
-            }
-        }
-
+        Mesh mesh = new() {
+            subMeshCount = 2,
+            vertices = vertices.ToArray(),
+            uv = uvs.ToArray()
+        };
+        mesh.SetTriangles(triangles.ToArray(), 0);
+        mesh.SetTriangles(waterTriangles.ToArray(), 1);
+        mesh.RecalculateNormals();
+        meshFilter.mesh = mesh;
         threadLocked = false;
     }
     bool IsOutOfChunk (Vector3Int pos) {
