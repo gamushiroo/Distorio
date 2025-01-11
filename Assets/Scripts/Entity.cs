@@ -2,16 +2,25 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 public abstract class Entity {
+
+    public int ID;
+    public readonly AudioSource audioSource;
     public bool IsAlive { get; private set; } = true;
     public AABB BoundingBox { get; private set; }
+
+
+
+    private protected float gravityMultiplier = 1;
+    private protected List<Item> items = new();
+    private protected int currentItem = 0;
+    private protected Entity pearent;
+    private protected List<Entity> child = new();
     private bool waitUntilGrounded;
     private readonly MeshFilter meshFilter;
     private protected readonly World world;
     private protected readonly GameObject gameObject;
     private protected readonly Transform transform;
-    public readonly AudioSource audioSource;
     private protected bool isGrounded;
-    public float gravityMultiplier = 1;
     private protected float defaultWidth = 0.6F;
     private protected float defaultHeight = 1.8F;
     private protected float defaulteyeHeight = 0.9F;
@@ -24,18 +33,14 @@ public abstract class Entity {
     private protected double posX;
     private protected double posY;
     private protected double posZ;
-    public int ID;
-    protected bool inTheWater;
-    private static int currentID = 0;
     private protected bool UseCollision = true;
-    protected int meshType = 18;
-    protected readonly float resistance = 14.0F;
+    private static int currentID = 0;
+    private protected bool inTheWater;
+    private protected int meshType = 1;
+    private protected readonly float resistance = 14.0F;
     private protected float rotationPitch = 0;
     private protected float rotationYaw = 0;
-    public List<Item> items = new();
-    public int currentItem = 0;
-    public Entity pearent;
-    public List<Entity> child = new();
+
     public Entity (World worldIn) {
         ID = currentID++;
         world = worldIn;
@@ -75,7 +80,7 @@ public abstract class Entity {
             for (int i = 0; i < 4; i++) {
                 Vector3 b = Data.voxelVerts[Data.blockMesh[p, i]];
                 vertices.Add(new(b.x * defaultWidth - tt, b.y * defaultHeight, b.z * defaultWidth - tt));
-                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(world.blockTypes[meshType].GetTextureID(p))) / Data.TextureSize);
+                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(Data.blockTypes[meshType].GetTextureID(p))) / Data.TextureSize);
             }
             for (int i = 0; i < 6; i++) {
                 triangles.Add(Data.order[i] + vertexIndex);
@@ -89,7 +94,7 @@ public abstract class Entity {
             items[i].Update();
         }
         if (pearent == null) {
-            inTheWater = world.CollidingIDs(BoundingBox).Contains(7);
+            inTheWater = world.chunkManager.CollidingIDs(BoundingBox).Contains(7);
             if (inTheWater) {
                 AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
             } else {
@@ -107,7 +112,7 @@ public abstract class Entity {
             double i = x;
             double j = y;
             double k = z;
-            List<AABB> p = world.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(x, y, z), ID);
+            List<AABB> p = world.chunkManager.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(x, y, z), ID);
             List<KeyValuePair<double, Action>> l = new() {
             new(Math.Abs(x), CalculateXOffset),
             new(Math.Abs(y), CalculateYOffset),

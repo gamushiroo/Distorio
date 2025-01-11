@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityPlayer : EntityLiving {
+
+
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
     private readonly Camera camera;
     private readonly Transform cameraTransform;
+    private readonly float fovDef = 70;
+
     public bool isMining;
-    public float fovDef = 70;
     public float fovTarget;
     public float currentFov;
-
 
     public EntityPlayer (World world) : base(world) {
         camera = world.camObj;
@@ -19,10 +21,11 @@ public class EntityPlayer : EntityLiving {
     }
     private protected override void Initialize () {
 
-        meshType = 19;
+        meshType = 1;
         base.Initialize();
         ToWorldSpawn();
         items.Add(new ItemWeapon());
+        items.Add(new ItemBlock(1));
 
     }
     public override void Update () {
@@ -36,7 +39,7 @@ public class EntityPlayer : EntityLiving {
         base.Update();
 
         double t = resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
-        List<AABB> others = world.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(0, Math.Max(t, 0), 0), ID);
+        List<AABB> others = world.chunkManager.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(0, Math.Max(t, 0), 0), ID);
         foreach (AABB other in others) {
             t = BoundingBox.CalculateYOffset(t, other);
         }
@@ -47,9 +50,9 @@ public class EntityPlayer : EntityLiving {
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
-            world.LoadChunksAround(chunkCoord);
+            world.chunkManager.LoadChunksAround(chunkCoord);
         }
-        if (world.CollidingIDs(BoundingBox).Contains(15)) {
+        if (world.chunkManager.CollidingIDs(BoundingBox).Contains(15)) {
             AddHealth(3 * Time.deltaTime);
         }
         CalculateItems();

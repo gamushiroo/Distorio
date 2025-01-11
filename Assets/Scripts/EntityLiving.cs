@@ -1,9 +1,13 @@
 using System;
 public class EntityLiving : Entity {
+
+
     private protected int maxHealth = 20;
     private protected float health;
     private protected bool isHealed;
     private float healthBefore;
+
+
     public EntityLiving (World world) : base(world) {
     }
     private protected override void Initialize () {
@@ -24,7 +28,7 @@ public class EntityLiving : Entity {
     }
     protected void ToWorldSpawn () {
         SetPosition(0.0D, 0.0D, 0.0D);
-        while (world.GetCollidingBoundingBoxes(BoundingBox, ID).Count != 0) {
+        while (world.chunkManager.GetCollidingBoundingBoxes(BoundingBox, ID).Count != 0) {
             AddPosition(0.0D, 1.0D, 0.0D);
         }
     }

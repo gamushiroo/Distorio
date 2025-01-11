@@ -12,7 +12,7 @@ public class EntityProjectile : EntityLiving {
         defaultHeight = 0.1F;
         gravityMultiplier = 0;
         maxHealth = 1;
-        meshType = 20;
+        meshType = 1;
         base.Initialize();
     }
     private protected override void OnCollision () {

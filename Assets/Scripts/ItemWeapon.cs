@@ -3,10 +3,9 @@ using UnityEngine;
 public class ItemWeapon : Item {
 
     private float gunCoolDown = 0;
-
-    float projectiles = 35;
-    float defSpread = 10;
-    float initialVelocity = 170;
+    private readonly float projectiles = 35;
+    private readonly float defSpread = 10;
+    private readonly float initialVelocity = 170;
 
 
     public ItemWeapon () {
@@ -25,7 +24,7 @@ public class ItemWeapon : Item {
                 float rand1 = Random.Range(-180, 180) * Mathf.Deg2Rad;
                 float rand2 = Random.Range(-spread, spread);
                 Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
-                world.entityQueue.Enqueue(new EntityProjectile(playerCamPos.x, playerCamPos.y, playerCamPos.z, playerRot * ttt, world));
+                world.chunkManager.AddEntity(new EntityProjectile(playerCamPos.x, playerCamPos.y, playerCamPos.z, playerRot * ttt, world));
             }
             playerIn.audioSource.PlayOneShot(world.dd, 0.5F);
             gunCoolDown = 0;

@@ -21,6 +21,17 @@ public static class Data {
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;
 
+    public static readonly BlockType[] blockTypes = new BlockType[6] {
+
+
+        new BlockType("", false, false, 0, 0, 0, 0, 0, 0, 0, 0),
+        new BlockType("Grass", true, true, 1, 0, 3, 3, 0, 2, 3, 3),
+        new BlockType("Dirt", true, true, 1, 0, 2, 2, 2, 2, 2, 2),
+        new BlockType("Stone", true, true, 1, 0, 1, 1, 1, 1, 1, 1),
+        new BlockType("Glass", false, false, 1, 0, 49, 49, 49, 49, 49, 49),
+        new BlockType("Glass", false, false, 1, 0, 49, 49, 49, 49, 49, 49)
+    };
+
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new(0.0F, 0.0F, 0.0F),
         new(1.0F, 0.0F, 0.0F),

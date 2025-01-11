@@ -21,7 +21,7 @@ public class Structure {
                 for (int _z = 0; _z < 5; _z++) {
                     if (Data.trees[_x, _y, _z] != 0) {
                         Vector3Int pos = new Vector3Int(_x, _y, _z) + position + new Vector3Int(-2, 0, -2);
-                        queue.Enqueue(new(Data.Vector3ToChunkVoxel(pos ), Data.trees[_x, _y, _z]));
+                        queue.Enqueue(new(Data.Vector3ToChunkVoxel(pos), Data.trees[_x, _y, _z]));
                     }
                 }
             }
