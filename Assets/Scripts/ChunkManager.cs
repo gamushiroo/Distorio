@@ -5,9 +5,8 @@ using UnityEngine;
 public class ChunkManager {
 
     private readonly World world;
-    private readonly Dictionary<Vector2Int, Chunk> chunks = new();
+    private static readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly List<Chunk> Draw1 = new(Data.CRange * Data.CRange);
-    private readonly List<Chunk> Draw2 = new(Data.CRange * Data.CRange);
     private readonly List<Chunk> chunksToUpdate = new();
     private readonly List<Entity> entities = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
@@ -62,42 +61,10 @@ public class ChunkManager {
         return a;
     }
 
-    static float GetHeight (Vector2 pos) {
-        float terrainHeight = 0;
-        for (int i = 0; i < 4; i++) {
-            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
-        }
-        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
-    }
-    public byte GetVoxel (int x, int y, int z) {
+    public void EETT (Vector3Int pos) {
 
-        byte VoxelValue = 0;
-        Vector2 ddd = new(x, z);
 
-        if (y < 40) {
-            VoxelValue = 4;
-        }
-        switch (y - Mathf.FloorToInt(GetHeight(ddd))) {
-            case < -4:
-                VoxelValue = 3;
-                break;
-            case < -1:
-                VoxelValue = 2;
-                break;
-            case < 0:
-                VoxelValue = 1;
-                break;
-            default:
-                break;
-        }
-
-        if (VoxelValue == 1) {
-            EETT(ddd, new(x, y, z));
-        }
-        return VoxelValue;
-    }
-    void EETT (Vector2 ddd, Vector3Int pos) {
-
+        Vector2 ddd = new(pos.x, pos.z);
         lock (modifications) {
             if (Noise.Get2DPerlin(ddd, 0.0158f) > 0) {
                 if (new System.Random().Next(0, Mathf.FloorToInt(Mathf.Max(0, Noise.Get2DPerlin(ddd, 0.052f) + 0.5f) * 32 + 2)) == 0) {
@@ -157,14 +124,7 @@ public class ChunkManager {
         for (int i = Draw1.Count - 1; i >= 0; i--) {
             if (Draw1[i].IsEditable) {
                 Draw1[i].Draw1();
-                Draw2.Add(Draw1[i]);
                 Draw1.RemoveAt(i);
-            }
-        }
-        for (int i = Draw2.Count - 1; i >= 0; i--) {
-            if (Draw2[i].IsEditable) {
-                Draw2[i].Draw2();
-                Draw2.RemoveAt(i);
             }
         }
     }

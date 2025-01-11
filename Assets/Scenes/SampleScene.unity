@@ -6611,7 +6611,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1439694690}
-  - component: {fileID: 1439694691}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -6635,23 +6634,6 @@ Transform:
   m_Father: {fileID: 963194228}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1439694691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439694689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3c172b5dfe1e014292b720c0ec817c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshFilter: {fileID: 1318072235}
-  world: {fileID: 1482468890}
-  handBlock: {fileID: 1318072233}
-  switchEase: 0
-  placeEase: 0
 --- !u!1 &1482468888
 GameObject:
   m_ObjectHideFlags: 0
@@ -6705,89 +6687,9 @@ MonoBehaviour:
   materials:
   - {fileID: 2100000, guid: e92221d114e6e854f8578be0f5db3b98, type: 2}
   - {fileID: 2100000, guid: 106884891bebc864984b8c496271b1f5, type: 2}
-  blockTypes:
-  - blockName: 
-    isSolid: 0
-    hasCollision: 0
-    hasInventory: 0
-    hardness: 0
-    sprite: {fileID: 21300000, guid: 223386f7d475133429222aefb8631ede, type: 3}
-    meshTypes: 0
-    backFaceTexture: 0
-    frontFaceTexture: 0
-    topFaceTexture: 0
-    bottomFaceTexture: 0
-    leftFaceTexture: 0
-    rightFaceTexture: 0
-  - blockName: Grass
-    isSolid: 1
-    hasCollision: 1
-    hasInventory: 0
-    hardness: 1
-    sprite: {fileID: -848102514, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 0
-    backFaceTexture: 3
-    frontFaceTexture: 3
-    topFaceTexture: 0
-    bottomFaceTexture: 2
-    leftFaceTexture: 3
-    rightFaceTexture: 3
-  - blockName: Dirt
-    isSolid: 1
-    hasCollision: 1
-    hasInventory: 0
-    hardness: 1
-    sprite: {fileID: 1549071701, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 0
-    backFaceTexture: 2
-    frontFaceTexture: 2
-    topFaceTexture: 2
-    bottomFaceTexture: 2
-    leftFaceTexture: 2
-    rightFaceTexture: 2
-  - blockName: Stone
-    isSolid: 1
-    hasCollision: 1
-    hasInventory: 0
-    hardness: 1
-    sprite: {fileID: 2086677478, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 0
-    backFaceTexture: 1
-    frontFaceTexture: 1
-    topFaceTexture: 1
-    bottomFaceTexture: 1
-    leftFaceTexture: 1
-    rightFaceTexture: 1
-  - blockName: Glass
-    isSolid: 0
-    hasCollision: 0
-    hasInventory: 0
-    hardness: 1
-    sprite: {fileID: 536285754, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 0
-    backFaceTexture: 49
-    frontFaceTexture: 49
-    topFaceTexture: 49
-    bottomFaceTexture: 49
-    leftFaceTexture: 49
-    rightFaceTexture: 49
-  - blockName: Glass
-    isSolid: 0
-    hasCollision: 0
-    hasInventory: 0
-    hardness: 1
-    sprite: {fileID: 536285754, guid: 81d9af2580a5a954baa22a82aaecba74, type: 3}
-    meshTypes: 0
-    backFaceTexture: 49
-    frontFaceTexture: 49
-    topFaceTexture: 49
-    bottomFaceTexture: 49
-    leftFaceTexture: 49
-    rightFaceTexture: 49
   backGround: {fileID: 1933486333}
   cam: {fileID: 963194228}
   camObj: {fileID: 963194227}
-  hand: {fileID: 1439694691}
   miningProgresBarObj: {fileID: 790624905}
   blockHighlight: {fileID: 2109980259}
   miningEffect: {fileID: 485163719}

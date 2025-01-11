@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Chunk {
@@ -29,22 +30,44 @@ public class Chunk {
         meshFilter = chunkObject.AddComponent<MeshFilter>();
     }
 
-
+    private static byte GetTerrain (int x, int y, int z) {
+        byte VoxelValue = y < 40 ? (byte)4 : (byte)0;
+        switch (y - Mathf.FloorToInt(GetHeight(x, z))) {
+            case < -4:
+                VoxelValue = 3;
+                break;
+            case < -1:
+                VoxelValue = 2;
+                break;
+            case < 0:
+                VoxelValue = 1;
+                break;
+            default:
+                break;
+        }
+        return VoxelValue;
+    }
+    private static float GetHeight (int x, int y) {
+        Vector2 pos = new(x, y);
+        float terrainHeight = 0;
+        for (int i = 0; i < 4; i++) {
+            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
+        }
+        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
+    }
 
     public void GenerateTerrainData () {
         threadLocked = true;
+
         new Thread(new ThreadStart(GenerateTerrainData)).Start();
         void GenerateTerrainData () {
             for (int x = 0; x < ChunkWidth; x++) {
                 for (int y = 0; y < ChunkHeight; y++) {
                     for (int z = 0; z < ChunkWidth; z++) {
-
-
-
-
-
-                        byte a = chunkManager.GetVoxel(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth);
-                        voxelMap[x, y, z] = a;
+                        voxelMap[x, y, z] = GetTerrain(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth);
+                        if (voxelMap[x, y, z] == 1) {
+                            chunkManager.EETT(new(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth));
+                        }
                     }
                 }
             }
@@ -75,9 +98,13 @@ public class Chunk {
         chunkManager.QueueDraw1(pos);
     }
 
-    public void Draw1 () {
+    public async void Draw1 () {
+
         threadLocked = true;
-        new Thread(new ThreadStart(UU)).Start();
+
+
+        await Task.Run(() => UU());
+
         void UU () {
             vertexIndex = 0;
             vertices.Clear();
@@ -103,23 +130,40 @@ public class Chunk {
                     }
                 }
             }
-            threadLocked = false;
         }
-    }
-    public void Draw2 () {
-        Mesh mesh = new() {
-            subMeshCount = 2,
-            vertices = vertices.ToArray(),
-            uv = uvs.ToArray()
-        };
-        mesh.SetTriangles(triangles.ToArray(), 0);
-        mesh.SetTriangles(waterTriangles.ToArray(), 1);
-        mesh.RecalculateNormals();
-        meshFilter.mesh = mesh;
+
+        lock (vertices) {
+            lock (triangles) {
+                lock (uvs) {
+                    lock (waterTriangles) {
+                        Mesh mesh = new() {
+                            subMeshCount = 2,
+                            vertices = vertices.ToArray(),
+                            uv = uvs.ToArray()
+                        };
+                        mesh.SetTriangles(triangles.ToArray(), 0);
+                        mesh.SetTriangles(waterTriangles.ToArray(), 1);
+                        mesh.RecalculateNormals();
+                        meshFilter.mesh = mesh;
+                    }
+                }
+            }
+        }
+
+        threadLocked = false;
     }
     bool IsOutOfChunk (Vector3Int pos) {
         return pos.x < 0 || pos.x >= ChunkWidth || pos.y < 0 || pos.y >= ChunkHeight || pos.z < 0 || pos.z >= ChunkWidth;
     }
+
+
+
+
+
+
+
+
+
     void NormalMesh (int x, int y, int z) {
         for (int p = 0; p < 6; p++) {
 
