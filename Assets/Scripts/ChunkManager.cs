@@ -13,6 +13,7 @@ public class ChunkManager {
     private readonly Queue<Entity> entityQueue = new();
     private readonly Material[] materials;
 
+    private static readonly Dictionary<Vector2Int, Queue<Action>> queues = new();
 
     public ChunkManager (World world) {
         this.world = world;
@@ -98,7 +99,7 @@ public class ChunkManager {
         }
         return a;
     }
-    public void AddMod (Queue<VoxelAndPos> aadd) {
+    private void AddMod (Queue<VoxelAndPos> aadd) {
         modifications.Enqueue(aadd);
     }
     public void DestroyBlock (Vector3 position) {
@@ -192,5 +193,4 @@ public class ChunkManager {
             }
         }
     }
-
 }

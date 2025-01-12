@@ -6,6 +6,7 @@ using UnityEngine;
 public class Chunk {
     public bool IsEditable => IsTerrainMapGenerated && !threadLocked;
     public bool IsTerrainMapGenerated { get; private set; }
+    public readonly Vector2Int pos;
 
     private static readonly int ChunkWidth = 16;
     private static readonly int ChunkHeight = 128;
@@ -20,7 +21,6 @@ public class Chunk {
     private readonly List<Vector2> uvs = new();
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
-    public readonly Vector2Int pos;
     private int vertexIndex = 0;
     public Chunk (Vector2Int pos, ChunkManager chunkManager, Material[] materials) {
         this.chunkManager = chunkManager;
@@ -135,16 +135,13 @@ public class Chunk {
         meshFilter.mesh = mesh;
         threadLocked = false;
     }
+
+
+
+
     bool IsOutOfChunk (Vector3Int pos) {
         return pos.x < 0 || pos.x >= ChunkWidth || pos.y < 0 || pos.y >= ChunkHeight || pos.z < 0 || pos.z >= ChunkWidth;
     }
-
-
-
-
-
-
-
 
 
     void NormalMesh (int x, int y, int z) {
