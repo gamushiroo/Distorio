@@ -48,7 +48,7 @@ public abstract class Entity {
         transform = gameObject.transform;
         meshFilter = gameObject.AddComponent<MeshFilter>();
         audioSource = gameObject.AddComponent<AudioSource>();
-        gameObject.AddComponent<MeshRenderer>().material = world.materials[0];
+        gameObject.AddComponent<MeshRenderer>().material = Data.materials[0];
         Initialize();
     }
     public Vector3 GetCamPos () {

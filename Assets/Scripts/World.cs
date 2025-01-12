@@ -3,19 +3,19 @@ using UnityEngine.UI;
 
 public class World : MonoBehaviour {
 
+    [SerializeField] private Camera camObj;
+
     public GameObject particle;
     public Slider hpBar;
     public Text hpText;
     public AudioClip eeeeeee;
     public AudioClip dd;
     public AudioSource audioSource;
-    public Material[] materials = new Material[2];
     public Transform backGround;
-    public Transform cam;
-    public Camera camObj;
     public GameObject miningProgresBarObj;
     public GameObject blockHighlight;
-    public GameObject miningEffect; public Slider miningProgresBar;
+    public GameObject miningEffect; 
+    public Slider miningProgresBar;
     private Vector2 offset;
     public GameObject healing;
 
@@ -24,8 +24,9 @@ public class World : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Random.InitState((int)System.DateTime.Now.Ticks);
         Noise.SetOffset(new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f)));
-        ChunkManager.world = this;
-        ChunkManager.materials = materials;
+        Data.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
+        Data.camera = camObj;
+        Data.cameraTransform = camObj.transform;
         ChunkManager.LoadChunksAround(new(0, 0));
         ChunkManager.AddEntity(new EntityPlayer(this));
     }

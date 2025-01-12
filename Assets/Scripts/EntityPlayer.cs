@@ -7,8 +7,6 @@ public class EntityPlayer : EntityLiving {
 
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
-    private readonly Camera camera;
-    private readonly Transform cameraTransform;
     private readonly float fovDef = 70;
 
     public bool isMining;
@@ -16,11 +14,8 @@ public class EntityPlayer : EntityLiving {
     public float currentFov;
 
     public EntityPlayer (World world) : base(world) {
-
-
-        camera = world.camObj;
-        cameraTransform = world.cam;
     }
+
     private protected override void Initialize () {
 
         meshType = 1;
@@ -64,8 +59,8 @@ public class EntityPlayer : EntityLiving {
 
     void SetGameObjectState () {
         currentFov += (fovTarget - currentFov) * Time.deltaTime * resistance * 2;
-        camera.fieldOfView = currentFov;
-        cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
+        Data.camera.fieldOfView = currentFov;
+        Data.cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
         world.healing.transform.position = Vec3.ToVector3(posX, posY, posZ);
         world.hpBar.value = health / maxHealth;
         world.miningProgresBarObj.SetActive(isMining);

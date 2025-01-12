@@ -3,6 +3,9 @@ using UnityEngine;
 
 public static class Data {
 
+    public static Material[] materials;
+    public static Camera camera;
+    public static Transform cameraTransform;
 
     public static readonly float gravityScale = 25.0F;
     public static readonly float jumpScale = 1;

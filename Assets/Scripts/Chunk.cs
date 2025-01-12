@@ -21,10 +21,10 @@ public class Chunk {
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
     private int vertexIndex = 0;
-    public Chunk (Vector2Int pos, Material[] materials) {
+    public Chunk (Vector2Int pos) {
         this.pos = pos;
         chunkObject.transform.position = ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
-        chunkObject.AddComponent<MeshRenderer>().materials = materials;
+        chunkObject.AddComponent<MeshRenderer>().materials = Data.materials;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
     }
 

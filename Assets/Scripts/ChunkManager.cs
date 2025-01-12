@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 public static class ChunkManager {
-    public static World world;
-    public static Material[] materials;
     private static readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private static readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private static readonly Queue<Entity> entityQueue = new();
@@ -130,7 +128,7 @@ public static class ChunkManager {
                 while (queue.Any()) {
                     VoxelAndPos vmod = queue.Dequeue();
                     if (!chunks.ContainsKey(vmod.pos.c)) {
-                        chunks.Add(vmod.pos.c, new(vmod.pos.c, materials));
+                        chunks.Add(vmod.pos.c, new(vmod.pos.c));
                     }
                     chunks[vmod.pos.c].EnqueueVoxelMod(vmod);
                     if (!chunksToUpdate.Contains(vmod.pos.c)) {
@@ -148,7 +146,7 @@ public static class ChunkManager {
             for (int z = posC.y - Data.CRange; z < posC.y + Data.CRange; z++) {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
-                    chunks.Add(pos, new(pos, materials));
+                    chunks.Add(pos, new(pos));
                 }
                 chunks[pos].SetActiveState(true);
                 if (!chunks[pos].IsTerrainMapGenerated) {
