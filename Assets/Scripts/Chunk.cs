@@ -107,9 +107,7 @@ public class Chunk {
     }
     void NormalMesh (int x, int y, int z) {
         for (int p = 0; p < 6; p++) {
-
             int faceCheck = IsOutOfChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) ? Chunks.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + Data.faceChecks[p]) : GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z));
-
             if (voxelMap[x, y, z] == 4) {
                 if (faceCheck != 4) {
                     for (int i = 0; i < 4; i++) {
