@@ -30,35 +30,8 @@ public class Chunk {
         meshFilter = chunkObject.AddComponent<MeshFilter>();
     }
 
-    private static byte GetTerrain (int x, int y, int z) {
-        byte VoxelValue = y < 40 ? (byte)4 : (byte)0;
-        switch (y - Mathf.FloorToInt(GetHeight(x, z))) {
-            case < -4:
-                VoxelValue = 3;
-                break;
-            case < -1:
-                VoxelValue = 2;
-                break;
-            case < 0:
-                VoxelValue = 1;
-                break;
-            default:
-                break;
-        }
-        return VoxelValue;
-    }
-    private static float GetHeight (int x, int y) {
-        Vector2 pos = new(x, y);
-        float terrainHeight = 0;
-        for (int i = 0; i < 4; i++) {
-            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
-        }
-        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
-    }
-
     public void GenerateTerrainData () {
         threadLocked = true;
-
         new Thread(new ThreadStart(GenerateTerrainData)).Start();
         void GenerateTerrainData () {
             for (int x = 0; x < ChunkWidth; x++) {
@@ -75,9 +48,35 @@ public class Chunk {
             threadLocked = false;
         }
     }
-    public int GetVoxelIDChunk (Vector3Int pos) {
-        return pos.x >= 0 && pos.x < ChunkWidth && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < ChunkWidth ? voxelMap[pos.x, pos.y, pos.z] : 0;
+    private static byte GetTerrain (int x, int y, int z) {
+        byte VoxelValue = y < 40 ? (byte)4 : (byte)0;
+        switch (y - Mathf.FloorToInt(GetTerrainHeight(x, z))) {
+            case < -4:
+                VoxelValue = 3;
+                break;
+            case < -1:
+                VoxelValue = 2;
+                break;
+            case < 0:
+                VoxelValue = 1;
+                break;
+            default:
+                break;
+        }
+        return VoxelValue;
     }
+    private static float GetTerrainHeight (int x, int y) {
+        Vector2 pos = new(x, y);
+        float terrainHeight = 0;
+        for (int i = 0; i < 4; i++) {
+            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
+        }
+        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
+    }
+
+
+    public int GetVoxelIDChunk (Vector3Int pos) => pos.x >= 0 && pos.x < ChunkWidth && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < ChunkWidth ? voxelMap[pos.x, pos.y, pos.z] : 0;
+
     public void EnqueueVoxelMod (VoxelAndPos voxelMod) {
         modifications.Enqueue(voxelMod);
     }
