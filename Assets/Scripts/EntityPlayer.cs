@@ -53,7 +53,7 @@ public class EntityPlayer : EntityLiving {
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
-            world.chunkManager.LoadChunksAround(chunkCoord);
+            world.chunkManager.LoadChunksAround(new(chunkCoord.x, chunkCoord.z));
         }
         if (world.chunkManager.CollidingIDs(BoundingBox).Contains(3)) {
             AddHealth(3 * Time.deltaTime);

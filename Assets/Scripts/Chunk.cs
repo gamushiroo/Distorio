@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 public class Chunk {
-    public bool IsEditable => IsTerrainMapGenerated && !threadLocked;
+    public bool IsEditable =>  !threadLocked;
     public bool IsTerrainMapGenerated { get; private set; }
-    public readonly Vector2Int pos;
+    public bool update;
 
+    private readonly Vector2Int pos;
     private static readonly int ChunkWidth = 16;
     private static readonly int ChunkHeight = 128;
     private bool threadLocked;
@@ -94,6 +95,7 @@ public class Chunk {
                 voxelMap[vmod.pos.v.x, vmod.pos.v.y, vmod.pos.v.z] = vmod.id;
             }
         }
+        update = false;
     }
 
     public async void GenerateMesh () {

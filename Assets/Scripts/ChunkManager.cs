@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ChunkManager {
 
     private readonly World world;
     private static readonly Dictionary<Vector2Int, Chunk> chunks = new();
-    private readonly List<Chunk> Draw1 = new(Data.CRange * Data.CRange);
-    private readonly List<Chunk> chunksToUpdate = new();
     private readonly List<Entity> entities = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly Queue<Entity> entityQueue = new();
     private readonly Material[] materials;
 
-    private static readonly Dictionary<Vector2Int, Queue<Action>> queues = new();
+    private static readonly Dictionary<Vector2Int, Queue<Action<Vector2Int>>> queues = new();
 
     public ChunkManager (World world) {
         this.world = world;
@@ -21,22 +20,66 @@ public class ChunkManager {
     }
 
     public void Awak () {
-
-        LoadChunksAround(new(0, 0, 0));
-        ModifyChunks();
-        UpdateChunks();
-        DrawChunks();
+        LoadChunksAround(new(0, 0));
         AddEntity(new EntityPlayer(world));
     }
-
     public void AddEntity (Entity entity) {
         entityQueue.Enqueue(entity);
     }
-
     public void Late () {
 
+        foreach (KeyValuePair<Vector2Int, Queue<Action<Vector2Int>>> a in queues) {
+            if (chunks[a.Key].IsEditable && a.Value.Any()) {
+                a.Value.Dequeue()(a.Key);
+            }
+        }
 
-        while (entityQueue.Count > 0) {
+        EntityThings();
+        ModifyChunks();
+    }
+
+    public void LoadChunksAround (Vector2Int posC) {
+        foreach (Chunk c in chunks.Values) {
+            c.SetActiveState(false);
+        }
+        for (int x = posC.x - Data.CRange; x < posC.x + Data.CRange; x++) {
+            for (int z = posC.y - Data.CRange; z < posC.y + Data.CRange; z++) {
+                Vector2Int pos = new(x, z);
+                if (!chunks.ContainsKey(pos)) {
+                    chunks.Add(pos, new(pos, this, materials));
+                    queues.Add(pos, new());//--
+                }
+                if (!chunks[pos].IsTerrainMapGenerated) {
+                    queues[pos].Enqueue(GTD);
+                }
+                chunks[pos].SetActiveState(true);
+            }
+        }
+    }
+    private void UpdateChunks (Vector2Int pos) {
+        chunks[pos].UpdateChunk();
+        queues[pos].Enqueue(DrawChunks);
+        for (int i = 0; i < 4; i++) {
+            Vector2Int rpos = pos + Data.chunkCheck[i];
+            if (chunks.ContainsKey(rpos)) {
+                queues[rpos].Enqueue(DrawChunks);
+            }
+        }
+    }
+    void GTD(Vector2Int pos) {
+        chunks[pos].GenerateTerrainData();
+        if (!chunks[pos].update) {
+            queues[pos].Enqueue(UpdateChunks);
+            chunks[pos].update = true;
+        }
+    }
+
+    private void DrawChunks (Vector2Int pos) {
+        chunks[pos].GenerateMesh();
+    }
+
+    void EntityThings () {
+        while (entityQueue.Any()) {
             entities.Add(entityQueue.Dequeue());
         }
         for (int i = entities.Count - 1; i >= 0; i--) {
@@ -46,10 +89,22 @@ public class ChunkManager {
                 entities.RemoveAt(i);
             }
         }
-        ModifyChunks();
-        UpdateChunks();
-        DrawChunks();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public List<int> CollidingIDs (AABB aabb) {
         List<int> a = new();
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
@@ -122,35 +177,6 @@ public class ChunkManager {
         }
         return false;
     }
-    void DrawChunks () {
-        for (int i = Draw1.Count - 1; i >= 0; i--) {
-            if (Draw1[i].IsEditable) {
-                Draw1[i].GenerateMesh();
-                Draw1.RemoveAt(i);
-            }
-        }
-    }
-    private void UpdateChunks () {
-        for (int i = chunksToUpdate.Count - 1; i >= 0; i--) {
-            if (chunksToUpdate[i].IsEditable) {
-                chunksToUpdate[i].UpdateChunk();
-                Draw1.Add(chunksToUpdate[i]);
-
-
-                for (int ee = 0; ee < 4; ee++) {
-                    Vector2Int fffpos = chunksToUpdate[i].pos + Data.chunkCheck[ee];
-                    if (chunks.ContainsKey(fffpos)) {
-                        Draw1.Add(chunks[fffpos]);
-                    }
-
-                    Debug.Log(Time.deltaTime);
-                }
-
-
-                chunksToUpdate.RemoveAt(i);
-            }
-        }
-    }
     private void ModifyChunks () {
         lock (modifications) {
             while (modifications.Count > 0) {
@@ -159,36 +185,13 @@ public class ChunkManager {
                     VoxelAndPos vmod = queue.Dequeue();
                     if (!chunks.ContainsKey(vmod.pos.c)) {
                         chunks.Add(vmod.pos.c, new(vmod.pos.c, this, materials));
+                        queues.Add(vmod.pos.c, new());//--
                     }
                     chunks[vmod.pos.c].EnqueueVoxelMod(vmod);
-                    if (!chunksToUpdate.Contains(chunks[vmod.pos.c])) {
-                        chunksToUpdate.Add(chunks[vmod.pos.c]);
+                    if (!chunks[vmod.pos.c].update) {
+                        queues[vmod.pos.c].Enqueue(UpdateChunks);
+                        chunks[vmod.pos.c].update = true;
                     }
-                }
-            }
-        }
-    }
-    public void LoadChunksAround (Vec3i posC) {
-        foreach (Chunk c in chunks.Values) {
-            c.SetActiveState(false);
-        }
-        for (int x = posC.x - Data.CRange; x < posC.x + Data.CRange; x++) {
-            for (int z = posC.z - Data.CRange; z < posC.z + Data.CRange; z++) {
-                Vector2Int pos = new(x, z);
-                if (!chunks.ContainsKey(pos)) {
-                    chunks.Add(pos, new(pos, this, materials));
-                }
-                if (!chunks[pos].IsTerrainMapGenerated) {
-                    chunks[pos].GenerateTerrainData();
-                    chunksToUpdate.Add(chunks[pos]);
-                }
-            }
-        }
-        for (int x = posC.x - Data.CRange - 12; x < posC.x + Data.CRange + 12; x++) {
-            for (int z = posC.z - Data.CRange - 12; z < posC.z + Data.CRange + 12; z++) {
-                Vector2Int pos = new(x, z);
-                if (chunks.ContainsKey(pos)) {
-                    chunks[pos].SetActiveState(true);
                 }
             }
         }
