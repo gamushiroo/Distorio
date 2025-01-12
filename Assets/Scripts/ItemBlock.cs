@@ -22,14 +22,14 @@ public class ItemBlock : Item {
     public override void RightMouseButton (World world, EntityPlayer player) {
 
         CalculateSelectingPos(world, player);
-        BlockType eee = Data.blockTypes[world.chunkManager.GetVoxelID(SelectingPos)];
+        BlockType eee = Data.blockTypes[ChunkManager.GetVoxelID(SelectingPos)];
         if (eee.hasCollision) {
             if (miningPos != SelectingPos) {
                 miningPos = SelectingPos;
                 miningProgress = 0;
             }
             if (miningProgress >= eee.hardness) {
-                world.chunkManager.DestroyBlock(SelectingPos);
+                ChunkManager.DestroyBlock(SelectingPos);
             }
             miningProgress += Time.deltaTime * 2.5F;
             world.miningProgresBar.value = miningProgress / eee.hardness;
@@ -47,14 +47,14 @@ public class ItemBlock : Item {
 
     bool TryPlace (World world, Entity player) {
         CalculateSelectingPos(world, player);
-        return !player.BoundingBox.IntersectsWith(Vec3i.ToVec3i(tryPlacingPos)) && world.chunkManager.SetBlock(tryPlacingPos, SelectingPos, itemID);
+        return !player.BoundingBox.IntersectsWith(Vec3i.ToVec3i(tryPlacingPos)) && ChunkManager.SetBlock(tryPlacingPos, SelectingPos, itemID);
     }
     void CalculateSelectingPos (World world, Entity player) {
         Vector3 _camPos = player.GetCamPos();
         Vector3 _camPos2 = _camPos;
         Quaternion _camRot = player.GetRotation();
         for (int i = 0; i < 300; i++) {
-            if (Data.blockTypes[world.chunkManager.GetVoxelID(_camPos)].hasCollision) {
+            if (Data.blockTypes[ChunkManager.GetVoxelID(_camPos)].hasCollision) {
                 break;
             }
             _camPos2 = _camPos;

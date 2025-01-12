@@ -12,7 +12,6 @@ public class Chunk {
     private static readonly int ChunkHeight = 128;
     private bool threadLocked;
     private bool ActiveState = true;
-    private readonly ChunkManager chunkManager;
     private readonly MeshFilter meshFilter;
     private readonly GameObject chunkObject = new();
     private readonly Queue<VoxelAndPos> modifications = new();
@@ -22,8 +21,7 @@ public class Chunk {
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
     private int vertexIndex = 0;
-    public Chunk (Vector2Int pos, ChunkManager chunkManager, Material[] materials) {
-        this.chunkManager = chunkManager;
+    public Chunk (Vector2Int pos, Material[] materials) {
         this.pos = pos;
         chunkObject.transform.position = ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
         chunkObject.AddComponent<MeshRenderer>().materials = materials;
@@ -39,7 +37,7 @@ public class Chunk {
                     for (int z = 0; z < ChunkWidth; z++) {
                         voxelMap[x, y, z] = GetTerrain(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth);
                         if (voxelMap[x, y, z] == 1) {
-                            chunkManager.EETT(new(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth));
+                            ChunkManager.EETT(new(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth));
                         }
                     }
                 }
@@ -147,7 +145,7 @@ public class Chunk {
     void NormalMesh (int x, int y, int z) {
         for (int p = 0; p < 6; p++) {
 
-            int faceCheck = IsOutOfChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) ? chunkManager.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + Data.faceChecks[p]) : GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z));
+            int faceCheck = IsOutOfChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) ? ChunkManager.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + Data.faceChecks[p]) : GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z));
 
             if (voxelMap[x, y, z] == 4) {
                 if (faceCheck != 4) {

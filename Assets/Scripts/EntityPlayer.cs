@@ -42,7 +42,7 @@ public class EntityPlayer : EntityLiving {
         base.Update();
 
         double t = resistance * ((Input.GetKey(KeyCode.LeftShift) ? defaultHeight / 2 : defaultHeight) - height) * Time.deltaTime;
-        List<AABB> others = world.chunkManager.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(0, Math.Max(t, 0), 0), ID);
+        List<AABB> others = ChunkManager.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(0, Math.Max(t, 0), 0), ID);
         foreach (AABB other in others) {
             t = BoundingBox.CalculateYOffset(t, other);
         }
@@ -53,9 +53,9 @@ public class EntityPlayer : EntityLiving {
         chunkCoord = Vec3i.ToChunkCoord(posX, posY, posZ);
         if (!chunkCoord.Equals(lastChunkCoord)) {
             lastChunkCoord = chunkCoord;
-            world.chunkManager.LoadChunksAround(chunkCoord);
+            ChunkManager.LoadChunksAround(new(chunkCoord.x, chunkCoord.z));
         }
-        if (world.chunkManager.CollidingIDs(BoundingBox).Contains(3)) {
+        if (ChunkManager.CollidingIDs(BoundingBox).Contains(3)) {
             AddHealth(3 * Time.deltaTime);
         }
         CalculateItems();

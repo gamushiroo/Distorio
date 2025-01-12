@@ -20,22 +20,17 @@ public class World : MonoBehaviour {
     public GameObject healing;
 
 
-    public ChunkManager chunkManager;
-
-
     private void Awake () {
-
-        chunkManager = new(this);
         Cursor.lockState = CursorLockMode.Locked;
         Random.InitState((int)System.DateTime.Now.Ticks);
         Noise.SetOffset(new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f)));
-
-        chunkManager.Awak();
-
+        ChunkManager.world = this;
+        ChunkManager.materials = materials;
+        ChunkManager.LoadChunksAround(new(0, 0));
+        ChunkManager.AddEntity(new EntityPlayer(this));
     }
     private void LateUpdate () {
-
-        chunkManager.Late();
+        ChunkManager.LateUpdate();
     }
 }
 [System.Serializable]
