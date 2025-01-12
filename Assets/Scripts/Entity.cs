@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 public abstract class Entity {
-
     public int ID;
     public readonly AudioSource audioSource;
     public bool IsAlive { get; private set; } = true;
     public AABB BoundingBox { get; private set; }
-
-
-
     private protected float gravityMultiplier = 1;
     private protected List<Item> items = new();
     private protected int currentItem = 0;
@@ -40,7 +36,6 @@ public abstract class Entity {
     private protected readonly float resistance = 14.0F;
     private protected float rotationPitch = 0;
     private protected float rotationYaw = 0;
-
     public Entity (World worldIn) {
         ID = currentID++;
         world = worldIn;
@@ -178,15 +173,6 @@ public abstract class Entity {
         UnityEngine.Object.Destroy(gameObject);
         IsAlive = false;
     }
-
-
-
-
-
-
-
-
-
     private protected virtual void OnCollision () {
     }
     private protected void ModifyBoundingBox () {
