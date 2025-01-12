@@ -37,18 +37,13 @@ public class World : MonoBehaviour {
 }
 [System.Serializable]
 public class BlockType {
-    public BlockType (string blockName, bool isSolid, bool hasCollision, float hardness, byte meshTypes, int backFaceTexture, int frontFaceTexture, int topFaceTexture, int bottomFaceTexture, int leftFaceTexture, int rightFaceTexture) {
+    public BlockType (string blockName, bool isSolid, bool hasCollision, float hardness, byte meshTypes, int backFaceTexture) {
         this.blockName = blockName;
         this.isSolid = isSolid;
         this.hasCollision = hasCollision;
         this.hardness = hardness;
         this.meshTypes = meshTypes;
         this.backFaceTexture = backFaceTexture;
-        this.frontFaceTexture = frontFaceTexture;
-        this.topFaceTexture = topFaceTexture;
-        this.bottomFaceTexture = bottomFaceTexture;
-        this.leftFaceTexture = leftFaceTexture;
-        this.rightFaceTexture = rightFaceTexture;
     }
     public string blockName;
     public bool isSolid;
@@ -56,20 +51,4 @@ public class BlockType {
     public float hardness;
     public byte meshTypes;
     public int backFaceTexture;
-    public int frontFaceTexture;
-    public int topFaceTexture;
-    public int bottomFaceTexture;
-    public int leftFaceTexture;
-    public int rightFaceTexture;
-    public int GetTextureID (int faceIndex) {
-        return faceIndex switch {
-            0 => backFaceTexture,
-            1 => frontFaceTexture,
-            2 => topFaceTexture,
-            3 => bottomFaceTexture,
-            4 => leftFaceTexture,
-            5 => rightFaceTexture,
-            _ => 0,
-        };
-    }
 }

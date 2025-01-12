@@ -112,7 +112,7 @@ public class Chunk {
                 if (faceCheck != 4) {
                     for (int i = 0; i < 4; i++) {
                         vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[p, i]] + new Vector3(x, y, z));
-                        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / MyResources.TextureSize);
+                        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].backFaceTexture)) / MyResources.TextureSize);
                     }
                     for (int i = 0; i < 6; i++) {
                         waterTriangles.Add(MyResources.order[i] + vertexIndex);
@@ -123,7 +123,7 @@ public class Chunk {
                 if (!MyResources.blockTypes[faceCheck].isSolid) {
                     for (int i = 0; i < 4; i++) {
                         vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[p, i]] + new Vector3(x, y, z));
-                        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / MyResources.TextureSize);
+                        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].backFaceTexture)) / MyResources.TextureSize);
                     }
                     AddTriangles();
                 }
@@ -134,7 +134,7 @@ public class Chunk {
         for (int p = 0; p < mesh.Length >> 2; p++) {
             for (int i = 0; i < 4; i++) {
                 vertices.Add(MyResources.voxelVerts[mesh[p, i]] + new Vector3(x, y, z));
-                uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / MyResources.TextureSize);
+                uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].backFaceTexture)) / MyResources.TextureSize);
             }
             AddTriangles();
         }

@@ -1,7 +1,10 @@
+using Unity.VisualScripting;
 using UnityEngine;
 public static class Terrain {
     public static byte GetTerrain (int x, int y, int z) {
         byte VoxelValue = y < 40 ? (byte)4 : (byte)0;
+
+
         switch (y - Mathf.FloorToInt(GetTerrainHeight(x, z))) {
             case < -4:
                 VoxelValue = 3;
@@ -14,6 +17,9 @@ public static class Terrain {
                 break;
             default:
                 break;
+        }
+        if (VoxelValue == 0 && Noise.Get3DPerlin(new(x, y, z), 0.05f) >= 0.5f) {
+            VoxelValue = 6;
         }
         return VoxelValue;
     }

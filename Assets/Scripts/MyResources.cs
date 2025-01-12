@@ -18,13 +18,14 @@ public static class MyResources {
     public static float treeZoneThreshold = -0.3F;
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;
-    public static readonly BlockType[] blockTypes = new BlockType[6] {
-        new BlockType("", false, false, 0, 0, 0, 0, 0, 0, 0, 0),
-        new BlockType("Grass", true, true, 1, 0, 3, 3, 0, 2, 3, 3),
-        new BlockType("Dirt", true, true, 1, 0, 2, 2, 2, 2, 2, 2),
-        new BlockType("Stone", true, true, 1, 0, 1, 1, 1, 1, 1, 1),
-        new BlockType("Glass", false, false, 1, 0, 49, 49, 49, 49, 49, 49),
-        new BlockType("Glass", false, false, 1, 0, 49, 49, 49, 49, 49, 49)
+    public static readonly BlockType[] blockTypes = new BlockType[7] {
+        new ("", false, false, 0, 0, 0),
+        new ("Grass", true, true, 1, 0, 0),
+        new ("Dirt", true, true, 1, 0, 2),
+        new ("Stone", true, true, 1, 0, 1),
+        new ("Glass", false, false, 1, 0, 49),
+        new ("Glass", false, false, 1, 0, 49),
+        new ("IronOre", true, true, 1, 0, 47)
     };
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new(0.0F, 0.0F, 0.0F),
