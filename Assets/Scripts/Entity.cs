@@ -68,6 +68,9 @@ public abstract class Entity {
         width = defaultWidth;
         height = defaultHeight;
         eyeHeight = defaulteyeHeight;
+        velocityX = 0;
+        velocityY = 0;
+        velocityZ = 0;
         GenerateMesh();
     }
     void GenerateMesh () {

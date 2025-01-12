@@ -2,42 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 public class ChunkManager {
-
     private readonly World world;
     private static readonly Dictionary<Vector2Int, Chunk> chunks = new();
     private readonly List<Entity> entities = new();
     private readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private readonly Queue<Entity> entityQueue = new();
     private readonly Material[] materials;
-
-    private static readonly Dictionary<Vector2Int, Queue<Action<Vector2Int>>> queues = new();
-
+    private static readonly Dictionary<Vector2Int, Queue<Action<Vector2Int>>> actions = new();
     public ChunkManager (World world) {
         this.world = world;
         materials = world.materials;
     }
-
     public void Awak () {
-        LoadChunksAround(new(0, 0));
         AddEntity(new EntityPlayer(world));
     }
-    public void AddEntity (Entity entity) {
-        entityQueue.Enqueue(entity);
-    }
     public void Late () {
-
-        foreach (KeyValuePair<Vector2Int, Queue<Action<Vector2Int>>> a in queues) {
-            if (chunks[a.Key].IsEditable && a.Value.Any()) {
-                a.Value.Dequeue()(a.Key);
-            }
-        }
-
         EntityThings();
+        PPAP();
         ModifyChunks();
     }
-
+    private void PPAP () {
+        foreach (KeyValuePair<Vector2Int, Queue<Action<Vector2Int>>> a in actions) {
+            while (a.Value.Any()) {
+                if (chunks[a.Key].IsEditable) {
+                    a.Value.Dequeue()(a.Key);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
     public void LoadChunksAround (Vector2Int posC) {
         foreach (Chunk c in chunks.Values) {
             c.SetActiveState(false);
@@ -47,10 +42,14 @@ public class ChunkManager {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos, this, materials));
-                    queues.Add(pos, new());//--
+                    actions.Add(pos, new());
                 }
                 if (!chunks[pos].IsTerrainMapGenerated) {
-                    queues[pos].Enqueue(GTD);
+                    chunks[pos].GenerateTerrainData();
+                    if (!chunks[pos].update) {
+                        actions[pos].Enqueue(UpdateChunks);
+                        chunks[pos].update = true;
+                    }
                 }
                 chunks[pos].SetActiveState(true);
             }
@@ -58,26 +57,17 @@ public class ChunkManager {
     }
     private void UpdateChunks (Vector2Int pos) {
         chunks[pos].UpdateChunk();
-        queues[pos].Enqueue(DrawChunks);
+        actions[pos].Enqueue(DrawChunks);
         for (int i = 0; i < 4; i++) {
             Vector2Int rpos = pos + Data.chunkCheck[i];
             if (chunks.ContainsKey(rpos)) {
-                queues[rpos].Enqueue(DrawChunks);
+                actions[rpos].Enqueue(DrawChunks);
             }
         }
     }
-    void GTD(Vector2Int pos) {
-        chunks[pos].GenerateTerrainData();
-        if (!chunks[pos].update) {
-            queues[pos].Enqueue(UpdateChunks);
-            chunks[pos].update = true;
-        }
-    }
-
     private void DrawChunks (Vector2Int pos) {
         chunks[pos].GenerateMesh();
     }
-
     void EntityThings () {
         while (entityQueue.Any()) {
             entities.Add(entityQueue.Dequeue());
@@ -90,21 +80,9 @@ public class ChunkManager {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void AddEntity (Entity entity) {
+        entityQueue.Enqueue(entity);
+    }
     public List<int> CollidingIDs (AABB aabb) {
         List<int> a = new();
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
@@ -116,10 +94,7 @@ public class ChunkManager {
         }
         return a;
     }
-
     public void EETT (Vector3Int pos) {
-
-
         Vector2 ddd = new(pos.x, pos.z);
         lock (modifications) {
             if (Noise.Get2DPerlin(ddd, 0.0158f) > 0) {
@@ -165,7 +140,6 @@ public class ChunkManager {
     }
     public int GetVoxelID (Vector3 position) {
         ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
-
         return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxelIDChunk(pos.v) : 0;
     }
     public bool SetBlock (Vector3 position, Vector3 selectingPos, int itemID) {
@@ -185,11 +159,11 @@ public class ChunkManager {
                     VoxelAndPos vmod = queue.Dequeue();
                     if (!chunks.ContainsKey(vmod.pos.c)) {
                         chunks.Add(vmod.pos.c, new(vmod.pos.c, this, materials));
-                        queues.Add(vmod.pos.c, new());//--
+                        actions.Add(vmod.pos.c, new());//--
                     }
                     chunks[vmod.pos.c].EnqueueVoxelMod(vmod);
                     if (!chunks[vmod.pos.c].update) {
-                        queues[vmod.pos.c].Enqueue(UpdateChunks);
+                        actions[vmod.pos.c].Enqueue(UpdateChunks);
                         chunks[vmod.pos.c].update = true;
                     }
                 }

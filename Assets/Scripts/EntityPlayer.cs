@@ -5,8 +5,8 @@ using UnityEngine;
 public class EntityPlayer : EntityLiving {
 
 
-    private Vec3i chunkCoord;
-    private Vec3i lastChunkCoord;
+    private Vec3i chunkCoord = new(0, 0, 0);
+    private Vec3i lastChunkCoord = new(0, 1, 0);
     private readonly Camera camera;
     private readonly Transform cameraTransform;
     private readonly float fovDef = 70;

@@ -33,13 +33,11 @@ public class Chunk {
 
     public void GenerateTerrainData () {
         threadLocked = true;
-        new Thread(new ThreadStart(GenerateTerrainData)).Start();
-        void GenerateTerrainData () {
+        Task.Run(() => {
             for (int x = 0; x < ChunkWidth; x++) {
                 for (int y = 0; y < ChunkHeight; y++) {
                     for (int z = 0; z < ChunkWidth; z++) {
-                        voxelMap[x, y, z] = GetTerrain(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth);
-                        if (voxelMap[x, y, z] == 1) {
+                        if ((voxelMap[x, y, z] = GetTerrain(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth)) == 1) {
                             chunkManager.EETT(new(x + pos.x * ChunkWidth, y, z + pos.y * ChunkWidth));
                         }
                     }
@@ -47,7 +45,7 @@ public class Chunk {
             }
             IsTerrainMapGenerated = true;
             threadLocked = false;
-        }
+        });
     }
     private static byte GetTerrain (int x, int y, int z) {
         byte VoxelValue = y < 40 ? (byte)4 : (byte)0;
