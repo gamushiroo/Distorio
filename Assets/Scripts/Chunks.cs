@@ -16,8 +16,8 @@ public static class Chunks {
         foreach (Chunk c in chunks.Values) {
             c.SetActiveState(false);
         }
-        for (int x = posC.x - Data.CRange; x < posC.x + Data.CRange; x++) {
-            for (int z = posC.y - Data.CRange; z < posC.y + Data.CRange; z++) {
+        for (int x = posC.x - MyResources.CRange; x < posC.x + MyResources.CRange; x++) {
+            for (int z = posC.y - MyResources.CRange; z < posC.y + MyResources.CRange; z++) {
                 Vector2Int pos = new(x, z);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos));
@@ -31,7 +31,7 @@ public static class Chunks {
         }
     }
     public static void DestroyBlock (Vector3 position) {
-        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+        ChunkVoxel pos = MyResources.Vector3ToChunkVoxel(position);
         Queue<VoxelAndPos> queue = new();
         queue.Enqueue(new(pos, 0));
         modifications.Enqueue(queue);
@@ -42,12 +42,12 @@ public static class Chunks {
             if (Noise.Get2DPerlin(ddd, 0.0158f) > 0) {
                 if (new System.Random().Next(0, Mathf.FloorToInt(Mathf.Max(0, Noise.Get2DPerlin(ddd, 0.052f) + 0.5f) * 32 + 2)) == 0) {
                     Queue<VoxelAndPos> a = new();
-                    a.Enqueue(new(Data.Vector3ToChunkVoxel(pos + Vector3Int.up), 4));
+                    a.Enqueue(new(MyResources.Vector3ToChunkVoxel(pos + Vector3Int.up), 4));
                     modifications.Enqueue(a);
                 }
             }
-            if (Noise.Get2DPerlin(ddd, Data.treeZoneScale) > Data.treeZoneThreshold) {
-                if (Noise.Get2DPerlin(ddd, Data.treePlacementScale) > Data.treePlacementThreshold) {
+            if (Noise.Get2DPerlin(ddd, MyResources.treeZoneScale) > MyResources.treeZoneThreshold) {
+                if (Noise.Get2DPerlin(ddd, MyResources.treePlacementScale) > MyResources.treePlacementThreshold) {
                     modifications.Enqueue(Structure.MakeTree(pos + Vector3Int.up));
                 }
             }
@@ -69,7 +69,7 @@ public static class Chunks {
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
             for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
                 for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
-                    if (Data.blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
+                    if (MyResources.blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
                         a.Add(new(x, y, z, x + 1, y + 1, z + 1));
                     }
                 }
@@ -78,13 +78,13 @@ public static class Chunks {
         return a;
     }
     public static int GetVoxelID (Vector3 position) {
-        ChunkVoxel pos = Data.Vector3ToChunkVoxel(position);
+        ChunkVoxel pos = MyResources.Vector3ToChunkVoxel(position);
         return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxelIDChunk(pos.v) : 0;
     }
     public static bool SetBlock (Vector3 position, Vector3 selectingPos, byte itemID) {
-        if (itemID != 0 && !Data.blockTypes[GetVoxelID(position)].hasCollision && Data.blockTypes[GetVoxelID(selectingPos)].hasCollision) {
+        if (itemID != 0 && !MyResources.blockTypes[GetVoxelID(position)].hasCollision && MyResources.blockTypes[GetVoxelID(selectingPos)].hasCollision) {
             Queue<VoxelAndPos> queue = new();
-            queue.Enqueue(new(Data.Vector3ToChunkVoxel(position), itemID));
+            queue.Enqueue(new(MyResources.Vector3ToChunkVoxel(position), itemID));
             modifications.Enqueue(queue);
             return true;
         }
@@ -113,7 +113,7 @@ public static class Chunks {
                 chunks[chunksToUpdate[i]].UpdateChunk();
                 ChunksToDraw.Add(chunksToUpdate[i]);
                 for (int p = 0; p < 4; p++) {
-                    Vector2Int fffpos = chunksToUpdate[i] + Data.chunkCheck[p];
+                    Vector2Int fffpos = chunksToUpdate[i] + MyResources.chunkCheck[p];
                     if (chunks.ContainsKey(fffpos)) {
                         ChunksToDraw.Add(fffpos);
                     }

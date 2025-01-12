@@ -43,7 +43,7 @@ public abstract class Entity {
         transform = gameObject.transform;
         meshFilter = gameObject.AddComponent<MeshFilter>();
         audioSource = gameObject.AddComponent<AudioSource>();
-        gameObject.AddComponent<MeshRenderer>().material = Data.materials[0];
+        gameObject.AddComponent<MeshRenderer>().material = MyResources.materials[0];
         Initialize();
     }
     public Vector3 GetCamPos () {
@@ -73,16 +73,16 @@ public abstract class Entity {
         float tt = defaultWidth / 2;
         for (int p = 0; p < 6; p++) {
             for (int i = 0; i < 4; i++) {
-                Vector3 b = Data.voxelVerts[Data.blockMesh[p, i]];
+                Vector3 b = MyResources.voxelVerts[MyResources.blockMesh[p, i]];
                 vertices.Add(new(b.x * defaultWidth - tt, b.y * defaultHeight, b.z * defaultWidth - tt));
-                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(Data.blockTypes[meshType].GetTextureID(p))) / Data.TextureSize);
+                uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[meshType].GetTextureID(p))) / MyResources.TextureSize);
             }
             for (int i = 0; i < 6; i++) {
-                triangles.Add(Data.order[i] + vertexIndex);
+                triangles.Add(MyResources.order[i] + vertexIndex);
             }
             vertexIndex += 4;
         }
-        meshFilter.sharedMesh = Data.MakeMesh(vertices, triangles, uvs);
+        meshFilter.sharedMesh = MyResources.MakeMesh(vertices, triangles, uvs);
     }
     public virtual void Update () {
         for (int i = 0; i < items.Count; i++) {
@@ -93,7 +93,7 @@ public abstract class Entity {
             if (inTheWater) {
                 AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
             } else {
-                AddForce(0, -Data.gravityScale * gravityMultiplier, 0);
+                AddForce(0, -MyResources.gravityScale * gravityMultiplier, 0);
             }
             Move();
         }

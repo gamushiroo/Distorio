@@ -21,8 +21,8 @@ public static class Terrain {
         Vector2 pos = new(x, y);
         float terrainHeight = 0;
         for (int i = 0; i < 4; i++) {
-            terrainHeight += Noise.Get2DPerlin(pos, Data.terrainScale / Mathf.Pow(2, i));
+            terrainHeight += Noise.Get2DPerlin(pos, MyResources.terrainScale / Mathf.Pow(2, i));
         }
-        return terrainHeight * Data.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + Data.solidGroundHeight;
+        return terrainHeight * MyResources.terrainHeight * (Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.029F) * 4) + Mathf.Pow(2, Noise.Get2DPerlin(pos, 0.005F) * 4) / 2) / (Noise.Get2DPerlin(pos, 0.05f) / 5000 + 1) + MyResources.solidGroundHeight;
     }
 }

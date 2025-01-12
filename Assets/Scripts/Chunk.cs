@@ -22,7 +22,7 @@ public class Chunk {
     public Chunk (Vector2Int pos) {
         this.pos = pos;
         chunkObject.transform.position = ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
-        chunkObject.AddComponent<MeshRenderer>().materials = Data.materials;
+        chunkObject.AddComponent<MeshRenderer>().materials = MyResources.materials;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
     }
     public void GenerateTerrainData () {
@@ -75,12 +75,12 @@ public class Chunk {
                 for (int y = 0; y < ChunkHeight; y++) {
                     for (int z = 0; z < ChunkWidth; z++) {
                         if (voxelMap[x, y, z] != 0) {
-                            switch (Data.blockTypes[voxelMap[x, y, z]].meshTypes) {
+                            switch (MyResources.blockTypes[voxelMap[x, y, z]].meshTypes) {
                                 case 0:
                                     NormalMesh(x, y, z);
                                     break;
                                 case 1:
-                                    GrassMesh(x, y, z, Data.grassMesh);
+                                    GrassMesh(x, y, z, MyResources.grassMesh);
                                     break;
                                 default:
                                     NormalMesh(x, y, z);
@@ -107,23 +107,23 @@ public class Chunk {
     }
     void NormalMesh (int x, int y, int z) {
         for (int p = 0; p < 6; p++) {
-            int faceCheck = IsOutOfChunk(Data.faceChecks[p] + new Vector3Int(x, y, z)) ? Chunks.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + Data.faceChecks[p]) : GetVoxelIDChunk(Data.faceChecks[p] + new Vector3Int(x, y, z));
+            int faceCheck = IsOutOfChunk(MyResources.faceChecks[p] + new Vector3Int(x, y, z)) ? Chunks.GetVoxelID(new Vector3Int(pos.x * ChunkWidth + x, 0 + y, pos.y * ChunkWidth + z) + MyResources.faceChecks[p]) : GetVoxelIDChunk(MyResources.faceChecks[p] + new Vector3Int(x, y, z));
             if (voxelMap[x, y, z] == 4) {
                 if (faceCheck != 4) {
                     for (int i = 0; i < 4; i++) {
-                        vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
-                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(Data.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                        vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[p, i]] + new Vector3(x, y, z));
+                        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / MyResources.TextureSize);
                     }
                     for (int i = 0; i < 6; i++) {
-                        waterTriangles.Add(Data.order[i] + vertexIndex);
+                        waterTriangles.Add(MyResources.order[i] + vertexIndex);
                     }
                     vertexIndex += 4;
                 }
             } else {
-                if (!Data.blockTypes[faceCheck].isSolid) {
+                if (!MyResources.blockTypes[faceCheck].isSolid) {
                     for (int i = 0; i < 4; i++) {
-                        vertices.Add(Data.voxelVerts[Data.blockMesh[p, i]] + new Vector3(x, y, z));
-                        uvs.Add((Data.voxelUVs[i] + Data.TexturePos(Data.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                        vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[p, i]] + new Vector3(x, y, z));
+                        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / MyResources.TextureSize);
                     }
                     AddTriangles();
                 }
@@ -133,15 +133,15 @@ public class Chunk {
     void GrassMesh (int x, int y, int z, int[,] mesh) {
         for (int p = 0; p < mesh.Length >> 2; p++) {
             for (int i = 0; i < 4; i++) {
-                vertices.Add(Data.voxelVerts[mesh[p, i]] + new Vector3(x, y, z));
-                uvs.Add((Data.voxelUVs[i] + Data.TexturePos(Data.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / Data.TextureSize);
+                vertices.Add(MyResources.voxelVerts[mesh[p, i]] + new Vector3(x, y, z));
+                uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[voxelMap[x, y, z]].GetTextureID(p))) / MyResources.TextureSize);
             }
             AddTriangles();
         }
     }
     void AddTriangles () {
         for (int i = 0; i < 6; i++) {
-            triangles.Add(Data.order[i] + vertexIndex);
+            triangles.Add(MyResources.order[i] + vertexIndex);
         }
         vertexIndex += 4;
     }

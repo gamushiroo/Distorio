@@ -24,9 +24,9 @@ public class World : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Random.InitState((int)System.DateTime.Now.Ticks);
         Noise.offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
-        Data.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
-        Data.camera = camObj;
-        Data.cameraTransform = camObj.transform;
+        MyResources.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
+        MyResources.camera = camObj;
+        MyResources.cameraTransform = camObj.transform;
         Chunks.LoadChunksAround(new(0, 0));
         Entities.Add(new EntityPlayer(this));
     }

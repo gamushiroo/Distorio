@@ -59,8 +59,8 @@ public class EntityPlayer : EntityLiving {
 
     void SetGameObjectState () {
         currentFov += (fovTarget - currentFov) * Time.deltaTime * resistance * 2;
-        Data.camera.fieldOfView = currentFov;
-        Data.cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
+        MyResources.camera.fieldOfView = currentFov;
+        MyResources.cameraTransform.SetPositionAndRotation(GetCamPos(), GetRotation());
         world.healing.transform.position = Vec3.ToVector3(posX, posY, posZ);
         world.hpBar.value = health / maxHealth;
         world.miningProgresBarObj.SetActive(isMining);
@@ -88,14 +88,14 @@ public class EntityPlayer : EntityLiving {
     }
 
     void CalculateInput () {
-        rotationPitch -= Data.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
-        rotationYaw += Data.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
+        rotationPitch -= MyResources.mouseSens * Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
+        rotationYaw += MyResources.mouseSens * Input.GetAxisRaw("Mouse X") * Time.deltaTime;
         rotationPitch = Mathf.Clamp(rotationPitch, -90, 90);
         if (Input.GetKeyDown(KeyCode.R)) {
             Initialize();
         }
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            AddForce_Impulse(0, Data.jumpPower, 0);
+            AddForce_Impulse(0, MyResources.jumpPower, 0);
         }
         AddForce(Vec3.ToVec3(PlayerVel()));
     }
@@ -123,7 +123,7 @@ public class EntityPlayer : EntityLiving {
             z--;
         if (z == 1 && Input.GetKey(KeyCode.LeftControl))
             dash = 1.0F / 3.0F;
-        return (float)Math.Pow(height / defaultHeight, 1.5F) * Data.playerSpeed * (new Vector3(x, 0, z).normalized + dash * Vector3.forward);
+        return (float)Math.Pow(height / defaultHeight, 1.5F) * MyResources.playerSpeed * (new Vector3(x, 0, z).normalized + dash * Vector3.forward);
     }
     private protected override void OnGrounded () {
         AddHealth(Mathf.Min(0, 13 + (float)velocityY));

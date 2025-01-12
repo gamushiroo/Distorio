@@ -22,7 +22,7 @@ public class ItemBlock : Item {
     public override void RightMouseButton (World world, EntityPlayer player) {
 
         CalculateSelectingPos(world, player);
-        BlockType eee = Data.blockTypes[Chunks.GetVoxelID(SelectingPos)];
+        BlockType eee = MyResources.blockTypes[Chunks.GetVoxelID(SelectingPos)];
         if (eee.hasCollision) {
             if (miningPos != SelectingPos) {
                 miningPos = SelectingPos;
@@ -54,7 +54,7 @@ public class ItemBlock : Item {
         Vector3 _camPos2 = _camPos;
         Quaternion _camRot = player.GetRotation();
         for (int i = 0; i < 300; i++) {
-            if (Data.blockTypes[Chunks.GetVoxelID(_camPos)].hasCollision) {
+            if (MyResources.blockTypes[Chunks.GetVoxelID(_camPos)].hasCollision) {
                 break;
             }
             _camPos2 = _camPos;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-public static class Data {
+public static class MyResources {
     public static Material[] materials;
     public static Camera camera;
     public static Transform cameraTransform;
