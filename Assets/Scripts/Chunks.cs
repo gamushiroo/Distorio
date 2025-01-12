@@ -12,13 +12,13 @@ public static class Chunks {
         UpdateChunks();
         DrawChunks();
     }
-    public static void LoadChunksAround (Vector2Int posC) {
+    public static void LoadChunksAround (int _x, int _y) {
         foreach (Chunk c in chunks.Values) {
             c.SetActiveState(false);
         }
-        for (int x = posC.x - MyResources.CRange; x < posC.x + MyResources.CRange; x++) {
-            for (int z = posC.y - MyResources.CRange; z < posC.y + MyResources.CRange; z++) {
-                Vector2Int pos = new(x, z);
+        for (int x = _x - MyResources.CRange; x < _x + MyResources.CRange; x++) {
+            for (int y = _y - MyResources.CRange; y < _y + MyResources.CRange; y++) {
+                Vector2Int pos = new(x, y);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(pos));
                 }

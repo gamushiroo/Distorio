@@ -27,7 +27,7 @@ public class World : MonoBehaviour {
         MyResources.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
         MyResources.camera = camObj;
         MyResources.cameraTransform = camObj.transform;
-        Chunks.LoadChunksAround(new(0, 0));
+        Chunks.LoadChunksAround(0, 0);
         Entities.Add(new EntityPlayer(this));
     }
     private void LateUpdate () {
