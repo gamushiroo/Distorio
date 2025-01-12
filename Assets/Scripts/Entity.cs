@@ -89,7 +89,7 @@ public abstract class Entity {
             items[i].Update();
         }
         if (pearent == null) {
-            inTheWater = Chunks.CollidingIDs(BoundingBox).Contains(7);
+            inTheWater = Chunks.GetCollidingBlockIDs(BoundingBox).Contains(7);
             if (inTheWater) {
                 AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
             } else {
@@ -107,7 +107,7 @@ public abstract class Entity {
             double i = x;
             double j = y;
             double k = z;
-            List<AABB> p = Chunks.GetCollidingBoundingBoxes(BoundingBox.BroadPhase(x, y, z));
+            List<AABB> p = Chunks.GetCollidingBlocks(BoundingBox.BroadPhase(x, y, z));
             List<KeyValuePair<double, Action>> l = new() {
             new(Math.Abs(x), CalculateXOffset),
             new(Math.Abs(y), CalculateYOffset),

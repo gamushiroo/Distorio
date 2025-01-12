@@ -28,7 +28,7 @@ public class EntityLiving : Entity {
     }
     protected void ToWorldSpawn () {
         SetPosition(0.0D, 0.0D, 0.0D);
-        while (Chunks.GetCollidingBoundingBoxes(BoundingBox).Count != 0) {
+        while (Chunks.GetCollidingBlocks(BoundingBox).Count != 0) {
             AddPosition(0.0D, 1.0D, 0.0D);
         }
     }

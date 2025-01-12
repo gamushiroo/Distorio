@@ -53,7 +53,7 @@ public static class Chunks {
             }
         }
     }
-    public static List<int> CollidingIDs (AABB aabb) {
+    public static List<int> GetCollidingBlockIDs (AABB aabb) {
         List<int> a = new();
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
             for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
@@ -64,7 +64,7 @@ public static class Chunks {
         }
         return a;
     }
-    public static List<AABB> GetCollidingBoundingBoxes (AABB aabb) {
+    public static List<AABB> GetCollidingBlocks (AABB aabb) {
         List<AABB> a = new();
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
             for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
