@@ -6678,9 +6678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5385bbdb8ac5b004386ec86292929b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materials:
-  - {fileID: 2100000, guid: e92221d114e6e854f8578be0f5db3b98, type: 2}
-  - {fileID: 2100000, guid: 106884891bebc864984b8c496271b1f5, type: 2}
+  camObj: {fileID: 963194227}
   particle: {fileID: 1727034449}
   hpBar: {fileID: 786760891}
   hpText: {fileID: 1828601337}
@@ -6688,8 +6686,6 @@ MonoBehaviour:
   dd: {fileID: 8300000, guid: e8cd194ac91943a4295f2924588e67f6, type: 3}
   audioSource: {fileID: 0}
   backGround: {fileID: 1933486333}
-  cam: {fileID: 963194228}
-  camObj: {fileID: 963194227}
   miningProgresBarObj: {fileID: 790624905}
   blockHighlight: {fileID: 2109980259}
   miningEffect: {fileID: 485163719}

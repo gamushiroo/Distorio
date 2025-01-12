@@ -140,8 +140,8 @@ public static class Data {
 }
 public struct VoxelAndPos {
     public ChunkVoxel pos;
-    public int id;
-    public VoxelAndPos (ChunkVoxel pos, int id) {
+    public byte id;
+    public VoxelAndPos (ChunkVoxel pos, byte id) {
         this.pos = pos;
         this.id = id;
     }

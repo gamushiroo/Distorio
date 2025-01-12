@@ -23,15 +23,16 @@ public class World : MonoBehaviour {
     private void Awake () {
         Cursor.lockState = CursorLockMode.Locked;
         Random.InitState((int)System.DateTime.Now.Ticks);
-        Noise.SetOffset(new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f)));
+        Noise.offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
         Data.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
         Data.camera = camObj;
         Data.cameraTransform = camObj.transform;
-        ChunkManager.LoadChunksAround(new(0, 0));
-        ChunkManager.AddEntity(new EntityPlayer(this));
+        Chunks.LoadChunksAround(new(0, 0));
+        Entities.Add(new EntityPlayer(this));
     }
     private void LateUpdate () {
-        ChunkManager.LateUpdate();
+        Entities.Update();
+        Chunks.Update();
     }
 }
 [System.Serializable]
