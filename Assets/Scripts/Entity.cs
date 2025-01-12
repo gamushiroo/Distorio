@@ -109,9 +109,9 @@ public abstract class Entity {
             double k = z;
             List<AABB> p = Chunks.GetCollidingBlocks(BoundingBox.BroadPhase(x, y, z));
             List<KeyValuePair<double, Action>> l = new() {
-            new(Math.Abs(x), CalculateXOffset),
-            new(Math.Abs(y), CalculateYOffset),
-            new(Math.Abs(z), CalculateZOffset)
+                new(Math.Abs(x), CalculateXOffset),
+                new(Math.Abs(y), CalculateYOffset),
+                new(Math.Abs(z), CalculateZOffset)
             };
             l.Sort((a, b) => b.Key.CompareTo(a.Key));
             foreach (KeyValuePair<double, Action> v in l) {
@@ -124,9 +124,15 @@ public abstract class Entity {
                 OnGrounded();
                 waitUntilGrounded = false;
             }
-            if (i != x) { velocityX = 0; }
-            if (j != y) { velocityY = 0; }
-            if (k != z) { velocityZ = 0; }
+            if (i != x) { 
+                velocityX = 0; 
+            }
+            if (j != y) { 
+                velocityY = 0; 
+            }
+            if (k != z) {
+                velocityZ = 0;
+            }
             if (i != x || j != y || k != z) {
                 OnCollision();
             }
