@@ -36,6 +36,7 @@ public abstract class Entity {
     private protected readonly float resistance = 14.0F;
     private protected float rotationPitch = 0;
     private protected float rotationYaw = 0;
+    private protected readonly float gravityScale = 25.0F;
     public Entity (World worldIn) {
         ID = currentID++;
         world = worldIn;
@@ -93,7 +94,7 @@ public abstract class Entity {
             if (inTheWater) {
                 AddForce(velocityX * -2, velocityY * -2, velocityZ * -2);
             } else {
-                AddForce(0, -MyResources.gravityScale * gravityMultiplier, 0);
+                AddForce(0, -gravityScale * gravityMultiplier, 0);
             }
             Move();
         }

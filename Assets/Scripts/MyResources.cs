@@ -4,10 +4,6 @@ public static class MyResources {
     public static Material[] materials;
     public static Camera camera;
     public static Transform cameraTransform;
-    public static readonly float gravityScale = 25.0F;
-    public static readonly float jumpScale = 1;
-    public static readonly float jumpPower = Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
-    public static readonly float playerSpeed = 13.0F / 3.0F;
     public static readonly int CRange = 6;
     public static readonly int TextureSize = 16;
     public static readonly float mouseSens = 0.60F;

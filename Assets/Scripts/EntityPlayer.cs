@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class EntityPlayer : EntityLiving {
 
-
+    private readonly float playerSpeed = 13.0F / 3.0F;
+    private readonly float jumpScale = 1;
+    private readonly float jumpPower;
     private Vec3i chunkCoord;
     private Vec3i lastChunkCoord;
     private readonly float fovDef = 70;
@@ -14,6 +16,8 @@ public class EntityPlayer : EntityLiving {
     public float currentFov;
 
     public EntityPlayer (World world) : base(world) {
+
+        jumpPower =   Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
     }
 
     private protected override void Initialize () {
@@ -95,7 +99,7 @@ public class EntityPlayer : EntityLiving {
             Initialize();
         }
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            AddForce_Impulse(0, MyResources.jumpPower, 0);
+            AddForce_Impulse(0, jumpPower, 0);
         }
         AddForce(Vec3.ToVec3(PlayerVel()));
     }
@@ -123,7 +127,7 @@ public class EntityPlayer : EntityLiving {
             z--;
         if (z == 1 && Input.GetKey(KeyCode.LeftControl))
             dash = 1.0F / 3.0F;
-        return (float)Math.Pow(height / defaultHeight, 1.5F) * MyResources.playerSpeed * (new Vector3(x, 0, z).normalized + dash * Vector3.forward);
+        return (float)Math.Pow(height / defaultHeight, 1.5F) * playerSpeed * (new Vector3(x, 0, z).normalized + dash * Vector3.forward);
     }
     private protected override void OnGrounded () {
         AddHealth(Mathf.Min(0, 13 + (float)velocityY));

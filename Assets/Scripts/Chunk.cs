@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 public class Chunk {
+    //Chunks‚©‚ç‚Ì‚Ý—˜—p‚³‚ê‚é
     public bool IsEditable => IsTerrainMapGenerated && !threadLocked;
     public bool IsTerrainMapGenerated { get; private set; }
     public readonly Vector2Int pos;
@@ -19,6 +20,7 @@ public class Chunk {
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
     private int vertexIndex = 0;
+    private readonly Chunk[] neighbourChunks = new Chunk[4];
     public Chunk (Vector2Int pos) {
         this.pos = pos;
         chunkObject.transform.position = ChunkWidth * new Vector3Int(pos.x, 0, pos.y);
