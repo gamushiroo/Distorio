@@ -26,7 +26,7 @@ public class ItemWeapon : Item {
                 Vector3 ttt = new Vector3(Mathf.Cos(rand1) * Mathf.Sin(rand2), Mathf.Sin(rand1) * Mathf.Sin(rand2), Mathf.Cos(rand2)) * initialVelocity;
                 Entities.Add(new EntityProjectile(playerCamPos.x, playerCamPos.y, playerCamPos.z, playerRot * ttt, world)); 
             }
-            playerIn.audioSource.PlayOneShot(world.dd, 0.5F);
+            //playerIn.audioSource.PlayOneShot(world.dd, 0.5F);
             gunCoolDown = 0;
         }
     }

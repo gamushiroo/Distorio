@@ -1,5 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
+public class BlockType {
+    public BlockType (string blockName, bool isSolid, bool hasCollision, float hardness, Block.RenderType renderType, int backFaceTexture) {
+        this.blockName = blockName;
+        this.isSolid = isSolid;
+        this.hasCollision = hasCollision;
+        this.hardness = hardness;
+        this.renderType = renderType;
+        this.backFaceTexture = backFaceTexture;
+    }
+    public string blockName;
+    public bool isSolid;
+    public bool hasCollision;
+    public float hardness;
+    public Block.RenderType renderType;
+    public int backFaceTexture;
+}
 public static class MyResources {
     public static Material[] materials;
     public static Camera camera;
@@ -15,13 +31,13 @@ public static class MyResources {
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;
     public static readonly BlockType[] blockTypes = new BlockType[7] {
-        new ("", false, false, 0, 0, 0),
-        new ("Grass", true, true, 1, 0, 0),
-        new ("Dirt", true, true, 1, 0, 2),
-        new ("Stone", true, true, 1, 0, 1),
-        new ("Glass", false, false, 1, 0, 49),
-        new ("Glass", false, false, 1, 0, 49),
-        new ("IronOre", true, true, 1, 0, 47)
+        new ("", false, false, 0, Block.RenderType.standard, 0),
+        new ("Grass", true, true, 1, Block.RenderType.standard, 0),
+        new ("Dirt", true, true, 1, Block.RenderType.standard, 2),
+        new ("Stone", true, true, 1, Block.RenderType.standard, 1),
+        new ("Glass", false, false, 1, Block.RenderType.standard, 49),
+        new ("Glass", false, false, 1, Block.RenderType.standard, 49),
+        new ("IronOre", true, true, 1, Block.RenderType.standard, 47)
     };
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new(0.0F, 0.0F, 0.0F),
@@ -62,14 +78,6 @@ public static class MyResources {
         {{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{0, 0, 4, 0, 0 },{5, 5, 4, 5, 5 },{5, 5, 4, 5, 5 },{0, 5, 4, 5, 0 },{0, 5, 5, 5, 0 } },
         {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{5, 5, 5, 5, 5 },{5, 5, 5, 5, 5 },{0, 5, 5, 5, 0 },{0, 0, 5, 0, 0 } },
         {{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 },{0, 5, 5, 5, 0 },{0, 5, 5, 5, 0 },{0, 0, 0, 0, 0 },{0, 0, 0, 0, 0 } }
-    };
-    public static readonly Vector3Int[] faceChecks = new Vector3Int[6] {
-        new(0, 0, -1),
-        new(0, 0, 1),
-        new(0, 1, 0),
-        new(0, -1, 0),
-        new(-1, 0, 0),
-        new(1, 0, 0)
     };
     public static readonly int[,] grassMesh = new int[4, 4] {
         {0, 3, 5, 6}, // Back Face

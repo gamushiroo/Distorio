@@ -18,9 +18,11 @@ public static class Terrain {
             default:
                 break;
         }
+        /*
         if (VoxelValue == 0 && Noise.Get3DPerlin(new(x, y, z), 0.05f) >= 0.5f) {
             VoxelValue = 6;
         }
+        */
         return VoxelValue;
     }
     private static float GetTerrainHeight (int x, int y) {

@@ -27,6 +27,7 @@ public class World : MonoBehaviour {
         MyResources.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
         MyResources.camera = camObj;
         MyResources.cameraTransform = camObj.transform;
+
         Chunks.LoadChunksAround(0, 0);
         Entities.Add(new EntityPlayer(this));
     }
@@ -34,21 +35,4 @@ public class World : MonoBehaviour {
         Entities.Update();
         Chunks.Update();
     }
-}
-[System.Serializable]
-public class BlockType {
-    public BlockType (string blockName, bool isSolid, bool hasCollision, float hardness, byte meshTypes, int backFaceTexture) {
-        this.blockName = blockName;
-        this.isSolid = isSolid;
-        this.hasCollision = hasCollision;
-        this.hardness = hardness;
-        this.meshTypes = meshTypes;
-        this.backFaceTexture = backFaceTexture;
-    }
-    public string blockName;
-    public bool isSolid;
-    public bool hasCollision;
-    public float hardness;
-    public byte meshTypes;
-    public int backFaceTexture;
 }

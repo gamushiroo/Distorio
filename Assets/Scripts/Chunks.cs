@@ -20,7 +20,7 @@ public static class Chunks {
             for (int y = _y - MyResources.CRange; y < _y + MyResources.CRange; y++) {
                 Vector2Int pos = new(x, y);
                 if (!chunks.ContainsKey(pos)) {
-                    chunks.Add(pos, new(pos));
+                    chunks.Add(pos, new(new(x, 0, y)));
                 }
                 chunks[pos].SetActiveState(true);
                 if (!chunks[pos].IsTerrainMapGenerated) {
@@ -97,7 +97,7 @@ public static class Chunks {
                 while (queue.Any()) {
                     VoxelAndPos vmod = queue.Dequeue();
                     if (!chunks.ContainsKey(vmod.pos.c)) {
-                        chunks.Add(vmod.pos.c, new(vmod.pos.c));
+                        chunks.Add(vmod.pos.c, new(new(vmod.pos.c.x, 0, vmod.pos.c.y)));
                     }
                     chunks[vmod.pos.c].EnqueueVoxelMod(vmod);
                     if (!chunksToUpdate.Contains(vmod.pos.c)) {
