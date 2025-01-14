@@ -50,8 +50,7 @@ public class Chunk {
     }
     public void SetActiveState (bool value) {
         if (ActiveState != value) {
-            ActiveState = value;
-            chunkObject.SetActive(value);
+            chunkObject.SetActive(ActiveState = value);
         }
     }
     public void UpdateChunk () {
