@@ -15,6 +15,6 @@ public enum RenderType {
     none = -1,
     standard = 0,
     liquid = 1,
-
+    notSolid = 2,
 
 }

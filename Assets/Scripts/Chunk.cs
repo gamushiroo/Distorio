@@ -89,11 +89,11 @@ public class Chunk {
         meshFilter.mesh = mesh;
         threadLocked = false;
     }
-    public int GetVoxelID (Vector3Int pos) {
-        return IsInsideChunk(pos) ? voxelMap[pos.x, pos.y, pos.z] : Chunks.GetVoxelID(pos + chunkPos);
+    public int GetVoxelWithCheck (Vector3Int pos) {
+        return pos.x >= 0 && pos.x < ChunkWidth && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < ChunkWidth ? GetVoxel(pos) : Chunks.GetVoxel(pos + chunkPos);
     }
-    private bool IsInsideChunk (Vector3Int pos) {
-        return pos.x >= 0 && pos.x < ChunkWidth && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < ChunkWidth;
+    public int GetVoxel (Vector3Int pos) {
+        return voxelMap[pos.x, pos.y, pos.z];
     }
     private void CreateMeshAt (int x, int y, int z) {
         Vector3Int pos = new(x, y, z);
@@ -103,10 +103,10 @@ public class Chunk {
                 break;
             case RenderType.standard:
                 for (int f = 0; f < 6; f++) {
-                    if (MyResources.blockTypes[GetVoxelID(faceChecks[f] + pos)].RenderType != RenderType.standard) {
+                    if (MyResources.blockTypes[GetVoxelWithCheck(faceChecks[f] + pos)].RenderType != block.RenderType) {
                         for (int i = 0; i < 4; i++) {
                             vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[f, i]] + pos);
-                            uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(block.backFaceTexture)) / MyResources.TextureSize);
+                            uvs.Add(MyResources.TexturePos(block.backFaceTexture, i));
                         }
                         for (int i = 0; i < 6; i++) {
                             triangles.Add(MyResources.order[i] + vertexIndex);
@@ -116,17 +116,29 @@ public class Chunk {
                 }
                 break;
             case RenderType.liquid:
-                for (int p = 0; p < 6; p++) {
-                    if (MyResources.blockTypes[GetVoxelID(faceChecks[p] + pos)].RenderType != RenderType.liquid) {
+                for (int f = 0; f < 6; f++) {
+                    if (MyResources.blockTypes[GetVoxelWithCheck(faceChecks[f] + pos)].RenderType != block.RenderType) {
                         for (int i = 0; i < 4; i++) {
-                            vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[p, i]] + pos);
-                            uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(block.backFaceTexture)) / MyResources.TextureSize);
+                            vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[f, i]] + pos);
+                            uvs.Add(MyResources.TexturePos(block.backFaceTexture, i));
                         }
                         for (int i = 0; i < 6; i++) {
                             waterTriangles.Add(MyResources.order[i] + vertexIndex);
                         }
                         vertexIndex += 4;
                     }
+                }
+                break;
+            case RenderType.notSolid:
+                for (int f = 0; f < 6; f++) {
+                    for (int i = 0; i < 4; i++) {
+                        vertices.Add(MyResources.voxelVerts[MyResources.blockMesh[f, i]] + pos);
+                        uvs.Add(MyResources.TexturePos(block.backFaceTexture, i));
+                    }
+                    for (int i = 0; i < 6; i++) {
+                        triangles.Add(MyResources.order[i] + vertexIndex);
+                    }
+                    vertexIndex += 4;
                 }
                 break;
         }

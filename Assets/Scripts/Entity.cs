@@ -76,7 +76,7 @@ public abstract class Entity {
             for (int i = 0; i < 4; i++) {
                 Vector3 b = MyResources.voxelVerts[MyResources.blockMesh[p, i]];
                 vertices.Add(new(b.x * defaultWidth - tt, b.y * defaultHeight, b.z * defaultWidth - tt));
-                uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[meshType].backFaceTexture)) / MyResources.TextureSize);
+                uvs.Add(MyResources.TexturePos(MyResources.blockTypes[meshType].backFaceTexture, i));
             }
             for (int i = 0; i < 6; i++) {
                 triangles.Add(MyResources.order[i] + vertexIndex);

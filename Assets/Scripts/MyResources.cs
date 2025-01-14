@@ -20,7 +20,6 @@ public static class MyResources {
     public static Material[] materials;
     public static Camera camera;
     public static Transform cameraTransform;
-    public static readonly int CRange = 6;
     public static readonly int TextureSize = 16;
     public static readonly float mouseSens = 0.60F;
     public static readonly int solidGroundHeight = 48;
@@ -36,7 +35,7 @@ public static class MyResources {
         new ("Dirt", true, true, 1, RenderType.standard, 2),
         new ("Stone", true, true, 1, RenderType.standard, 1),
         new ("Glass", false, false, 1, RenderType.liquid, 49),
-        new ("Glass", false, false, 1,  RenderType.standard, 49),
+        new ("Glass", false, false, 1,  RenderType.notSolid, 49),
         new ("IronOre", true, true, 1, RenderType.standard, 47)
     };
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
@@ -93,8 +92,8 @@ public static class MyResources {
         {4, 7, 0, 3}, // Left Face
         {1, 2, 5, 6}  // Right Face
     };
-    public static Vector2 TexturePos (int ID) {
-        return new(ID % TextureSize, TextureSize - 1 - ID / TextureSize);
+    public static Vector2 TexturePos (int ID, int i) {
+        return (voxelUVs[i] + new Vector2(ID % TextureSize, TextureSize - 1 - ID / TextureSize)) / TextureSize;
     }
     public static ChunkVoxel Vector3ToChunkVoxel (Vector3 pos) {
         Vector3Int p = Vector3Int.FloorToInt(pos);

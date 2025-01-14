@@ -7,6 +7,7 @@ public static class Chunks {
     private static readonly Queue<Queue<VoxelAndPos>> modifications = new();
     private static readonly List<Vector2Int> ChunksToDraw = new();
     private static readonly List<Vector2Int> chunksToUpdate = new();
+    private static readonly int loadRange = 6;
     public static void Update () {
         ModifyChunks();
         UpdateChunks();
@@ -16,8 +17,8 @@ public static class Chunks {
         foreach (Chunk c in chunks.Values) {
             c.SetActiveState(false);
         }
-        for (int x = _x - MyResources.CRange; x < _x + MyResources.CRange; x++) {
-            for (int y = _y - MyResources.CRange; y < _y + MyResources.CRange; y++) {
+        for (int x = _x - loadRange; x < _x + loadRange; x++) {
+            for (int y = _y - loadRange; y < _y + loadRange; y++) {
                 Vector2Int pos = new(x, y);
                 if (!chunks.ContainsKey(pos)) {
                     chunks.Add(pos, new(new(x, 0, y)));
@@ -58,7 +59,7 @@ public static class Chunks {
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
             for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
                 for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
-                    a.Add(GetVoxelID(new(x, y, z)));
+                    a.Add(GetVoxel(new(x, y, z)));
                 }
             }
         }
@@ -69,7 +70,7 @@ public static class Chunks {
         for (int x = (int)Math.Floor(aabb.minX); x < (int)Math.Ceiling(aabb.maxX); x++) {
             for (int y = (int)Math.Floor(aabb.minY); y < (int)Math.Ceiling(aabb.maxY); y++) {
                 for (int z = (int)Math.Floor(aabb.minZ); z < (int)Math.Ceiling(aabb.maxZ); z++) {
-                    if (MyResources.blockTypes[GetVoxelID(new(x, y, z))].hasCollision) {
+                    if (MyResources.blockTypes[GetVoxel(new(x, y, z))].hasCollision) {
                         a.Add(new(x, y, z, x + 1, y + 1, z + 1));
                     }
                 }
@@ -77,12 +78,12 @@ public static class Chunks {
         }
         return a;
     }
-    public static int GetVoxelID (Vector3 position) {
+    public static int GetVoxel (Vector3 position) {
         ChunkVoxel pos = MyResources.Vector3ToChunkVoxel(position);
-        return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxelID(pos.v) : 0;
+        return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxel(pos.v) : 0;
     }
     public static bool SetBlock (Vector3 position, Vector3 selectingPos, byte itemID) {
-        if (itemID != 0 && !MyResources.blockTypes[GetVoxelID(position)].hasCollision && MyResources.blockTypes[GetVoxelID(selectingPos)].hasCollision) {
+        if (itemID != 0 && !MyResources.blockTypes[GetVoxel(position)].hasCollision && MyResources.blockTypes[GetVoxel(selectingPos)].hasCollision) {
             Queue<VoxelAndPos> queue = new();
             queue.Enqueue(new(MyResources.Vector3ToChunkVoxel(position), itemID));
             modifications.Enqueue(queue);
