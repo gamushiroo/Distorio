@@ -79,7 +79,7 @@ public static class Chunks {
     }
     public static int GetVoxelID (Vector3 position) {
         ChunkVoxel pos = MyResources.Vector3ToChunkVoxel(position);
-        return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxelIDChunk(pos.v) : 0;
+        return chunks.ContainsKey(pos.c) ? chunks[pos.c].GetVoxelID(pos.v) : 0;
     }
     public static bool SetBlock (Vector3 position, Vector3 selectingPos, byte itemID) {
         if (itemID != 0 && !MyResources.blockTypes[GetVoxelID(position)].hasCollision && MyResources.blockTypes[GetVoxelID(selectingPos)].hasCollision) {

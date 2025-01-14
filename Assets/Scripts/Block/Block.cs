@@ -3,14 +3,14 @@ public class Block {
 
 
 
-    public BlockRenderType GetRenderType () {
+    public RenderType GetRenderType () {
 
-        return BlockRenderType.standard;
+        return RenderType.standard;
 
     }
 }
 
-public enum BlockRenderType {
+public enum RenderType {
 
     none = -1,
     standard = 0,
