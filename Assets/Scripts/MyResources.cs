@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 public class BlockType {
-    public BlockType (string blockName, bool isSolid, bool hasCollision, float hardness, Block.RenderType renderType, int backFaceTexture) {
+    public BlockType (string blockName, bool isSolid, bool hasCollision, float hardness, BlockRenderType blockRenderType, int backFaceTexture) {
         this.blockName = blockName;
         this.isSolid = isSolid;
         this.hasCollision = hasCollision;
         this.hardness = hardness;
-        this.renderType = renderType;
+        this.blockRenderType = blockRenderType;
         this.backFaceTexture = backFaceTexture;
     }
     public string blockName;
     public bool isSolid;
     public bool hasCollision;
     public float hardness;
-    public Block.RenderType renderType;
+    public BlockRenderType blockRenderType;
     public int backFaceTexture;
 }
 public static class MyResources {
@@ -31,13 +31,13 @@ public static class MyResources {
     public static float treePlacementScale = 1.03F;
     public static float treePlacementThreshold = 0.35F;
     public static readonly BlockType[] blockTypes = new BlockType[7] {
-        new ("", false, false, 0, Block.RenderType.standard, 0),
-        new ("Grass", true, true, 1, Block.RenderType.standard, 0),
-        new ("Dirt", true, true, 1, Block.RenderType.standard, 2),
-        new ("Stone", true, true, 1, Block.RenderType.standard, 1),
-        new ("Glass", false, false, 1, Block.RenderType.standard, 49),
-        new ("Glass", false, false, 1, Block.RenderType.standard, 49),
-        new ("IronOre", true, true, 1, Block.RenderType.standard, 47)
+        new ("Air", false, false, 0, BlockRenderType.none, 0),
+        new ("Grass", true, true, 1, BlockRenderType.standard, 0),
+        new ("Dirt", true, true, 1, BlockRenderType.standard, 2),
+        new ("Stone", true, true, 1, BlockRenderType.standard, 1),
+        new ("Glass", false, false, 1, BlockRenderType.standard, 49),
+        new ("Glass", false, false, 1,  BlockRenderType.standard, 49),
+        new ("IronOre", true, true, 1, BlockRenderType.standard, 47)
     };
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new(0.0F, 0.0F, 0.0F),

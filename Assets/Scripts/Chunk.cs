@@ -100,8 +100,8 @@ public class Chunk {
         byte ttt = voxelMap[x, y, z];
         if (ttt != 0) {
             Vector3Int position = new(x, y, z);
-            switch (MyResources.blockTypes[ttt].renderType) {
-                case Block.RenderType.standard:
+            switch (MyResources.blockTypes[ttt].blockRenderType) {
+                case BlockRenderType.standard:
                     for (int p = 0; p < 6; p++) {
                         Vector3Int a = faceChecks[p] + position;
                         int faceCheck = IsOutOfChunk(a) ? Chunks.GetVoxelID(a + chunkPos) : GetVoxelIDChunk(a);
@@ -129,7 +129,7 @@ public class Chunk {
                         }
                     }
                     break;
-                case Block.RenderType.liquid:
+                case BlockRenderType.liquid:
                     for (int p = 0; p < MyResources.grassMesh.Length >> 2; p++) {
                         for (int i = 0; i < 4; i++) {
                             vertices.Add(MyResources.voxelVerts[MyResources.grassMesh[p, i]] + position);

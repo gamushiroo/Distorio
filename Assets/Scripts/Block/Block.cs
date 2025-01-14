@@ -1,19 +1,20 @@
 public class Block {
 
-    public enum RenderType {
-
-
-        standard = 0,
-        liquid = 1,
-
-
-    }
 
 
 
-    public RenderType GetRenderType () {
+    public BlockRenderType GetRenderType () {
 
-        return RenderType.standard;
+        return BlockRenderType.standard;
 
     }
+}
+
+public enum BlockRenderType {
+
+    none = -1,
+    standard = 0,
+    liquid = 1,
+
+
 }
