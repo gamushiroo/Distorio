@@ -15,7 +15,7 @@ public class BlockType {
     public int backFaceTexture;
 }
 public static class MyResources {
-    public static Material[] materials;
+    public static Material[] materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
     public static Camera camera;
     public static Transform cameraTransform;
     public static readonly int TextureSize = 16;

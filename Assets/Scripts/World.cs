@@ -24,14 +24,17 @@ public class World : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Random.InitState((int)System.DateTime.Now.Ticks);
         Noise.offset = new(Random.Range(-66666.6f, 66666.6f), Random.Range(-66666.6f, 66666.6f));
-        MyResources.materials = new Material[2] { (Material)Resources.Load("Block"), (Material)Resources.Load("Water") };
         MyResources.camera = camObj;
         MyResources.cameraTransform = camObj.transform;
 
         Chunks.LoadChunksAround(0, 0);
-        Entities.Add(new EntityPlayer(this));
     }
     private void LateUpdate () {
+
+        if (Input.GetKeyDown(KeyCode.U)) {
+
+            Entities.Add(new EntityPlayer(this));
+        }
         Entities.Update();
         Chunks.Update();
     }
