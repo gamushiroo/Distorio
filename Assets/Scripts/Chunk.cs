@@ -4,14 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 public class Chunk {
-    //Chunks‚©‚ç‚Ì‚Ý—˜—p‚³‚ê‚é
     public bool IsEditable => IsTerrainMapGenerated && !threadLocked;
     public bool IsTerrainMapGenerated { get; private set; }
-    public readonly Vector3Int chunkPos;
-    private static readonly int ChunkWidth = 16;
-    private static readonly int ChunkHeight = 128;
     private bool threadLocked;
     private bool ActiveState = true;
+    private static readonly int ChunkWidth = 16;
+    private static readonly int ChunkHeight = 128;
+    private readonly Vector3Int chunkPos;
     private readonly MeshFilter meshFilter;
     private readonly GameObject chunkObject = new();
     private readonly Queue<VoxelAndPos> modifications = new();
@@ -21,9 +20,9 @@ public class Chunk {
     private readonly List<int> triangles = new();
     private readonly List<int> waterTriangles = new();
     private int vertexIndex = 0;
-    public Chunk (Vector3Int posIn) {
-        chunkPos = ChunkWidth * posIn;
-        chunkObject.transform.position = chunkPos;
+    public Chunk (Vector3Int chunkPos) {
+        this.chunkPos = ChunkWidth * chunkPos;
+        chunkObject.transform.position = this.chunkPos;
         chunkObject.AddComponent<MeshRenderer>().materials = MyResources.materials;
         meshFilter = chunkObject.AddComponent<MeshFilter>();
     }
@@ -88,11 +87,11 @@ public class Chunk {
         meshFilter.mesh = mesh;
         threadLocked = false;
     }
-    public int GetVoxelWithCheck (Vector3Int pos) {
-        return pos.x >= 0 && pos.x < ChunkWidth && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < ChunkWidth ? GetVoxel(pos) : Chunks.GetVoxel(pos + chunkPos);
-    }
     public int GetVoxel (Vector3Int pos) {
         return voxelMap[pos.x, pos.y, pos.z];
+    }
+    private int GetVoxelWithCheck (Vector3Int pos) {
+        return pos.x >= 0 && pos.x < ChunkWidth && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < ChunkWidth ? GetVoxel(pos) : Chunks.GetVoxel(pos + chunkPos);
     }
     private void CreateMeshAt (int x, int y, int z) {
         Vector3Int pos = new(x, y, z);
@@ -140,6 +139,8 @@ public class Chunk {
                     vertexIndex += 4;
                 }
                 break;
+            default:
+                break;
         }
     }
     private static readonly Vector3Int[] faceChecks = new Vector3Int[6] {
@@ -151,18 +152,3 @@ public class Chunk {
         new(1, 0, 0)
     };
 }
-
-
-
-/*
-for (int p = 0; p < MyResources.grassMesh.Length >> 2; p++) {
-    for (int i = 0; i < 4; i++) {
-        vertices.Add(MyResources.voxelVerts[MyResources.grassMesh[p, i]] + pos);
-        uvs.Add((MyResources.voxelUVs[i] + MyResources.TexturePos(MyResources.blockTypes[ttt].backFaceTexture)) / MyResources.TextureSize);
-    }
-    for (int i = 0; i < 6; i++) {
-        triangles.Add(MyResources.order[i] + vertexIndex);
-    }
-    vertexIndex += 4;
-}
-*/

@@ -125,11 +125,11 @@ public abstract class Entity {
                 OnGrounded();
                 waitUntilGrounded = false;
             }
-            if (i != x) { 
-                velocityX = 0; 
+            if (i != x) {
+                velocityX = 0;
             }
-            if (j != y) { 
-                velocityY = 0; 
+            if (j != y) {
+                velocityY = 0;
             }
             if (k != z) {
                 velocityZ = 0;

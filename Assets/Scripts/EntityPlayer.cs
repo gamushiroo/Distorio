@@ -17,7 +17,7 @@ public class EntityPlayer : EntityLiving {
 
     public EntityPlayer (World world) : base(world) {
 
-        jumpPower =   Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
+        jumpPower = Mathf.Sqrt(2 * gravityScale * (jumpScale + 0.4F));
     }
 
     private protected override void Initialize () {

@@ -14,7 +14,7 @@ public class World : MonoBehaviour {
     public Transform backGround;
     public GameObject miningProgresBarObj;
     public GameObject blockHighlight;
-    public GameObject miningEffect; 
+    public GameObject miningEffect;
     public Slider miningProgresBar;
     private Vector2 offset;
     public GameObject healing;
